@@ -1,11 +1,14 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { NgHeroiconsModule } from "@dimaslz/ng-heroicons";
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
+
+import localeSwedish from '@angular/common/locales/sv';
+registerLocaleData(localeSwedish);
 
 @NgModule({
   declarations: [
@@ -17,7 +20,7 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     NgHeroiconsModule,
   ],
-  providers: [],
+  providers: [{ provide: LOCALE_ID, useValue: 'sv' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

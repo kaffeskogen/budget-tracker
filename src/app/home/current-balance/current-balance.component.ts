@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-current-balance',
   template: `
-    <div class="rounded-3xl w-full min-h-[200px] bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex flex-col items-center place-content-between text-white">
+    <div class="shadow rounded-3xl w-full min-h-[200px] bg-gradient-to-br from-orange-600 to-blue-700 flex flex-col items-center place-content-between text-white">
       <div class="text-sm pt-10">Current balance</div>
       <div class="text-4xl pb-8 font-semibold">4 538,00 kr</div>
       <div class="flex place-content-between pb-6 w-full">

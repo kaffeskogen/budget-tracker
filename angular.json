@@ -4,6 +4,9 @@
   "newProjectRoot": "projects",
   "projects": {
     "budget-tracker": {
+      "i18n": {
+        "sourceLocale": "sv"
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {

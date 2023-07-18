@@ -6,6 +6,7 @@ import { HomeComponent } from './home.component';
 import { HeaderComponent } from './header/header.component';
 import { SharedModule } from '../shared/shared.module';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
+import { TableComponentModule } from '../shared/ui/table/table.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { CurrentBalanceComponent } from './current-balance/current-balance.compo
   imports: [
     CommonModule,
     HomeRoutingModule,
-    SharedModule
+    SharedModule,
+    TableComponentModule
   ]
 })
 export class HomeModule { }
