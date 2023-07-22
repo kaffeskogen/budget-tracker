@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
@@ -7,19 +7,24 @@ import { HeaderComponent } from './header/header.component';
 import { SharedModule } from '../shared/shared.module';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { TableComponentModule } from '../shared/ui/table/table.module';
+import { TableCardComponent } from './table-card/table-card.component';
 
 
 @NgModule({
   declarations: [
     HomeComponent,
     HeaderComponent,
-    CurrentBalanceComponent
+    CurrentBalanceComponent,
+    TableCardComponent
   ],
   imports: [
     CommonModule,
     HomeRoutingModule,
     SharedModule,
     TableComponentModule
+  ],
+  providers: [
+    // { provide: LOCALE_ID, useValue: 'sv' }
   ]
 })
 export class HomeModule { }

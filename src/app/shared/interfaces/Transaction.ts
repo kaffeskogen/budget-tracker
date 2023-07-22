@@ -3,6 +3,7 @@ export interface Transaction {
     value?: number;
     title: string;
     category: string;
+    groupId: string;
     currency: string;
     subcategory?: string;
     date: Date;

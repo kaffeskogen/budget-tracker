@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { DEFAULT_CURRENCY_CODE, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -20,7 +20,9 @@ registerLocaleData(localeSwedish);
     CommonModule,
     NgHeroiconsModule,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'sv' }],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'sv' }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

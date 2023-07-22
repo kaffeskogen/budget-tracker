@@ -1,28 +1,24 @@
 ::ng-deep table {
-    @apply w-full mt-1 overflow-hidden rounded bg-slate-50;
+    @apply w-full mt-1 overflow-hidden rounded;
 
     thead tr {
-        @apply bg-green-700 text-white text-left;
+        @apply text-left;
     }
 
-    th,
-    td {
-        @apply px-4;
+    tbody tr {
+        @apply bg-slate-50;
     }
 
     th {
-        @apply pt-4 pb-2;
+        @apply px-4 pt-4 pb-1;
     }
 
-    td {
-        @apply py-2;
+    td,
+    th {
+        @apply px-4 py-1;
     }
 
     tr:last-child td {
-        @apply pb-4
-    }
-
-    tr:first-child td {
-        @apply pt-4
+        @apply h-4
     }
 }

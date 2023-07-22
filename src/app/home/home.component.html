@@ -1,14 +1,5 @@
 <app-header></app-header>
 <app-current-balance></app-current-balance>
 
-<b class="block mt-8 ml-3">Income</b>
-<app-table [data]="incomes">
-    <ng-template [appTableHeader]="incomes" let-header>
-        <th>Title</th>
-        <th class="text-right">Amount</th>
-    </ng-template>
-    <ng-template [appTableRow]="incomes" let-row>
-        <td>{{ row.title }}</td>
-        <td class="text-right font-bold">{{ row.value | currency: row.currency :'symbol-narrow':'4.0-0' }}</td>
-    </ng-template>
-</app-table>
+<app-table-card *ngFor="let group of groups" [groupId]="group.id" [color]="group.color">
+</app-table-card>
