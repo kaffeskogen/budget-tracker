@@ -8,6 +8,7 @@ export interface TransactionsState {
   transactions: Transaction[];
   groupId: string | null;
   error: string | null;
+  showAll: boolean;
   status: 'loading' | 'success' | 'error';
 }
 
@@ -19,14 +20,24 @@ export class TableCardService {
     error: null,
     groupId: null,
     status: 'loading',
+    showAll: false,
     transactions: []
   });
 
   retry$ = new Subject<void>();
   error$ = new Subject<Error>();
+  showAll$ = new Subject<boolean>();
   groupId$ = new Subject<string>();
 
+  THRESHOLD = 3;
+
+  showAll = computed(() => this.state().showAll);
   transactions = computed(() => this.state().transactions);
+  visiableTransactions = computed(() =>
+    this.transactions()
+      .slice(0, this.showAll()
+        ? this.transactions().length
+        : Math.min(this.transactions().length, this.THRESHOLD)));
   sum = computed(() => this.transactions().reduce((a, b) => a + (b.value ?? 0), 0));
   error = computed(() => this.state().error);
   groupId = computed(() => this.state().groupId);
@@ -71,6 +82,12 @@ export class TableCardService {
       .subscribe(() =>
         this.state.update((state) => ({ ...state, status: "loading" }))
       );
+
+    this.showAll$
+      .pipe(takeUntilDestroyed())
+      .subscribe((showAll) => {
+        this.state.update((state) => ({ ...state, showAll }))
+      })
 
     this.error$.pipe(takeUntilDestroyed()).subscribe((error) =>
       this.state.update((state) => ({

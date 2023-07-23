@@ -1,4 +1,7 @@
+import { IconComponents } from "../icons";
+
 export interface Transaction {
+    icon: keyof typeof IconComponents;
     estimation?: number;
     value?: number;
     title: string;

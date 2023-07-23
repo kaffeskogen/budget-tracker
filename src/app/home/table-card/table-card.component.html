@@ -1,38 +1,61 @@
-<div class="status">
-    <p *ngIf="service.status() === 'loading'">Loading...</p>
-    <div *ngIf="service.status() === 'error'">
-        <p>{{ service.error() }}</p>
-        <button (click)="service.retry$.next()">Retry</button>
+<div [@outAnimation] *ngIf="service.status() === 'loading'" class="animate-pulse absolute pointer-events-none w-full">
+    <!-- <div *ngIf="service.status() === 'loading'" class="animate-pulse absolute pointer-events-none w-full"> -->
+
+    <div class="pt-4 mb-4 px-4 font-bold h-7 flex">
+        <div class="opacity-50 rounded h-4 inline-block w-20 content-center" [ngStyle]="{background: color}">&nbsp;
+        </div>
+    </div>
+    <div *ngFor="let item of [1,2,3]" style="margin-bottom: 0.375rem"
+        class="flex whitespace-nowrap py-2 px-4 items-center">
+        <div class="bg-gray-300 w-5 h-5 rounded-full ml-[2px]"></div>
+        <div class="flex-1 ml-2">
+            <div class="bg-gray-400 w-24 h-4 mt-1"></div>
+            <div class="bg-gray-300 w-16 h-3 mt-2"></div>
+        </div>
+        <div class="bg-gray-300 w-16 h-4"></div>
+    </div>
+    <div class="mb-1 flex whitespace-nowrap py-2 px-4 place-content-between">
+        <div class="mt-1 h-3 w-24 opacity-30" [ngStyle]="{ background: color }"></div>
+        <div class="mt-1 h-4 w-16 opacity-50" [ngStyle]="{ background: color }"></div>
     </div>
 </div>
-<div *ngIf="service.status() === 'success'" class="my-2">
+<div *ngIf="service.status() === 'error'">
+    <p>{{ service.error() }}</p>
+    <button (click)="service.retry$.next()">Retry</button>
+</div>
+<div *ngIf="service.status() === 'success'" [@inAnimation]>
 
-    <div class="py-2 px-4 font-bold" [ngStyle]="{'color': color}">
-        <div class="text-xl">{{groupId}}</div>
-        <div class="text-sm">{{service.sum() | currency: 'SEK' : 'symbol-narrow':'0.0-0'}}</div>
+    <div class="py-2 px-4 font-bold" [ngStyle]="{color: color}">
+        <div class="text-xl">{{group.name}}</div>
     </div>
-    <div *ngFor="let transaction of service.transactions()"
-        class="rounded bg-slate-50 mb-1 flex whitespace-nowrap py-2 px-4 shadow">
-        <div>Test</div>
-        <div class="flex-1">{{transaction.title}}</div>
-        <div>{{transaction.value | currency: transaction.currency :'symbol-narrow':'0.0-0'}}</div>
+    <div *ngFor="let transaction of service.visiableTransactions()"
+        class="rounded bg-slate-50 mb-1 flex whitespace-nowrap py-2 px-4 shadow items-center">
+        <app-icon [iconName]="transaction.icon" [color]="color"></app-icon>
+        <div class="flex-1">
+            <div>{{transaction.title}}</div>
+            <div class="text-sm leading-tight text-gray-600">{{transaction.category}}&nbsp;</div>
+        </div>
+        <div class="font-semibold">{{transaction.value | currency: transaction.currency :'symbol-narrow':'0.0-0'}}</div>
+    </div>
+    <div *ngIf="service.transactions().length" [ngStyle]="{color: color}"
+        class="mb-1 flex whitespace-nowrap py-2 px-4 place-content-between">
+        <div *ngIf="service.transactions().length > service.THRESHOLD">
+
+            <div (click)="service.showAll$.next(!service.showAll())" class="text-sm cursor-pointer hover:underline"
+                tabindex="-1">
+                Show {{
+                service.showAll() ?
+                'fewer ⏶' :
+                ( (service.transactions().length - service.visiableTransactions().length) + ' more ⏷' )
+                }}
+            </div>
+        </div>
+        <div class="font-semibold">{{service.sum() | currency: 'SEK' :
+            'symbol-narrow':'0.0-0'}}</div>
     </div>
 
-    <div *ngIf="!service.transactions().length" class="px-4">
+    <div *ngIf="!service.transactions().length" class="px-4 py-2 rounded bg-gray-300">
         <i>No transactions</i>
     </div>
-
-    <!-- <app-table [data]="service.transactions()" [color]="color">
-        <ng-template [appTableHeader]="transactions" let-header>
-            <th colspan="2" class="font-normal" [ngStyle]="{'color': color}">
-                <div class="text-xl">{{groupId}}</div>
-                <div class="text-sm">{{sum() | currency}}</div>
-            </th>
-        </ng-template>
-        <ng-template [appTableRow]="transactions" let-row>
-            <td>{{ row.title }}</td>
-            <td class="text-right font-bold">{{ row.value | currency: row.currency :'symbol-narrow':'0.0-0' }}</td>
-        </ng-template>
-    </app-table> -->
 
 </div>

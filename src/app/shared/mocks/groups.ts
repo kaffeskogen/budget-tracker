@@ -15,20 +15,20 @@ export const MOCK_GROUPS: Group[] = [
         color: colors.sky['700']
     },
     {
-        id: 'Savings',
-        name: 'savings',
+        id: 'savings',
+        name: 'Savings',
         icon: '💰',
         color: colors.red['700']
     },
     {
-        id: 'Food',
-        name: 'food',
+        id: 'food',
+        name: 'Food',
         icon: '🍕',
         color: colors.blue['700']
     },
     {
-        id: 'Other',
-        name: 'other',
+        id: 'other',
+        name: 'Other',
         icon: '💸',
         color: colors.yellow['700']
     }
