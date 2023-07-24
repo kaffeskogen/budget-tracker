@@ -1,5 +1,7 @@
-<app-header></app-header>
-<app-current-balance></app-current-balance>
+<div>
+    <app-header></app-header>
+    <app-current-balance></app-current-balance>
+</div>
 
 <app-table-card *ngFor="let group of groups" [group]="group" [color]="group.color">
 </app-table-card>

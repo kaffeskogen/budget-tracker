@@ -10,7 +10,7 @@ import { Component } from '@angular/core';
  
         <div class="px-8 flex items-center">
           <currency-dollar-solid-icon [size]="32"></currency-dollar-solid-icon>
-          <div class="pl-2">
+          <div class="pl-2 whitespace-nowrap">
             <div class="text-xs">Income</div>
             <div>43 400 kr</div>
           </div>
@@ -18,7 +18,7 @@ import { Component } from '@angular/core';
 
         <div class="px-8 flex items-center">
           <credit-card-solid-icon [size]="32"></credit-card-solid-icon>
-          <div class="pl-2">
+          <div class="pl-2 whitespace-nowrap">
             <div class="text-xs">Expenses</div>
             <div>37 862 kr</div>
           </div>
