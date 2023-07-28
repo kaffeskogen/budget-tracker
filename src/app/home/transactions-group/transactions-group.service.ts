@@ -12,8 +12,10 @@ export interface TransactionsState {
   status: 'loading' | 'success' | 'error';
 }
 
-@Injectable()
-export class TableCardService {
+@Injectable({
+  providedIn: 'root'
+})
+export class TransactionsGroupService {
 
   private apiService = inject(ApiService);
   private state = signal<TransactionsState>({
@@ -29,7 +31,7 @@ export class TableCardService {
   showAll$ = new Subject<boolean>();
   groupId$ = new Subject<string>();
 
-  THRESHOLD = 3;
+  readonly THRESHOLD = 3;
 
   showAll = computed(() => this.state().showAll);
   transactions = computed(() => this.state().transactions);
@@ -58,13 +60,15 @@ export class TableCardService {
   )
 
   constructor() {
-    this.transactionsInGroup$.pipe(takeUntilDestroyed()).subscribe((transactions) =>
-      this.state.update((state) => ({
-        ...state,
-        transactions,
-        status: "success",
-      } satisfies TransactionsState))
-    );
+    this.transactionsInGroup$
+      .pipe(takeUntilDestroyed())
+      .subscribe((transactions) =>
+        this.state.update((state) => ({
+          ...state,
+          transactions,
+          status: "success",
+        } satisfies TransactionsState))
+      );
 
     this.groupId$
       .pipe(takeUntilDestroyed())

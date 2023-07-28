@@ -3,5 +3,5 @@
     <app-current-balance></app-current-balance>
 </div>
 
-<app-table-card *ngFor="let group of groups" [group]="group" [color]="group.color">
-</app-table-card>
+<app-transactions-group *ngFor="let group of groups" [group]="group" [color]="group.color">
+</app-transactions-group>

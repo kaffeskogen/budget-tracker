@@ -1,13 +1,13 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { TableCardService } from './table-card.service';
+import { TransactionsGroupService } from './transactions-group.service';
 import { Group } from 'src/app/shared/interfaces/Group';
 import { style, transition, trigger, animate } from '@angular/animations';
 
 @Component({
-  selector: 'app-table-card',
-  templateUrl: './table-card.component.html',
-  styleUrls: ['./table-card.component.scss'],
-  providers: [TableCardService],
+  selector: 'app-transactions-group',
+  templateUrl: './transactions-group.component.html',
+  styleUrls: ['./transactions-group.component.scss'],
+  providers: [TransactionsGroupService],
   animations: [
     trigger(
       'outAnimation',
@@ -37,8 +37,8 @@ import { style, transition, trigger, animate } from '@angular/animations';
     )
   ]
 })
-export class TableCardComponent<TItem extends object> implements OnInit {
-  service = inject(TableCardService);
+export class TransactionsGroupComponent implements OnInit {
+  service = inject(TransactionsGroupService);
 
   @Input() color!: string;
   @Input() group!: Group;

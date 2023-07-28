@@ -1,9 +1,6 @@
-import { Component } from '@angular/core';
-import { Transaction } from '../shared/interfaces/Transaction';
+import { Component, inject } from '@angular/core';
 import { Group } from '../shared/interfaces/Group';
 import { MOCK_GROUPS } from '../shared/mocks/groups';
-import { MOCK_TRANSACTIONS } from '../shared/mocks/transactions';
-import * as colors from 'tailwindcss/colors';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +10,5 @@ import * as colors from 'tailwindcss/colors';
 export class HomeComponent {
 
   groups: Group[] = MOCK_GROUPS;
-
 
 }

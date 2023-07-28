@@ -7,7 +7,7 @@ import { HeaderComponent } from './header/header.component';
 import { SharedModule } from '../shared/shared.module';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { TableComponentModule } from '../shared/ui/table/table.module';
-import { TableCardComponent } from './table-card/table-card.component';
+import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
 
 
 @NgModule({
@@ -15,7 +15,7 @@ import { TableCardComponent } from './table-card/table-card.component';
     HomeComponent,
     HeaderComponent,
     CurrentBalanceComponent,
-    TableCardComponent
+    TransactionsGroupComponent
   ],
   imports: [
     CommonModule,
