@@ -9,31 +9,7 @@ import { Transaction } from '../interfaces/Transaction';
 })
 export class ApiService {
 
-  getTransactionsByGroup(groupId: string | null): Observable<Transaction[]> {
-    if (groupId === null) {
-      return of([]);
-    }
-
-    const transactions = MOCK_TRANSACTIONS.filter(t => t.groupId === groupId);
-
-    return of(transactions).pipe(
-      delay(1000),
-      switchMap(() =>
-        Math.random() < 0 ? throwError(() => new Error("Oops")) : of(transactions)
-      )
-    );
-  }
-
-  getGroups() {
-    const groups = MOCK_GROUPS;
-
-    return of(groups).pipe(
-      delay(1000),
-      switchMap(() =>
-        Math.random() < 0 ? throwError(() => new Error("Oops")) : of(groups)
-      )
-    );
-
-  }
+  $transactions = of(MOCK_TRANSACTIONS);
+  $groups = of(MOCK_GROUPS);
 
 }

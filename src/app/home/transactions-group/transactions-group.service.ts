@@ -48,44 +48,39 @@ export class TransactionsGroupService {
   transactionsInGroup$ = this.groupId$.pipe(
     startWith(null),
     switchMap((groupId) =>
-      this.apiService.getTransactionsByGroup(groupId).pipe(
-        retry({
-          delay: (err) => {
-            this.error$.next(err);
-            return this.retry$;
-          }
-        })
-      )
+      this.apiService.$transactions
+        .pipe(
+          map(items => items.filter(i => i.groupId === groupId)),
+          retry({
+            delay: (err) => {
+              this.error$.next(err);
+              return this.retry$;
+            }
+          })
+        )
     )
   )
 
   constructor() {
     this.transactionsInGroup$
       .pipe(takeUntilDestroyed())
-      .subscribe((transactions) =>
+      .subscribe((transactions) => {
+        console.log('Success!');
         this.state.update((state) => ({
           ...state,
           transactions,
-          status: "success",
-        } satisfies TransactionsState))
-      );
-
-    this.groupId$
-      .pipe(takeUntilDestroyed())
-      .subscribe((groupId) => {
-        this.state.update((state) => ({
-          ...state,
-          groupId,
-          status: "loading",
-          transactions: [],
+          status: "success"
         } satisfies TransactionsState))
       });
 
     this.retry$
       .pipe(takeUntilDestroyed())
-      .subscribe(() =>
-        this.state.update((state) => ({ ...state, status: "loading" }))
-      );
+      .subscribe(() => {
+        this.state.update((state) => ({
+          ...state,
+          status: "loading"
+        }))
+      });
 
     this.showAll$
       .pipe(takeUntilDestroyed())
@@ -93,13 +88,15 @@ export class TransactionsGroupService {
         this.state.update((state) => ({ ...state, showAll }))
       })
 
-    this.error$.pipe(takeUntilDestroyed()).subscribe((error) =>
-      this.state.update((state) => ({
-        ...state,
-        status: "error",
-        error: error.message,
-      } satisfies TransactionsState))
-    );
+    this.error$
+      .pipe(takeUntilDestroyed())
+      .subscribe((error) =>
+        this.state.update((state) => ({
+          ...state,
+          status: "error",
+          error: error.message,
+        } satisfies TransactionsState))
+      );
 
   }
 

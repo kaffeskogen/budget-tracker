@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import { TransactionsGroupService } from './transactions-group.service';
 import { Group } from 'src/app/shared/interfaces/Group';
 import { style, transition, trigger, animate } from '@angular/animations';
@@ -37,13 +37,15 @@ import { style, transition, trigger, animate } from '@angular/animations';
     )
   ]
 })
-export class TransactionsGroupComponent implements OnInit {
+export class TransactionsGroupComponent implements OnChanges {
   service = inject(TransactionsGroupService);
 
-  @Input() color!: string;
-  @Input() group!: Group;
+  @Input() color: string = '#333';
+  @Input() group?: Group;
 
-  ngOnInit(): void {
-    this.service.groupId$.next(this.group.id);
+  ngOnChanges(): void {
+    if (this.group) {
+      this.service.groupId$.next(this.group.id);
+    }
   }
 }

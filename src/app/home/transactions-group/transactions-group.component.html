@@ -1,5 +1,4 @@
-<div [@outAnimation] class="animate-pulse pointer-events-none">
-    <!-- <div *ngIf="service.status() === 'loading'" class="animate-pulse absolute pointer-events-none w-full"> -->
+<div *ngIf="service.status() === 'loading'" [@outAnimation] class="animate-pulse pointer-events-none">
     <div class="absolute w-full">
         <div class="pt-2 mb-2 px-4 font-bold h-7 flex">
             <div class="opacity-50 rounded h-4 inline-block w-20 content-center" [ngStyle]="{background: color}">&nbsp;
@@ -24,7 +23,7 @@
     <p>{{ service.error() }}</p>
     <button (click)="service.retry$.next()">Retry</button>
 </div>
-<div *ngIf="service.status() === 'success'" [@inAnimation]>
+<div *ngIf="service.status() === 'success' && !!group" [@inAnimation]>
 
     <div class="pb-2 px-4 font-bold" [ngStyle]="{color: color}">
         <div class="text-xl">{{group.name}}</div>

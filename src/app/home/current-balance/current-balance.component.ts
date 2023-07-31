@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CurrentBalanceService } from './current-balance.service';
 
 @Component({
   selector: 'app-current-balance',
@@ -25,8 +26,11 @@ import { Component } from '@angular/core';
         </div>
       </div>
     </div>
-  `
+  `,
+  providers: [
+    CurrentBalanceService
+  ]
 })
 export class CurrentBalanceComponent {
-
+  service = inject(CurrentBalanceService)
 }
