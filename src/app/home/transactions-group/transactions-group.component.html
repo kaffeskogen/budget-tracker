@@ -25,9 +25,18 @@
 </div>
 <div *ngIf="service.status() === 'success' && !!group" [@inAnimation]>
 
-    <div class="pb-2 px-4 font-bold" [ngStyle]="{color: color}">
-        <div class="text-xl">{{group.name}}</div>
+    <div class="pb-2 px-4 flex place-content-between">
+        <div class="text-xl font-bold" [ngStyle]="{color: color}">
+            {{group.name}}
+        </div>
+
+        <div class="py-1 px-4 flex top-0 items-center">
+            <app-icon iconName='Plus' color="#999"></app-icon>
+            <div class="flex-1">Add</div>
+        </div>
     </div>
+
+
     <div *ngFor="let transaction of service.visiableTransactions()"
         class="rounded bg-slate-50 mb-1 flex whitespace-nowrap py-2 px-4 shadow items-center">
         <app-icon [iconName]="transaction.icon" [color]="color"></app-icon>
@@ -35,26 +44,31 @@
             <div>{{transaction.title}}</div>
             <div class="text-sm leading-tight text-gray-600">{{transaction.category}}&nbsp;</div>
         </div>
-        <div class="font-semibold">{{transaction.value | currency: transaction.currency :'symbol-narrow':'0.0-0'}}</div>
-    </div>
-    <div *ngIf="service.transactions().length" [ngStyle]="{color: color}"
-        class="mb-1 flex whitespace-nowrap py-2 px-4 place-content-between items-end flex-row-reverse">
-        <div class="font-semibold">{{service.sum() | currency: 'SEK' :
-            'symbol-narrow':'0.0-0'}}</div>
-        <div *ngIf="service.transactions().length > service.THRESHOLD">
-            <div (click)="service.showAll$.next(!service.showAll())" class="text-sm cursor-pointer hover:underline"
-                tabindex="-1">
-                Show {{
-                service.showAll() ?
-                'fewer ⏶' :
-                ( (service.transactions().length - service.visiableTransactions().length) + ' more ⏷' )
-                }}
-            </div>
-        </div>
+        <div class="font-semibold">{{transaction.value | currencyFormatted }}</div>
     </div>
 
-    <div *ngIf="!service.transactions().length" class="px-4 py-2 mb-4 rounded bg-gray-300">
-        <i>No transactions</i>
+    <div>
+
+        <div *ngIf="service.transactions().length" [ngStyle]="{color: color}"
+            class="mb-1 flex whitespace-nowrap py-2 px-4 place-content-between items-end flex-row-reverse">
+            <div class="font-semibold">{{service.sum() | currency: 'SEK' :
+                'symbol-narrow':'0.0-0'}}</div>
+            <div *ngIf="service.transactions().length > service.THRESHOLD">
+                <div (click)="service.showAll$.next(!service.showAll())" class="text-sm cursor-pointer hover:underline"
+                    tabindex="-1">
+                    Show {{
+                    service.showAll() ?
+                    'fewer ⏶' :
+                    ( (service.transactions().length - service.visiableTransactions().length) + ' more ⏷' )
+                    }}
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!service.transactions().length" class="px-4 py-2 mb-4 rounded bg-gray-300">
+            <i>No transactions</i>
+        </div>
+
     </div>
 
 </div>

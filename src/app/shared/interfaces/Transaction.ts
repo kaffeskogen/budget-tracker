@@ -7,7 +7,6 @@ export interface Transaction {
     title: string;
     category: string;
     groupId: string;
-    currency: string;
     subcategory?: string;
     date: Date;
     recurring?: boolean;

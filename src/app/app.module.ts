@@ -23,7 +23,8 @@ registerLocaleData(localeSwedish);
     BrowserAnimationsModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'sv' }
+    { provide: LOCALE_ID, useValue: 'sv' },
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'SEK' }
   ],
   bootstrap: [AppComponent]
 })

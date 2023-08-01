@@ -1,3 +1,4 @@
 :host {
+    @apply grid gap-x-8 gap-y-4 px-8;
     grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
 }

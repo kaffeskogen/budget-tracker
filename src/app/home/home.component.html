@@ -1,31 +1,18 @@
-<div class="grid gap-x-8 gap-y-4 px-8">
-
-    <div>
-        <app-header></app-header>
-        <app-current-balance></app-current-balance>
-    </div>
-
-    <div *ngIf="service.status() === 'error'">
-        {{service.error()}}
-    </div>
-
-    <div *ngIf="service.status() === 'success'">
-        <app-transactions-group *ngFor="let group of service.groups()" [group]="group" [color]="group.color">
-        </app-transactions-group>
-    </div>
-
-    <div *ngIf="service.status() === 'loading'">
-        <app-transactions-group>
-        </app-transactions-group>
-    </div>
-
+<div>
+    <app-header></app-header>
+    <app-current-balance></app-current-balance>
 </div>
 
-<div class="h-16">
-    <div class="h-16 fixed bottom-0 w-full bg-white rounded-t-full shadow-lg">
-        <div
-            class="mt-[-2rem] bottom-0 h-20 w-20 mx-auto rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-orange-500 flex items-center justify-center">
-            <plus-solid-icon color="#fff" [size]="40"></plus-solid-icon>
-        </div>
-    </div>
-</div>
+<ng-container *ngIf="service.status() === 'error'">
+    {{service.error()}}
+</ng-container>
+
+<ng-container *ngIf="service.status() === 'success'">
+    <app-transactions-group *ngFor="let group of service.groups()" [group]="group" [color]="group.color">
+    </app-transactions-group>
+</ng-container>
+
+<ng-container *ngIf="service.status() === 'loading'">
+    <app-transactions-group>
+    </app-transactions-group>
+</ng-container>
