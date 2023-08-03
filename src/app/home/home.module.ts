@@ -8,6 +8,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { TableComponentModule } from '../shared/ui/table/table.module';
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
+import { NewTransactionComponent } from './new-transaction/new-transaction.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { TransactionsGroupComponent } from './transactions-group/transactions-gr
     HomeComponent,
     HeaderComponent,
     CurrentBalanceComponent,
-    TransactionsGroupComponent
+    TransactionsGroupComponent,
+    NewTransactionComponent
   ],
   imports: [
     CommonModule,

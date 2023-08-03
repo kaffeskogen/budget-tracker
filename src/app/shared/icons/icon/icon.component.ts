@@ -11,10 +11,12 @@ export class IconComponent implements OnInit {
 
   @Input() iconName!: keyof typeof IconComponents;
   @Input() color!: string;
+  @Input() size: number = 24;
 
   ngOnInit(): void {
     const el = this.renderIconAfterThisElement.createComponent(IconComponents[this.iconName]);
     el.instance.color = this.color;
+    el.instance.size = this.size;
   }
 
 }

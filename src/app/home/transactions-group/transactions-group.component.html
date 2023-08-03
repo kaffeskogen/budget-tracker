@@ -25,21 +25,15 @@
 </div>
 <div *ngIf="service.status() === 'success' && !!group" [@inAnimation]>
 
-    <div class="pb-2 px-4 flex place-content-between">
+    <div class="pb-2 px-4 flex">
         <div class="text-xl font-bold" [ngStyle]="{color: color}">
             {{group.name}}
         </div>
-
-        <div class="py-1 px-4 flex top-0 items-center">
-            <app-icon iconName='Plus' color="#999"></app-icon>
-            <div class="flex-1">Add</div>
-        </div>
     </div>
 
-
-    <div *ngFor="let transaction of service.visiableTransactions()"
+    <div *ngFor="let transaction of service.visibleTransactions()"
         class="rounded bg-slate-50 mb-1 flex whitespace-nowrap py-2 px-4 shadow items-center">
-        <app-icon [iconName]="transaction.icon" [color]="color"></app-icon>
+        <app-icon [iconName]="transaction.icon" [color]="color" class="mr-2"></app-icon>
         <div class="flex-1">
             <div>{{transaction.title}}</div>
             <div class="text-sm leading-tight text-gray-600">{{transaction.category}}&nbsp;</div>
@@ -51,18 +45,26 @@
 
         <div *ngIf="service.transactions().length" [ngStyle]="{color: color}"
             class="mb-1 flex whitespace-nowrap py-2 px-4 place-content-between items-end flex-row-reverse">
-            <div class="font-semibold">{{service.sum() | currency: 'SEK' :
-                'symbol-narrow':'0.0-0'}}</div>
+
+            <a routerLink="new" class="flex top-0 items-center text-sm cursor-pointer hover:underline">
+                <app-icon iconName='Plus' [color]="color" [size]="16"></app-icon>
+                <div class="flex-1">Add</div>
+            </a>
+
+            <!-- <div class="font-semibold show-on-hover">{{service.sum() | currency: 'SEK' :
+                'symbol-narrow':'0.0-0'}}</div> -->
+
             <div *ngIf="service.transactions().length > service.THRESHOLD">
                 <div (click)="service.showAll$.next(!service.showAll())" class="text-sm cursor-pointer hover:underline"
                     tabindex="-1">
                     Show {{
                     service.showAll() ?
                     'fewer ⏶' :
-                    ( (service.transactions().length - service.visiableTransactions().length) + ' more ⏷' )
+                    ( (service.transactions().length - service.visibleTransactions().length) + ' more ⏷' )
                     }}
                 </div>
             </div>
+
         </div>
 
         <div *ngIf="!service.transactions().length" class="px-4 py-2 mb-4 rounded bg-gray-300">

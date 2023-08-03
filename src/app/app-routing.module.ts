@@ -8,8 +8,7 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
-  },
-  { path: 'home', loadChildren: () => import('./shared/shared.module').then(m => m.SharedModule) }
+  }
 ];
 
 @NgModule({

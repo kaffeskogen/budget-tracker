@@ -35,7 +35,7 @@ export class TransactionsGroupService {
 
   showAll = computed(() => this.state().showAll);
   transactions = computed(() => this.state().transactions);
-  visiableTransactions = computed(() =>
+  visibleTransactions = computed(() =>
     this.transactions()
       .slice(0, this.showAll()
         ? this.transactions().length
@@ -65,7 +65,6 @@ export class TransactionsGroupService {
     this.transactionsInGroup$
       .pipe(takeUntilDestroyed())
       .subscribe((transactions) => {
-        console.log('Success!');
         this.state.update((state) => ({
           ...state,
           transactions,
