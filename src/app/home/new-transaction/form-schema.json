@@ -1,0 +1,188 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "$id": "form-schema.json",
+    "type": "object",
+    "properties": {
+        "sections": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "controls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "controls": {
+            "type": "array",
+            "items": {
+                "oneOf": [
+                    {
+                        "title": "text",
+                        "$ref": "#/definitions/text"
+                    },
+                    {
+                        "title": "number",
+                        "$ref": "#/definitions/number"
+                    },
+                    {
+                        "title": "icon",
+                        "$ref": "#/definitions/icon"
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "text": {
+            "$id": "/definitions/text",
+            "$schema": "http://json-schema.org/schema",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "slug",
+                "name",
+                "type"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "const": "text"
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "placeholder": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            }
+        },
+        "number": {
+            "$id": "/definitions/number",
+            "$schema": "http://json-schema.org/schema",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "slug",
+                "name",
+                "type"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "const": "number"
+                },
+                "decimalPoints": {
+                    "type": "number"
+                },
+                "formatAs": {
+                    "type": "string"
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "placeholder": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            }
+        },
+        "icon": {
+            "$id": "/definitions/icon",
+            "$schema": "http://json-schema.org/schema",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "slug",
+                "name",
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "const": "icon"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "date": {
+            "$id": "/definitions/date",
+            "$schema": "http://json-schema.org/schema",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "slug",
+                "name",
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "const": "date"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                }
+            }
+        }
+    }
+}

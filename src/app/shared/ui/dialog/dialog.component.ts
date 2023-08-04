@@ -8,6 +8,7 @@ import {
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-dialog',
@@ -17,7 +18,7 @@ import {
         </div>
     </ng-template>
 `,
-    encapsulation: ViewEncapsulation.None,
+    // encapsulation: ViewEncapsulation.None,
 })
 export class DialogComponent implements AfterViewInit {
     @ViewChild(CdkPortal) public readonly portal?: CdkPortal;
@@ -37,22 +38,19 @@ export class DialogComponent implements AfterViewInit {
     private overlayRef = this.overlay.create(this.overlayConfig);
 
     constructor(private readonly overlay: Overlay) {
-        this.overlayRef.backdropClick().subscribe(() => {
-            this.closeDialog.emit();
-        });
+        this.overlayRef
+            .backdropClick()
+            .pipe(takeUntilDestroyed())
+            .subscribe(() => {
+                this.closeDialog.emit();
+            });
     }
 
     public ngAfterViewInit(): void {
-        if (!this.portal) {
-            setInterval(() => {
-                console.log('test', this.portal);
-            }, 500)
-        }
         this.overlayRef?.attach(this.portal);
     }
 
     public ngOnDestroy(): void {
-        // parent destroys this component, this component destroys the overlayRef
         this.overlayRef?.detach();
         this.overlayRef?.dispose();
     }

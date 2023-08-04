@@ -1,0 +1,13 @@
+{
+    "$schema": "form-schema.json",
+    "controls": [
+        {
+            "decimalPoints": 0,
+            "thousandSeperator": "Test"
+        },
+        {
+            "placeholder": "Test",
+            "defaultValue": "Test"
+        }
+    ]
+}
