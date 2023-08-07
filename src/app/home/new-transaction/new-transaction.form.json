@@ -1,0 +1,17 @@
+{
+    "sections": [],
+    "controls": [
+        {
+            "type": "text",
+            "id": "text",
+            "name": "text",
+            "slug": "text"
+        },
+        {
+            "type": "icon",
+            "id": "icon",
+            "name": "icon",
+            "slug": "icon"
+        }
+    ]
+}

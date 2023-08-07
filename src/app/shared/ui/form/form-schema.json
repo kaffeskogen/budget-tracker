@@ -2,11 +2,20 @@
     "$schema": "http://json-schema.org/schema",
     "$id": "form-schema.json",
     "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "sections",
+        "controls"
+    ],
     "properties": {
+        "$schema": {
+            "type": "string"
+        },
         "sections": {
             "type": "array",
             "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "type": "string"
@@ -38,6 +47,10 @@
                     {
                         "title": "icon",
                         "$ref": "#/definitions/icon"
+                    },
+                    {
+                        "title": "date",
+                        "$ref": "#/definitions/date"
                     }
                 ]
             }
@@ -56,17 +69,18 @@
                 "type"
             ],
             "properties": {
+                "type": {
+                    "const": "text"
+                },
                 "id": {
                     "type": "string"
                 },
                 "slug": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-z0-9-_]+"
                 },
                 "name": {
                     "type": "string"
-                },
-                "type": {
-                    "const": "text"
                 },
                 "defaultValue": {
                     "type": [
@@ -94,23 +108,30 @@
                 "type"
             ],
             "properties": {
+                "type": {
+                    "const": "number"
+                },
                 "id": {
                     "type": "string"
                 },
                 "slug": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-z0-9-_]+"
                 },
                 "name": {
                     "type": "string"
                 },
-                "type": {
-                    "const": "number"
-                },
                 "decimalPoints": {
-                    "type": "number"
+                    "type": [
+                        "number",
+                        "null"
+                    ]
                 },
                 "formatAs": {
-                    "type": "string"
+                    "type": [
+                        "string",
+                        "null"
+                    ]
                 },
                 "defaultValue": {
                     "type": [
@@ -145,7 +166,8 @@
                     "type": "string"
                 },
                 "slug": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-z0-9-_]+"
                 },
                 "name": {
                     "type": "string"
@@ -171,12 +193,19 @@
                     "type": "string"
                 },
                 "slug": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-z0-9-_]+"
                 },
                 "name": {
                     "type": "string"
                 },
-                "time": {
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "includeTime": {
                     "type": [
                         "boolean",
                         "null"
