@@ -1,6 +1,4 @@
-import { Component } from '@angular/core';
-
-@Component({
+import { Component } from '@angular/core'; @Component({
   selector: 'app-header',
   template: `
   <div class="flex place-content-between items-center mb-4">

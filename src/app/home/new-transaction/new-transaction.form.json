@@ -5,7 +5,8 @@
             "type": "text",
             "id": "text",
             "name": "text",
-            "slug": "text"
+            "slug": "text",
+            "placeholder": "Hello world"
         },
         {
             "type": "icon",

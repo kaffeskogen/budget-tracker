@@ -1,30 +1,31 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgHeroiconsModule } from '@dimaslz/ng-heroicons';
-import { IconComponent } from './icons/icon/icon.component';
 import { CurrencyFormattedPipe } from './pipes/currency-formatted.pipe';
 import { DialogComponent } from './ui/dialog/dialog.component';
 import { PortalModule } from '@angular/cdk/portal';
-import { FormComponent } from './ui/form/form.component';
+import { IconComponent } from './icons/icon/icon.component';
+import { FormModule } from './ui/form/form.module';
 
 
 @NgModule({
   declarations: [
-    IconComponent,
     CurrencyFormattedPipe,
     DialogComponent,
-    FormComponent
+    IconComponent
   ],
   imports: [
     CommonModule,
     NgHeroiconsModule,
-    PortalModule
+    PortalModule,
+    FormModule
   ],
   exports: [
     NgHeroiconsModule,
-    IconComponent,
     CurrencyFormattedPipe,
-    DialogComponent
+    DialogComponent,
+    IconComponent,
+    FormModule
   ]
 })
 export class SharedModule { }

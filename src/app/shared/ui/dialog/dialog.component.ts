@@ -5,8 +5,7 @@ import {
     Component,
     EventEmitter,
     Output,
-    ViewChild,
-    ViewEncapsulation,
+    ViewChild
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
