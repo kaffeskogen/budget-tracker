@@ -5,11 +5,9 @@ import { ControlValueAccessor, FormControlDirective, NG_VALUE_ACCESSOR } from '@
 @Component({
   selector: 'app-text-control',
   template: `
-    <input class="py-2 px-4 border border-slate-500 rounded" placeholder="{{placeholder}}" (keyup)="writeValue($event)">`,
+      <input class="py-2 px-4 border border-slate-500 rounded" placeholder="{{placeholder}}" (keyup)="writeValue($event)">
+    `,
   styles: [],
-  hostDirectives: [
-    FormControlDirective
-  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -32,8 +30,7 @@ export class TextControlComponent implements ControlValueAccessor {
   }
 
   writeValue(evt: KeyboardEvent) {
-    const value = (evt.currentTarget as HTMLInputElement).value;
-    this.value = value;
+    this.value = (evt.currentTarget as HTMLInputElement).value;
   }
 
   registerOnChange(fn: any) {

@@ -1,5 +1,5 @@
 import { ControlValueAccessor } from "@angular/forms";
-import { FORM_CONTROLS } from "../controls";
+import { FORM_CONTROLS } from "../control";
 
 export type JsonFormControlType = keyof typeof FORM_CONTROLS;
 

@@ -1,6 +1,6 @@
 import { ViewContainerRef } from "@angular/core";
 import { JsonFormControl, JsonFormControlType } from "../models/models";
-import { FORM_CONTROLS } from "../controls";
+import { FORM_CONTROLS } from "../control";
 import { ControlValueAccessor } from "@angular/forms";
 
 export class JsonFormControlFactory {
@@ -11,6 +11,7 @@ export class JsonFormControlFactory {
     }
 
     CreateComponent(control: JsonFormControl): ControlValueAccessor {
+
         if (!Object.hasOwn(FORM_CONTROLS, control.type)) {
             const component = this.vcr.createComponent(FORM_CONTROLS.notimplemented);
             const instance = component.instance;
@@ -30,6 +31,7 @@ export class JsonFormControlFactory {
         }
 
         return instance;
+
     }
 
 }

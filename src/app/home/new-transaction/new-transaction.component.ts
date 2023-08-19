@@ -9,7 +9,7 @@ import { JsonForm } from 'src/app/shared/ui/form/models/models';
   <app-dialog (closeDialog)="closeDialog()">
     <ng-container>
 
-      <app-form [form]="formJson"></app-form>
+      <app-form *ngIf="formJson" [form]="formJson"></app-form>
 
     </ng-container>
   </app-dialog>

@@ -1,12 +1,14 @@
 import { NgModule } from "@angular/core";
 import { FormComponent } from "./form.component";
-import { TextControlComponent } from './controls/text-control/text-control.component';
-import { NumberControlComponent } from './controls/number-control/number-control.component';
-import { DateControlComponent } from './controls/date-control/date-control.component';
-import { IconControlComponent } from './controls/icon-control/icon-control.component';
-import { NotimplementedControlComponent } from './controls/notimplemented-control/notimplemented-control.component';
+import { TextControlComponent } from './control/text-control/text-control.component';
+import { NumberControlComponent } from './control/number-control/number-control.component';
+import { DateControlComponent } from './control/date-control/date-control.component';
+import { IconControlComponent } from './control/icon-control/icon-control.component';
+import { NotimplementedControlComponent } from './control/notimplemented-control/notimplemented-control.component';
 import { BrowserModule } from "@angular/platform-browser";
 import { ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { ControlComponent } from './control/control.component';
 
 @NgModule({
     declarations: [
@@ -15,9 +17,11 @@ import { ReactiveFormsModule } from "@angular/forms";
         NumberControlComponent,
         DateControlComponent,
         IconControlComponent,
-        NotimplementedControlComponent
+        NotimplementedControlComponent,
+        ControlComponent
     ],
     imports: [
+        CommonModule,
         ReactiveFormsModule
     ],
     exports: [

@@ -7,12 +7,6 @@
             "name": "text",
             "slug": "text",
             "placeholder": "Hello world"
-        },
-        {
-            "type": "icon",
-            "id": "icon",
-            "name": "icon",
-            "slug": "icon"
         }
     ]
 }
