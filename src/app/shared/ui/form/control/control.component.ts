@@ -1,7 +1,7 @@
-import { Component, Input, ViewChild, ViewContainerRef, inject } from '@angular/core';
+import { Component, Injector, Input, ViewChild, ViewContainerRef, forwardRef, inject } from '@angular/core';
 import { JsonFormControl } from '../models/models';
 import { JsonFormControlFactory } from '../utils/json-form-control-factory';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 
 @Component({
   selector: 'app-control',
@@ -13,12 +13,14 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: ControlComponent,
+      useExisting: forwardRef(() => ControlComponent),
       multi: true
     }
   ]
 })
 export class ControlComponent implements ControlValueAccessor {
+
+  injector = inject(Injector);
 
   @Input() control!: JsonFormControl;
 
@@ -26,11 +28,10 @@ export class ControlComponent implements ControlValueAccessor {
   fcf?: JsonFormControlFactory;
 
   public ngOnInit() {
+    const ngControl = this.injector.get(NgControl);
     const factory = new JsonFormControlFactory(this.vc);
     const component = factory.CreateComponent(this.control);
-    this.writeValue = component.writeValue.bind(component);
-    this.registerOnChange = component.registerOnChange.bind(component);
-    this.registerOnChange = component.registerOnChange.bind(component);
+    ngControl.valueAccessor = component;
   }
 
   writeValue(evt: KeyboardEvent) {

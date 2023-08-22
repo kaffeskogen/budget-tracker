@@ -6,7 +6,7 @@ import { DateControlComponent } from './control/date-control/date-control.compon
 import { IconControlComponent } from './control/icon-control/icon-control.component';
 import { NotimplementedControlComponent } from './control/notimplemented-control/notimplemented-control.component';
 import { BrowserModule } from "@angular/platform-browser";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { ControlComponent } from './control/control.component';
 
@@ -22,6 +22,7 @@ import { ControlComponent } from './control/control.component';
     ],
     imports: [
         CommonModule,
+        FormsModule,
         ReactiveFormsModule
     ],
     exports: [
