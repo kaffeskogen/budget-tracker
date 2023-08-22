@@ -1,16 +1,14 @@
-import { Component, ElementRef, Input, ViewChild, forwardRef } from '@angular/core';
-
-import { ControlValueAccessor, FormControlDirective, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-text-control',
   template: `
-      <input class="py-2 px-4 border border-slate-500 rounded"
+      <input class="py-2 px-4 border border-slate-500 rounded w-80"
         [ngModel]="value"
         (ngModelChange)="onValueChange($event)"
         (blur)="onInputBlurred()">
     `,
-  styles: [],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

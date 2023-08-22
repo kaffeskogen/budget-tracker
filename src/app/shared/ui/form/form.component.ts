@@ -5,12 +5,14 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-form',
   template: `
-  <form *ngIf="formGroup && formControls" [formGroup]="formGroup">
+  <form *ngIf="formGroup && formControls" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <app-control
       *ngFor="let control of form.controls"
       [formControl]="formControls[control.slug]"
       [control]="control"
       ></app-control>
+
+    <button type="submit">Submit</button>
   </form>
 `
 })
@@ -28,5 +30,10 @@ export class FormComponent implements OnInit {
     }, {} as { [key: string]: FormControl })
 
     this.formGroup = this.formBuilder.group(this.formControls);
+  }
+
+  public onSubmit() {
+    const value = this.formGroup?.getRawValue();
+    console.log(value);
   }
 }
