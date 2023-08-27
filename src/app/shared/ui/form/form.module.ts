@@ -5,7 +5,6 @@ import { NumberControlComponent } from './control/number-control/number-control.
 import { DateControlComponent } from './control/date-control/date-control.component';
 import { IconControlComponent } from './control/icon-control/icon-control.component';
 import { NotimplementedControlComponent } from './control/notimplemented-control/notimplemented-control.component';
-import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { ControlComponent } from './control/control.component';

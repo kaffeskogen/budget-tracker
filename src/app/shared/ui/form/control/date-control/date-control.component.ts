@@ -7,7 +7,8 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
         type="date"
         [ngModel]="value"
         (ngModelChange)="onValueChange($event)"
-        (blur)="onInputBlurred()">
+        (blur)="onInputBlurred()"
+        [disabled]="disabled">
     `,
   providers: [
     {
@@ -18,6 +19,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class DateControlComponent {
   public value!: Date;
+  public disabled = false;
   public onChange!: (value: Date) => void;
   public onTouched!: () => void;
 
@@ -40,5 +42,9 @@ export class DateControlComponent {
 
   public onInputBlurred(): void {
     this.onTouched();
+  }
+
+  public setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 }

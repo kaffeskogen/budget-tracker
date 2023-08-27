@@ -1,6 +1,9 @@
-import { Component, Input, OnInit, ViewContainerRef, inject } from '@angular/core';
-import { JsonForm, JsonFormControl } from './models/models';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { JsonForm } from './models/models';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { fromEvent } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BaseControlComponent } from './control/base-control/base-control.component';
 
 @Component({
   selector: 'app-form',
@@ -8,20 +11,37 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
   <form *ngIf="formGroup && formControls" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <app-control
       *ngFor="let control of form.controls"
+      [controlOverrides]="controlOverrides"
       [formControl]="formControls[control.slug]"
       [control]="control"
       ></app-control>
 
-    <button type="submit">Submit</button>
+      <div class="flex justify-end">
+        <button (click)="onCancel.emit()" type="button" class="rounded px-4 py-2 mt-4 mr-2 border border-slate-400 hover:bg-gray-100 text-gray-800">Cancel</button>
+        <button type="submit" class="rounded px-4 py-2 mt-4 border bg-sky-700 hover:bg-sky-800 text-white">Save</button>
+      </div>
   </form>
 `
 })
-export class FormComponent implements OnInit {
+export class FormComponent implements OnInit, AfterViewInit {
   @Input() form!: JsonForm;
+  @Input() defaultValues: { [key: string]: any } | undefined;
+  @Input() controlOverrides?: { [key: string]: BaseControlComponent };
+  @Output() onSave = new EventEmitter<any>();
+  @Output() onCancel = new EventEmitter<any>();
 
   formBuilder = new FormBuilder();
   formControls?: { [key: string]: FormControl };
   formGroup?: FormGroup;
+
+
+  private readonly el = inject(ElementRef);
+
+  constructor() {
+    fromEvent(document, "keyup")
+      .pipe(takeUntilDestroyed())
+      .subscribe((e) => (e as any as KeyboardEvent).key === 'Escape' && this.onCancel.emit())
+  }
 
   public ngOnInit(): void {
     this.formControls = this.form.controls.reduce((a, b) => {
@@ -30,10 +50,22 @@ export class FormComponent implements OnInit {
     }, {} as { [key: string]: FormControl })
 
     this.formGroup = this.formBuilder.group(this.formControls);
+
+    if (this.defaultValues) {
+      this.formGroup.patchValue(this.defaultValues);
+    }
+
+  }
+
+  public ngAfterViewInit(): void {
+    requestAnimationFrame(() => { // wait for angular to render
+      this.el.nativeElement.querySelector('input').focus();
+    });
   }
 
   public onSubmit() {
     const value = this.formGroup?.getRawValue();
-    console.log(value);
+    this.formGroup?.disable();
+    this.onSave.emit(value);
   }
 }

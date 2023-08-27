@@ -9,6 +9,12 @@
             "placeholder": "Hello world"
         },
         {
+            "type": "group",
+            "id": "group",
+            "name": "groupId",
+            "slug": "groupId"
+        },
+        {
             "type": "date",
             "id": "date",
             "name": "date",

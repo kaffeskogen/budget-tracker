@@ -2,6 +2,7 @@ import { ViewContainerRef } from "@angular/core";
 import { JsonFormControl, JsonFormControlType } from "../models/models";
 import { FORM_CONTROLS } from "../control";
 import { ControlValueAccessor } from "@angular/forms";
+import { BaseControlComponent } from "../control/base-control/base-control.component";
 
 export class JsonFormControlFactory {
 
@@ -10,16 +11,18 @@ export class JsonFormControlFactory {
         this.vcr = vcr;
     }
 
-    CreateComponent(control: JsonFormControl): ControlValueAccessor {
+    CreateComponent(control: JsonFormControl, overrides?: { [key: string]: BaseControlComponent }): ControlValueAccessor {
 
-        if (!Object.hasOwn(FORM_CONTROLS, control.type)) {
+        const allControls = Object.assign(FORM_CONTROLS, overrides);
+
+        if (!Object.hasOwn(allControls, control.type)) {
             const component = this.vcr.createComponent(FORM_CONTROLS.notimplemented);
             const instance = component.instance;
             instance.controlType = control.type;
             return instance;
         }
 
-        const componentRef = this.vcr.createComponent(FORM_CONTROLS[control.type as JsonFormControlType]);
+        const componentRef = this.vcr.createComponent(allControls[control.type as JsonFormControlType]);
         const instance = componentRef.instance as ControlValueAccessor;
 
         const props = Object.keys(control).filter(p => !['id', 'slug', 'name', 'type'].includes(p));

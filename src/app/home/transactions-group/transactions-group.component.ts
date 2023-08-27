@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, inject } from '@angular/core';
 import { TransactionsGroupService } from './transactions-group.service';
 import { Group } from 'src/app/shared/interfaces/Group';
 import { style, transition, trigger, animate } from '@angular/animations';

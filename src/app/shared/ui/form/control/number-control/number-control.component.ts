@@ -1,5 +1,6 @@
 import { Component, forwardRef } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BaseControlComponent } from '../base-control/base-control.component';
 @Component({
   selector: 'app-number-control',
   template: `
@@ -7,7 +8,8 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
         type="number"
         [ngModel]="value"
         (ngModelChange)="onValueChange($event)"
-        (blur)="onInputBlurred()">
+        (blur)="onInputBlurred()"
+        [disabled]="disabled">
     `,
   providers: [
     {
@@ -16,8 +18,10 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     }
   ]
 })
-export class NumberControlComponent {
+export class NumberControlComponent extends BaseControlComponent implements ControlValueAccessor {
+
   public value!: number;
+  public disabled = false;
   public onChange!: (value: number) => void;
   public onTouched!: () => void;
 
@@ -41,4 +45,9 @@ export class NumberControlComponent {
   public onInputBlurred(): void {
     this.onTouched();
   }
+
+  public setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
 }

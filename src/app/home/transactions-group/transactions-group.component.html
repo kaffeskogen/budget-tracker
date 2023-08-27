@@ -43,10 +43,15 @@
 
     <div>
 
-        <div *ngIf="service.transactions().length" [ngStyle]="{color: color}"
+        <div *ngIf="!service.transactions().length" class="px-4 py-2 mb-4 rounded bg-gray-300">
+            <i>No transactions</i>
+        </div>
+
+        <div [ngStyle]="{color: color}"
             class="mb-1 flex whitespace-nowrap py-2 px-4 place-content-between items-end flex-row-reverse">
 
-            <a routerLink="new" class="flex top-0 items-center text-sm cursor-pointer hover:underline">
+            <a [routerLink]="['new']" [state]="{groupId:group.id}"
+                class="flex top-0 items-center text-sm cursor-pointer hover:underline">
                 <app-icon iconName='Plus' [color]="color" [size]="16"></app-icon>
                 <div class="flex-1">Add</div>
             </a>
@@ -67,9 +72,6 @@
 
         </div>
 
-        <div *ngIf="!service.transactions().length" class="px-4 py-2 mb-4 rounded bg-gray-300">
-            <i>No transactions</i>
-        </div>
 
     </div>
 

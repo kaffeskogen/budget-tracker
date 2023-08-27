@@ -9,6 +9,9 @@ import { CurrentBalanceComponent } from './current-balance/current-balance.compo
 import { TableComponentModule } from '../shared/ui/table/table.module';
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
 import { NewTransactionComponent } from './new-transaction/new-transaction.component';
+import { EditTransactionComponent } from './edit-transaction/edit-transaction.component';
+import { GroupChoiceComponent } from './new-transaction/group-choice.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -17,13 +20,16 @@ import { NewTransactionComponent } from './new-transaction/new-transaction.compo
     HeaderComponent,
     CurrentBalanceComponent,
     TransactionsGroupComponent,
-    NewTransactionComponent
+    NewTransactionComponent,
+    EditTransactionComponent,
+    GroupChoiceComponent
   ],
   imports: [
     CommonModule,
     HomeRoutingModule,
     SharedModule,
-    TableComponentModule
+    TableComponentModule,
+    FormsModule
   ],
   providers: [
     // { provide: LOCALE_ID, useValue: 'sv' }
