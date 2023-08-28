@@ -1,6 +1,7 @@
 import { IconComponents } from "../icons";
 
 export interface Transaction {
+    id: string;
     icon: keyof typeof IconComponents;
     estimation?: number;
     value?: number;
@@ -8,6 +9,6 @@ export interface Transaction {
     category: string;
     groupId: string;
     subcategory?: string;
-    date: Date;
+    date: string;
     recurring?: boolean;
 }

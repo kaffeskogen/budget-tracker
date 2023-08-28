@@ -63,7 +63,6 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-                "id",
                 "slug",
                 "name",
                 "type"
@@ -71,9 +70,6 @@
             "properties": {
                 "type": {
                     "const": "text"
-                },
-                "id": {
-                    "type": "string"
                 },
                 "slug": {
                     "type": "string",
@@ -102,7 +98,6 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-                "id",
                 "slug",
                 "name",
                 "type"
@@ -110,9 +105,6 @@
             "properties": {
                 "type": {
                     "const": "number"
-                },
-                "id": {
-                    "type": "string"
                 },
                 "slug": {
                     "type": "string",
@@ -153,7 +145,6 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-                "id",
                 "slug",
                 "name",
                 "type"
@@ -161,9 +152,6 @@
             "properties": {
                 "type": {
                     "const": "icon"
-                },
-                "id": {
-                    "type": "string"
                 },
                 "slug": {
                     "type": "string",
@@ -180,7 +168,6 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-                "id",
                 "slug",
                 "name",
                 "type"
@@ -188,9 +175,6 @@
             "properties": {
                 "type": {
                     "const": "date"
-                },
-                "id": {
-                    "type": "string"
                 },
                 "slug": {
                     "type": "string",

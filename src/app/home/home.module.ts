@@ -8,9 +8,9 @@ import { SharedModule } from '../shared/shared.module';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { TableComponentModule } from '../shared/ui/table/table.module';
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
-import { NewTransactionComponent } from './new-transaction/new-transaction.component';
+import { TransactionComponent } from './transaction/transaction.component';
 import { EditTransactionComponent } from './edit-transaction/edit-transaction.component';
-import { GroupChoiceComponent } from './new-transaction/group-choice.component';
+import { GroupChoiceComponent } from './transaction/controls/group-choice.component';
 import { FormsModule } from '@angular/forms';
 
 
@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
     HeaderComponent,
     CurrentBalanceComponent,
     TransactionsGroupComponent,
-    NewTransactionComponent,
+    TransactionComponent,
     EditTransactionComponent,
     GroupChoiceComponent
   ],

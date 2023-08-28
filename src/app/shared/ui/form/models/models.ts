@@ -10,14 +10,12 @@ export interface JsonForm {
 
 export interface JsonFormSection {
     name: string;
-    id: string;
     slug: string;
     controls: string[];
 }
 
 export interface JsonFormControl {
     type: JsonFormControlType;
-    id: string;
     slug: string;
     name: string;
     defaultValue?: string | null;

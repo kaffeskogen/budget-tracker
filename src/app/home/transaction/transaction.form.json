@@ -3,21 +3,23 @@
     "controls": [
         {
             "type": "text",
-            "id": "text",
-            "name": "text",
-            "slug": "text",
+            "name": "Title",
+            "slug": "title",
             "placeholder": "Hello world"
         },
         {
             "type": "group",
-            "id": "group",
-            "name": "groupId",
+            "name": "Group",
             "slug": "groupId"
         },
         {
+            "type": "number",
+            "name": "Value",
+            "slug": "value"
+        },
+        {
             "type": "date",
-            "id": "date",
-            "name": "date",
+            "name": "Date",
             "slug": "date"
         }
     ]
