@@ -1,13 +1,10 @@
-import { Component, Input, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import formJson from './transaction.form.json'
 import { JsonForm } from 'src/app/shared/ui/form/models/models';
 import { GroupChoiceComponent } from './controls/group-choice.component';
-import { BaseControlComponent } from 'src/app/shared/ui/form/control/base-control/base-control.component';
 import { AppStateService } from 'src/app/shared/data-access/app-state.service';
 import { ApiService } from 'src/app/shared/data-access/api.service';
-import { Observable, firstValueFrom, map, of } from 'rxjs';
 import { Transaction } from 'src/app/shared/interfaces/Transaction';
 import { toSignal } from '@angular/core/rxjs-interop';
 

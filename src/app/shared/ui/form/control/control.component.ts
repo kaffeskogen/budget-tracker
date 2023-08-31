@@ -2,7 +2,6 @@ import { Component, Injector, Input, ViewChild, ViewContainerRef, forwardRef, in
 import { JsonFormControl } from '../models/models';
 import { JsonFormControlFactory } from '../utils/json-form-control-factory';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
-import { BaseControlComponent } from './base-control/base-control.component';
 
 @Component({
   selector: 'app-control',
@@ -24,7 +23,7 @@ export class ControlComponent implements ControlValueAccessor {
   injector = inject(Injector);
 
   @Input() control!: JsonFormControl;
-  @Input() controlOverrides?: { [key: string]: BaseControlComponent };
+  @Input() controlOverrides?: { [key: string]: any };
 
   @ViewChild('vc', { read: ViewContainerRef, static: true }) vc!: ViewContainerRef;
   fcf?: JsonFormControlFactory;

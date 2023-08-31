@@ -3,7 +3,6 @@ import { JsonForm } from './models/models';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BaseControlComponent } from './control/base-control/base-control.component';
 
 @Component({
   selector: 'app-form',
@@ -26,7 +25,7 @@ import { BaseControlComponent } from './control/base-control/base-control.compon
 export class FormComponent implements OnInit, AfterViewInit {
   @Input() form!: JsonForm;
   @Input() defaultValues: { [key: string]: any } | undefined;
-  @Input() controlOverrides?: { [key: string]: BaseControlComponent };
+  @Input() controlOverrides?: { [key: string]: any };
   @Output() onSave = new EventEmitter<any>();
   @Output() onCancel = new EventEmitter<any>();
 

@@ -1,32 +1,47 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, ElementRef, ViewChild, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { BaseControlComponent } from '../base-control/base-control.component';
+import { NumberParser } from '../../utils/number-formatting';
+
 @Component({
   selector: 'app-number-control',
   template: `
       <input class="py-2 px-4 border border-slate-500 rounded w-80"
-        type="number"
-        [ngModel]="value"
-        (ngModelChange)="onValueChange($event)"
+        #input
+        (keydown)="onKeyDown($event)"
+        (input)="onInput()"
         (blur)="onInputBlurred()"
         [disabled]="disabled">
     `,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => NumberControlComponent)
+      useExisting: forwardRef(() => NumberControlComponent),
+      multi: true
     }
   ]
 })
-export class NumberControlComponent extends BaseControlComponent implements ControlValueAccessor {
+export class NumberControlComponent implements ControlValueAccessor {
+
+  @ViewChild('input', { read: ElementRef, static: true }) input!: ElementRef<HTMLInputElement>;
 
   public value!: number;
   public disabled = false;
   public onChange!: (value: number) => void;
   public onTouched!: () => void;
+  public nbr = new NumberParser('sv-SE');
 
   public writeValue(value: number): void {
-    this.value = value;
+    this.value = Math.abs(value);
+    const el = this.input.nativeElement;
+    const cursorPos = el.selectionStart;
+    const formatted = this.nbr.format(this.value);
+    if (el.value !== formatted) {
+      const diff = formatted.length - el.value.length;
+      el.value = this.nbr.format(this.value);
+      if (cursorPos) {
+        el.setSelectionRange(cursorPos + diff, cursorPos + diff);
+      }
+    }
   }
 
   public registerOnChange(fn: (value: number) => void): void {
@@ -37,9 +52,48 @@ export class NumberControlComponent extends BaseControlComponent implements Cont
     this.onTouched = fn;
   }
 
-  public onValueChange(value: number): void {
-    this.writeValue(value);
-    this.onChange(value);
+  public onKeyDown(evt: Event) {
+    const e = evt as KeyboardEvent;
+    const isNumber = /delete|end|home|arrow|backspace|tab|enter|escape|[0-9]|,|\./.test(e.key.toLowerCase());
+    const specialIsDown = [e.shiftKey, e.altKey, e.ctrlKey, e.metaKey].find(Boolean);
+    if (!isNumber && !specialIsDown) {
+      evt.preventDefault();
+      return false;
+    }
+
+    if (e.key.toLowerCase() === 'backspace') {
+      const el = this.input.nativeElement;
+      const cursorPos = el.selectionStart;
+      if (cursorPos) {
+        const previousChar = el.value[cursorPos - 1];
+        if (/\s/.test(previousChar)) {
+          el.setSelectionRange(cursorPos - 1, cursorPos - 1);
+        }
+      }
+    }
+
+    if (e.key.toLowerCase() === 'delete') {
+      const el = this.input.nativeElement;
+      const cursorPos = el.selectionStart;
+      if (cursorPos && cursorPos < el.value.length) {
+        const nextChar = el.value[cursorPos];
+        if (/\s/.test(nextChar)) {
+          el.setSelectionRange(cursorPos + 1, cursorPos + 1);
+        }
+      }
+    }
+
+    return true;
+  }
+
+  public onInput() {
+    const value = this.input.nativeElement.value;
+    const parsed = this.nbr.parse(value);
+    if (isNaN(parsed)) {
+      return;
+    }
+    this.writeValue(parsed);
+    this.onChange(parsed);
   }
 
   public onInputBlurred(): void {

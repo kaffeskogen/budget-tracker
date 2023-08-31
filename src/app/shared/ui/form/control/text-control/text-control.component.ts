@@ -1,6 +1,5 @@
 import { Component, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { BaseControlComponent } from '../base-control/base-control.component';
 
 @Component({
   selector: 'app-text-control',
@@ -14,11 +13,12 @@ import { BaseControlComponent } from '../base-control/base-control.component';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TextControlComponent)
+      useExisting: forwardRef(() => TextControlComponent),
+      multi: true
     }
   ]
 })
-export class TextControlComponent extends BaseControlComponent implements ControlValueAccessor {
+export class TextControlComponent implements ControlValueAccessor {
 
   public value!: string;
   public disabled = false;
