@@ -6,8 +6,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/for
 @Component({
   selector: 'app-control',
   template: `
-  <label class="flex flex-col">
-    <small>{{control.name}}</small>
+  <label class="flex flex-col mt-4">
+    <small class="ml-4">{{control.name}}</small>
     <ng-container #vc></ng-container>
   </label>`,
   providers: [

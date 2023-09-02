@@ -5,12 +5,17 @@ import { NumberParser } from '../../utils/number-formatting';
 @Component({
   selector: 'app-number-control',
   template: `
-      <input class="py-2 px-4 border border-slate-500 rounded w-80"
-        #input
-        (keydown)="onKeyDown($event)"
-        (input)="onInput()"
-        (blur)="onInputBlurred()"
-        [disabled]="disabled">
+      <div class="flex">
+        <input class="py-2 px-4 border-l border-y border-slate-400 rounded-l flex-1"
+          #input
+          (keydown)="onKeyDown($event)"
+          (input)="onInput()"
+          (blur)="onInputBlurred()"
+          [disabled]="disabled">
+        <div class="bg-gray-100 border-slate-400 text-gray-500 border-r border-y rounded-r w-10 flex items-center justify-center">
+          kr
+        </div>
+      </div>
     `,
   providers: [
     {
@@ -55,7 +60,7 @@ export class NumberControlComponent implements ControlValueAccessor {
   public onKeyDown(evt: Event) {
     const e = evt as KeyboardEvent;
     const isNumber = /delete|end|home|arrow|backspace|tab|enter|escape|[0-9]|,|\./.test(e.key.toLowerCase());
-    const specialIsDown = [e.shiftKey, e.altKey, e.ctrlKey, e.metaKey].find(Boolean);
+    const specialIsDown = [e.altKey, e.ctrlKey, e.metaKey].some(Boolean);
     if (!isNumber && !specialIsDown) {
       evt.preventDefault();
       return false;

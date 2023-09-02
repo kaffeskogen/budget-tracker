@@ -6,7 +6,7 @@ import { ApiService } from 'src/app/shared/data-access/api.service';
 @Component({
   selector: 'app-group-choice',
   template: `
-    <select class="py-2 px-4 border border-slate-500 rounded w-80"
+    <select class="py-2 px-3 border border-slate-400 rounded block w-full"
         *ngIf="value"
         [(ngModel)]="value.id"
         (ngModelChange)="onValueChange($event)"
