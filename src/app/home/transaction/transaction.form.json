@@ -13,6 +13,16 @@
             "slug": "groupId"
         },
         {
+            "type": "text",
+            "name": "Category",
+            "slug": "category"
+        },
+        {
+            "type": "text",
+            "name": "Icon",
+            "slug": "icon"
+        },
+        {
             "type": "number",
             "name": "Value",
             "slug": "value"

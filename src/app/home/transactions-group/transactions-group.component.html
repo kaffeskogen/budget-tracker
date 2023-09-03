@@ -1,4 +1,4 @@
-<div *ngIf="service.status() === 'loading'" [@outAnimation] class="animate-pulse pointer-events-none">
+<div *ngIf="status() === 'loading'" [@outAnimation] class="animate-pulse pointer-events-none">
     <div class="absolute w-full">
         <div class="pt-2 mb-2 px-4 font-bold h-7 flex">
             <div class="opacity-50 rounded h-4 inline-block w-20 content-center" [ngStyle]="{background: color}">&nbsp;
@@ -19,11 +19,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="service.status() === 'error'">
-    <p>{{ service.error() }}</p>
-    <button (click)="service.retry$.next()">Retry</button>
-</div>
-<div *ngIf="service.status() === 'success' && !!group" [@inAnimation]>
+<div *ngIf="status() === 'success' && !!group" [@inAnimation]>
 
     <div class="pb-2 px-4 flex">
         <div class="text-xl font-bold" [ngStyle]="{color: color}">
@@ -31,7 +27,7 @@
         </div>
     </div>
 
-    <a [routerLink]="['edit', transaction.id]" *ngFor="let transaction of service.visibleTransactions()"
+    <a [routerLink]="['edit', transaction.id]" *ngFor="let transaction of visibleTransactions()"
         class="rounded bg-slate-50 mb-1 flex whitespace-nowrap py-2 px-4 shadow items-center">
         <app-icon [iconName]="transaction.icon" [color]="color" class="mr-2"></app-icon>
         <div class="flex-1">
@@ -43,7 +39,7 @@
 
     <div>
 
-        <div *ngIf="!service.transactions().length" class="px-4 py-2 mb-4 rounded bg-gray-300">
+        <div *ngIf="!transactions().length" class="px-4 py-2 mb-4 rounded bg-gray-300">
             <i>No transactions</i>
         </div>
 
@@ -56,16 +52,13 @@
                 <div class="flex-1">Add</div>
             </a>
 
-            <!-- <div class="font-semibold show-on-hover">{{service.sum() | currency: 'SEK' :
-                'symbol-narrow':'0.0-0'}}</div> -->
 
-            <div *ngIf="service.transactions().length > service.THRESHOLD">
-                <div (click)="service.showAll$.next(!service.showAll())" class="text-sm cursor-pointer hover:underline"
-                    tabindex="-1">
+            <div *ngIf="transactions().length > THRESHOLD">
+                <div (click)="showAll$.next(!showAll())" class="text-sm cursor-pointer hover:underline" tabindex="-1">
                     Show {{
-                    service.showAll() ?
+                    showAll() ?
                     'fewer ⏶' :
-                    ( (service.transactions().length - service.visibleTransactions().length) + ' more ⏷' )
+                    ( (transactions().length - visibleTransactions().length) + ' more ⏷' )
                     }}
                 </div>
             </div>

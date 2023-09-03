@@ -1,7 +1,6 @@
 import { Component, forwardRef, inject } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { lastValueFrom } from 'rxjs';
-import { ApiService } from 'src/app/shared/data-access/api.service';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { TransactionGroupsService } from 'src/app/shared/data-access/transaction-groups.service';
 
 @Component({
   selector: 'app-group-choice',
@@ -12,7 +11,7 @@ import { ApiService } from 'src/app/shared/data-access/api.service';
         (ngModelChange)="onValueChange($event)"
         (blur)="onInputBlurred()"
         [disabled]="disabled">
-      <option *ngFor="let group of $groups|async" [value]="group.id">{{group.name}}</option>
+      <option *ngFor="let group of service.groups()" [value]="group.id">{{group.name}}</option>
     </select>
   `,
   providers: [
@@ -24,16 +23,15 @@ import { ApiService } from 'src/app/shared/data-access/api.service';
 })
 export class GroupChoiceComponent implements ControlValueAccessor {
 
-  api = inject(ApiService);
-  $groups = this.api.$groups;
+  service = inject(TransactionGroupsService);
 
   public value!: { id: string; text: string };
   public disabled = false;
   public onChange!: (value: string) => void;
   public onTouched!: () => void;
 
-  public async writeValue(value: string): Promise<void> {
-    const allGroups = await lastValueFrom(this.$groups);
+  public writeValue(value: string) {
+    const allGroups = this.service.groups();
     const group = allGroups.find(g => g.name === value);
     this.value = group ?
       { id: group.id, text: group.name } :

@@ -1,12 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, Signal, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import formJson from './transaction.form.json'
 import { JsonForm } from 'src/app/shared/ui/form/models/models';
 import { GroupChoiceComponent } from './controls/group-choice.component';
 import { AppStateService } from 'src/app/shared/data-access/app-state.service';
-import { ApiService } from 'src/app/shared/data-access/api.service';
 import { Transaction } from 'src/app/shared/interfaces/Transaction';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
 
 @Component({
   selector: 'new-transaction',
@@ -29,7 +29,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class TransactionComponent {
 
   appState = inject(AppStateService);
-  api = inject(ApiService);
+  service = inject(TransactionsService);
 
   route = inject(ActivatedRoute);
   router = inject(Router);
@@ -38,17 +38,19 @@ export class TransactionComponent {
 
   controlOverrides = { group: GroupChoiceComponent };
 
-  defaultNewTransaction = signal<Partial<Transaction>>({
-    ...this.router.getCurrentNavigation()?.extras.state,
-    date: this.appState.lastSelectedFormattedDate()
+  defaultNewTransaction = signal<Omit<Transaction, 'id'>>({
+    groupId: this.router.getCurrentNavigation()?.extras.state?.['groupId'] ?? '',
+    icon: 'AcademicCap',
+    date: this.appState.lastSelectedFormattedDate(),
+    category: '',
+    title: ''
   })
 
   params = toSignal(this.route.params);
   routerParam = computed(() => this.params()?.['transactionId'])
-  transactions = toSignal(this.api.$transactions);
-  transaction = computed(() =>
-    this.routerParam() && this.transactions() ?
-      this.transactions()?.find(t => t.id === this.routerParam()) :
+  transaction: Signal<Transaction | Omit<Transaction, 'id'>> = computed(() =>
+    this.routerParam() ?
+      this.service.transactions()?.find(t => t.id === this.routerParam()) ?? this.defaultNewTransaction() :
       this.defaultNewTransaction()
   );
 
@@ -56,10 +58,24 @@ export class TransactionComponent {
     this.router.navigate(['..'], { relativeTo: this.route });
   }
 
-  public onSave(formValue: any) {
-    if (typeof formValue.date === 'string') {
-      this.saveLastSelectedDate(formValue.date)
+  public onSave(formValue: object) {
+
+    const transaction: Transaction | Omit<Transaction, 'id'> = {
+      ...this.transaction(),
+      ...formValue
+    };
+
+    if ('date' in formValue && typeof formValue.date === 'string') {
+      this.saveLastSelectedDate(formValue.date);
     }
+
+    if ('id' in transaction) {
+      this.service.edit$.next(transaction);
+    } else {
+      this.service.add$.next(transaction);
+    }
+
+    this.closeDialog();
   }
 
   public saveLastSelectedDate(newValue: string) {

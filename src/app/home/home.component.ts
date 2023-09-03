@@ -1,14 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { HomeService } from './home.service';
+import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  providers: [HomeService]
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
 
-  service = inject(HomeService);
+  service = inject(TransactionGroupsService);
 
 }
