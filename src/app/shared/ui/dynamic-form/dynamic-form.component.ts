@@ -5,15 +5,15 @@ import { fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-form',
+  selector: 'app-dynamic-form',
   template: `
   <form *ngIf="formGroup && formControls" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-    <app-control
+    <app-dynamic-control
       *ngFor="let control of form.controls"
       [controlOverrides]="controlOverrides"
       [formControl]="formControls[control.slug]"
       [control]="control"
-      ></app-control>
+      ></app-dynamic-control>
 
       <div class="flex justify-end">
         <button (click)="onCancel.emit()" type="button" class="rounded px-4 py-2 mt-4 mr-2 border border-slate-400 hover:bg-gray-100 text-gray-800">Cancel</button>
@@ -22,7 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   </form>
 `
 })
-export class FormComponent implements OnInit, AfterViewInit {
+export class DynamicFormComponent implements OnInit, AfterViewInit {
   @Input() form!: JsonForm;
   @Input() defaultValues: { [key: string]: any } | undefined;
   @Input() controlOverrides?: { [key: string]: any };

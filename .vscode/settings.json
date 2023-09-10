@@ -5,7 +5,7 @@
             "fileMatch": [
                 "/*.form.json"
             ],
-            "url": "./src/app/shared/ui/form/form-schema.json"
+            "url": "./src/app/shared/ui/dynamic-form/dynamic-form-schema.json"
         }
     ]
 }

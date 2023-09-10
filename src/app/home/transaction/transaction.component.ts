@@ -1,12 +1,12 @@
 import { Component, Signal, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import formJson from './transaction.form.json'
-import { JsonForm } from 'src/app/shared/ui/form/models/models';
 import { GroupChoiceComponent } from './controls/group-choice.component';
 import { AppStateService } from 'src/app/shared/data-access/app-state.service';
 import { Transaction } from 'src/app/shared/interfaces/Transaction';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
+import { JsonForm } from 'src/app/shared/ui/dynamic-form/models/models';
 
 @Component({
   selector: 'new-transaction',
@@ -14,13 +14,13 @@ import { TransactionsService } from 'src/app/shared/data-access/transactions.ser
   <app-dialog (closeDialog)="closeDialog()">
     <ng-container>
 
-      <app-form
+      <app-dynamic-form
         *ngIf="formJson"
         [form]="formJson"
         [controlOverrides]="controlOverrides"
         [defaultValues]="transaction()"
         (onCancel)="closeDialog()"
-        (onSave)="onSave($event)"></app-form>
+        (onSave)="onSave($event)"></app-dynamic-form>
 
     </ng-container>
   </app-dialog>

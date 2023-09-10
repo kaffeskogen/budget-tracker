@@ -18,7 +18,7 @@
             "slug": "category"
         },
         {
-            "type": "text",
+            "type": "icon",
             "name": "Icon",
             "slug": "icon"
         },

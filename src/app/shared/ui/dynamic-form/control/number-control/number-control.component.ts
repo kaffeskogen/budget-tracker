@@ -109,4 +109,9 @@ export class NumberControlComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
+  public onValueChange(): void {
+    throw new Error('Not implemented exception');
+  }
+
+
 }

@@ -1,20 +1,21 @@
-import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
+import { OnInit } from '@angular/core';
+import { OverlayConfig, Overlay } from '@angular/cdk/overlay';
 import { CdkPortal } from '@angular/cdk/portal';
-import { Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+
 @Component({
-  selector: 'app-dialog',
-  template: `<ng-template cdkPortal>
-        <div class="w-full px-8 py-4 bg-white rounded shadow">
-            <ng-content></ng-content>
-        </div>
-    </ng-template>
-`,
-  // encapsulation: ViewEncapsulation.None,
+  selector: 'app-callout',
+  template: `
+    <p>
+      callout works!
+    </p>
+  `,
+  styles: []
 })
-export class DialogComponent implements OnInit {
-  @ViewChild(CdkPortal, { static: true }) public readonly portal?: CdkPortal;
+export class CalloutComponent implements OnInit {
+  @ViewChild(CdkPortal, { read: ViewContainerRef, static: true }) public readonly portal?: CdkPortal;
   // the parent is in charge of destroying this component (usually through ngIf or route change)
   @Output() public readonly closeDialog = new EventEmitter<void>();
 

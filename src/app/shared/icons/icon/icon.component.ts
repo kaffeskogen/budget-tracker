@@ -14,7 +14,12 @@ export class IconComponent implements OnInit {
   @Input() size: number = 24;
 
   ngOnInit(): void {
-    const el = this.renderIconAfterThisElement.createComponent(IconComponents[this.iconName]);
+    const iconCmpt = IconComponents[this.iconName];
+    if (!iconCmpt) {
+      this.renderIconAfterThisElement.createComponent(IconComponents.Stop)
+      return;
+    }
+    const el = this.renderIconAfterThisElement.createComponent(iconCmpt);
     el.instance.color = this.color;
     el.instance.size = this.size;
   }

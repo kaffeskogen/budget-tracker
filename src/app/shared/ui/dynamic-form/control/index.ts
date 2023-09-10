@@ -5,9 +5,9 @@ import { NumberControlComponent } from "./number-control/number-control.componen
 import { TextControlComponent } from "./text-control/text-control.component";
 
 export const FORM_CONTROLS = {
-    text: TextControlComponent,
-    number: NumberControlComponent,
-    date: DateControlComponent,
-    icon: IconControlComponent,
-    notimplemented: NotimplementedControlComponent,
+    ["text"]: TextControlComponent,
+    ["number"]: NumberControlComponent,
+    ["date"]: DateControlComponent,
+    ["icon"]: IconControlComponent,
+    ["notimplemented"]: NotimplementedControlComponent,
 } as const;

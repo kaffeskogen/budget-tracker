@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { FormComponent } from "./form.component";
+import { DynamicFormComponent } from "./dynamic-form.component";
 import { TextControlComponent } from './control/text-control/text-control.component';
 import { NumberControlComponent } from './control/number-control/number-control.component';
 import { DateControlComponent } from './control/date-control/date-control.component';
@@ -7,17 +7,19 @@ import { IconControlComponent } from './control/icon-control/icon-control.compon
 import { NotimplementedControlComponent } from './control/notimplemented-control/notimplemented-control.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { ControlComponent } from './control/control.component';
+import { DynamicControlComponent } from './control/dynamic-control.component';
+import { IconPickerComponent } from './control/icon-control/icon-picker/icon-picker.component';
 
 @NgModule({
     declarations: [
-        FormComponent,
+        DateControlComponent,
+        DynamicFormComponent,
+        IconControlComponent,
         TextControlComponent,
         NumberControlComponent,
-        DateControlComponent,
-        IconControlComponent,
         NotimplementedControlComponent,
-        ControlComponent
+        DynamicControlComponent,
+        IconPickerComponent
     ],
     imports: [
         CommonModule,
@@ -25,7 +27,7 @@ import { ControlComponent } from './control/control.component';
         ReactiveFormsModule
     ],
     exports: [
-        FormComponent
+        DynamicFormComponent
     ]
 })
-export class FormModule { }
+export class DynamicFormModule { }
