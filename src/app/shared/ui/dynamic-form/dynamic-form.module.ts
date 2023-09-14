@@ -9,6 +9,9 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { DynamicControlComponent } from './control/dynamic-control.component';
 import { IconPickerComponent } from './control/icon-control/icon-picker/icon-picker.component';
+import { IconComponent } from "../../icons/icon/icon.component";
+import { CalloutComponent } from "../callout/callout.component";
+import { OverlayModule } from "@angular/cdk/overlay";
 
 @NgModule({
     declarations: [
@@ -21,13 +24,16 @@ import { IconPickerComponent } from './control/icon-control/icon-picker/icon-pic
         DynamicControlComponent,
         IconPickerComponent
     ],
+    exports: [
+        DynamicFormComponent
+    ],
     imports: [
         CommonModule,
         FormsModule,
-        ReactiveFormsModule
-    ],
-    exports: [
-        DynamicFormComponent
+        ReactiveFormsModule,
+        IconComponent,
+        CalloutComponent,
+        OverlayModule
     ]
 })
 export class DynamicFormModule { }

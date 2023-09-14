@@ -1,32 +1,33 @@
-import { OnInit } from '@angular/core';
-import { OverlayConfig, Overlay } from '@angular/cdk/overlay';
-import { CdkPortal } from '@angular/cdk/portal';
-import { Component, EventEmitter, Output, ViewChild, ViewContainerRef } from '@angular/core';
+import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
+import { CdkPortal, PortalModule } from '@angular/cdk/portal';
+import { Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
 
 @Component({
   selector: 'app-callout',
-  template: `
-    <p>
-      callout works!
-    </p>
+  template: `<ng-template cdkPortal>
+    <div class="w-full px-8 py-4 bg-white rounded shadow">
+        <ng-content></ng-content>
+    </div>
+  </ng-template>
   `,
-  styles: []
+  standalone: true,
+  imports: [
+    PortalModule
+  ]
 })
 export class CalloutComponent implements OnInit {
-  @ViewChild(CdkPortal, { read: ViewContainerRef, static: true }) public readonly portal?: CdkPortal;
-  // the parent is in charge of destroying this component (usually through ngIf or route change)
+  @ViewChild(CdkPortal, { static: true }) public readonly portal?: CdkPortal;
+
   @Output() public readonly closeDialog = new EventEmitter<void>();
 
   private readonly overlayConfig = new OverlayConfig({
-    hasBackdrop: true,
+    hasBackdrop: false,
     positionStrategy: this.overlay
       .position()
       .global()
       .centerHorizontally()
       .centerVertically(),
-    scrollStrategy: this.overlay.scrollStrategies.block(),
     minWidth: 500,
   });
   private overlayRef = this.overlay.create(this.overlayConfig);

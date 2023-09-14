@@ -12,6 +12,8 @@ import { TransactionComponent } from './transaction/transaction.component';
 import { EditTransactionComponent } from './edit-transaction/edit-transaction.component';
 import { GroupChoiceComponent } from './transaction/controls/group-choice.component';
 import { FormsModule } from '@angular/forms';
+import { IconComponent } from '../shared/icons/icon/icon.component';
+import { DialogComponent } from '../shared/ui/dialog/dialog.component';
 
 
 @NgModule({
@@ -29,7 +31,9 @@ import { FormsModule } from '@angular/forms';
     HomeRoutingModule,
     SharedModule,
     TableComponentModule,
-    FormsModule
+    FormsModule,
+    IconComponent,
+    DialogComponent
   ],
   providers: [
     // { provide: LOCALE_ID, useValue: 'sv' }

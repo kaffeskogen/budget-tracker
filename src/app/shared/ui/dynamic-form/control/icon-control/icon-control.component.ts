@@ -1,17 +1,30 @@
+import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { IconComponents } from 'src/app/shared/icons';
 
 @Component({
   selector: 'app-icon-control',
   template: `
+    <button (click)="isOpen = !isOpen" cdkOverlayOrigin #trigger="cdkOverlayOrigin" role="button" type="button" class="border rounded inline-block border-slate-400 py-2 px-4 box-border bg-white hover:bg-gray-50 active:bg-transparent">
+      <app-icon [iconName]="value" [color]="'blue'" [size]="24"></app-icon>
+    </button>
+    <ng-template
+      cdkConnectedOverlay immitateWidth
+      [cdkConnectedOverlayOrigin]="trigger"
+      [cdkConnectedOverlayOpen]="isOpen"
+      [cdkConnectedOverlayBackdropClass]="'bg-transparent'"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      [cdkConnectedOverlayPositions]="positions"
+      (backdropClick)="isOpen = false">
 
-      
+      <div class="border rounded inline-block border-slate-400 box-border w-full">
 
-      <input class="py-2 px-4 border border-slate-400 rounded block w-full"
-        [ngModel]="value"
-        (ngModelChange)="onValueChange($event)"
-        (blur)="onInputBlurred()"
-        [disabled]="disabled">
+        <app-icon-picker></app-icon-picker>
+
+      </div>
+
+    </ng-template>
   `,
   providers: [
     {
@@ -23,12 +36,25 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class IconControlComponent implements ControlValueAccessor {
 
-  public value!: string;
+  public value!: keyof typeof IconComponents;
   public disabled = false;
+  public isOpen = true;
   public onChange!: (value: string) => void;
   public onTouched!: () => void;
 
-  public writeValue(value: string): void {
+  public positions = [
+    new ConnectionPositionPair({
+      originX: 'start',
+      originY: 'top'
+    }, {
+      overlayX: 'start',
+      overlayY: 'top'
+    },
+      0,
+      0)
+  ];
+
+  public writeValue(value: keyof typeof IconComponents): void {
     this.value = value;
   }
 
@@ -40,7 +66,7 @@ export class IconControlComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  public onValueChange(value: string): void {
+  public onValueChange(value: keyof typeof IconComponents): void {
     this.writeValue(value);
     this.onChange(value);
   }

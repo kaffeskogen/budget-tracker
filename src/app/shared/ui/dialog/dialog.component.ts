@@ -1,5 +1,5 @@
 import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
-import { CdkPortal } from '@angular/cdk/portal';
+import { CdkPortal, PortalModule } from '@angular/cdk/portal';
 import { Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -10,12 +10,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             <ng-content></ng-content>
         </div>
     </ng-template>
-`,
-  // encapsulation: ViewEncapsulation.None,
+  `,
+  standalone: true,
+  imports: [
+    PortalModule
+  ]
 })
 export class DialogComponent implements OnInit {
   @ViewChild(CdkPortal, { static: true }) public readonly portal?: CdkPortal;
-  // the parent is in charge of destroying this component (usually through ngIf or route change)
+
   @Output() public readonly closeDialog = new EventEmitter<void>();
 
   private readonly overlayConfig = new OverlayConfig({

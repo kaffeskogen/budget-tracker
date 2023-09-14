@@ -4,7 +4,8 @@ import { IconComponents } from 'src/app/shared/icons';
 @Component({
   selector: 'app-icon',
   template: `<div #renderIconAfterThisElement></div>`,
-  styleUrls: ['./icon.component.scss']
+  styleUrls: ['./icon.component.scss'],
+  standalone: true
 })
 export class IconComponent implements OnInit {
   @ViewChild("renderIconAfterThisElement", { read: ViewContainerRef, static: true }) renderIconAfterThisElement!: ViewContainerRef;
