@@ -4,7 +4,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 @Component({
   selector: 'app-date-control',
   template: `
-      <input class="py-2 px-4 border border-slate-400 rounded block w-full"
+      <input class="app-input"
         type="date"
         [ngModel]="value"
         (ngModelChange)="onValueChange($event)"

@@ -1,12 +1,14 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, forwardRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { fromEvent } from 'rxjs';
 import { IconComponents } from 'src/app/shared/icons';
 
 @Component({
   selector: 'app-icon-control',
   template: `
-    <button (click)="isOpen = !isOpen" cdkOverlayOrigin #trigger="cdkOverlayOrigin" role="button" type="button" class="border rounded inline-block border-slate-400 py-2 px-4 box-border bg-white hover:bg-gray-50 active:bg-transparent">
+    <button (click)="isOpen = !isOpen" cdkOverlayOrigin #trigger="cdkOverlayOrigin" role="button" type="button" class="app-input" style="width: auto;">
       <app-icon [iconName]="value" [color]="'blue'" [size]="24"></app-icon>
     </button>
     <ng-template
@@ -18,7 +20,7 @@ import { IconComponents } from 'src/app/shared/icons';
       [cdkConnectedOverlayPositions]="positions"
       (backdropClick)="isOpen = false">
 
-      <div class="border rounded inline-block border-slate-400 box-border w-full">
+      <div class="border rounded inline-block border-slate-400 box-border w-full" *ngIf="isOpen">
 
         <app-icon-picker></app-icon-picker>
 
@@ -38,7 +40,7 @@ export class IconControlComponent implements ControlValueAccessor {
 
   public value!: keyof typeof IconComponents;
   public disabled = false;
-  public isOpen = true;
+  public isOpen = false;
   public onChange!: (value: string) => void;
   public onTouched!: () => void;
 

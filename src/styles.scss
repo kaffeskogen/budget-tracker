@@ -7,3 +7,7 @@
 html {
     @apply bg-slate-200 overflow-y-scroll;
 }
+
+.app-input {
+    @apply bg-white pt-2 pb-1.5 px-4 border border-b-2 border-b-slate-300 rounded block w-full outline-none focus:border-b-blue-500;
+}

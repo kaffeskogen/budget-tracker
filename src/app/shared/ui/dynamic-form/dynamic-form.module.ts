@@ -12,6 +12,7 @@ import { IconPickerComponent } from './control/icon-control/icon-picker/icon-pic
 import { IconComponent } from "../../icons/icon/icon.component";
 import { CalloutComponent } from "../callout/callout.component";
 import { OverlayModule } from "@angular/cdk/overlay";
+import { ScrollingModule } from "@angular/cdk/scrolling";
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import { OverlayModule } from "@angular/cdk/overlay";
         DynamicFormComponent
     ],
     imports: [
+        ScrollingModule,
         CommonModule,
         FormsModule,
         ReactiveFormsModule,

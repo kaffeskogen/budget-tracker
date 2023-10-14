@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-dialog',
   template: `<ng-template cdkPortal>
-        <div class="w-full px-8 py-4 bg-white rounded shadow">
+        <div class="w-full px-8 py-4 bg-neutral-100 rounded shadow">
             <ng-content></ng-content>
         </div>
     </ng-template>
@@ -29,7 +29,8 @@ export class DialogComponent implements OnInit {
       .centerHorizontally()
       .centerVertically(),
     scrollStrategy: this.overlay.scrollStrategies.block(),
-    minWidth: 500,
+    maxWidth: 500,
+    width: '100%'
   });
   private overlayRef = this.overlay.create(this.overlayConfig);
 

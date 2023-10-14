@@ -5,7 +5,7 @@ import { TransactionGroupsService } from 'src/app/shared/data-access/transaction
 @Component({
   selector: 'app-group-choice',
   template: `
-    <select class="py-2 px-3 border border-slate-400 rounded block w-full"
+    <select class="app-input"
         *ngIf="value"
         [(ngModel)]="value.id"
         (ngModelChange)="onValueChange($event)"

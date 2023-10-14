@@ -37,7 +37,7 @@ export class DynamicFormComponent implements OnInit, AfterViewInit {
   private readonly el = inject(ElementRef);
 
   constructor() {
-    fromEvent(document, "keyup")
+    fromEvent(document, "keydown")
       .pipe(takeUntilDestroyed())
       .subscribe((e) => (e as any as KeyboardEvent).key === 'Escape' && this.onCancel.emit())
   }

@@ -6,17 +6,21 @@ import { NumberParser } from '../../utils/number-formatting';
   selector: 'app-number-control',
   template: `
       <div class="flex">
-        <input class="py-2 px-4 border-l border-y border-slate-400 rounded-l flex-1"
+        <input class="app-input flex-1"
+          style="border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 0;"
           #input
           (keydown)="onKeyDown($event)"
           (input)="onInput()"
           (blur)="onInputBlurred()"
           [disabled]="disabled">
-        <div class="bg-gray-100 border-slate-400 text-gray-500 border-r border-y rounded-r w-10 flex items-center justify-center">
+        <div class="suffix bg-gray-100 border-l-0 text-gray-500 border-b-2 border-b-slate-300 border-r border-y rounded-r w-10 flex items-center justify-center">
           kr
         </div>
       </div>
     `,
+  styleUrls: [
+    './number-control.component.scss'
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
