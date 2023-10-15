@@ -16,11 +16,13 @@ import { JsonForm } from 'src/app/shared/ui/dynamic-form/models/models';
 
       <app-dynamic-form
         *ngIf="formJson"
+        [title]="isNewTransaction() ? 'New transaction' : 'Editing transaction'"
         [form]="formJson"
         [controlOverrides]="controlOverrides"
         [defaultValues]="transaction()"
         (onCancel)="closeDialog()"
-        (onSave)="onSave($event)"></app-dynamic-form>
+        (onSave)="onSave($event)">
+      </app-dynamic-form>
 
     </ng-container>
   </app-dialog>
@@ -47,9 +49,10 @@ export class TransactionComponent {
   })
 
   params = toSignal(this.route.params);
-  routerParam = computed(() => this.params()?.['transactionId'])
+  routerParam = computed(() => this.params()?.['transactionId']);
+  isNewTransaction = computed(() => !this.routerParam());
   transaction: Signal<Transaction | Omit<Transaction, 'id'>> = computed(() =>
-    this.routerParam() ?
+    this.isNewTransaction() ?
       this.service.transactions()?.find(t => t.id === this.routerParam()) ?? this.defaultNewTransaction() :
       this.defaultNewTransaction()
   );

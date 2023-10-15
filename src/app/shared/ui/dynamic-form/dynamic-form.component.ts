@@ -8,6 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   selector: 'app-dynamic-form',
   template: `
   <form *ngIf="formGroup && formControls" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <h2 class="text-xl mt-2 mb-4 font-semibold">{{title}}</h2>
     <app-dynamic-control
       *ngFor="let control of form.controls"
       [controlOverrides]="controlOverrides"
@@ -16,7 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       ></app-dynamic-control>
 
       <div class="flex justify-end">
-        <button (click)="onCancel.emit()" type="button" class="rounded px-4 py-2 mt-4 mr-2 border border-slate-400 hover:bg-gray-100 text-gray-800">Cancel</button>
+        <button (click)="onCancel.emit()" type="button" class="rounded px-4 py-2 mt-4 mr-2 border border-slate-400 hover:bg-gray-100 text-gray-800 bg-white">Cancel</button>
         <button type="submit" class="rounded px-4 py-2 mt-4 border bg-sky-700 hover:bg-sky-800 text-white">Save</button>
       </div>
   </form>
@@ -24,6 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class DynamicFormComponent implements OnInit, AfterViewInit {
   @Input() form!: JsonForm;
+  @Input() title!: string;
   @Input() defaultValues: { [key: string]: any } | undefined;
   @Input() controlOverrides?: { [key: string]: any };
   @Output() onSave = new EventEmitter<any>();
