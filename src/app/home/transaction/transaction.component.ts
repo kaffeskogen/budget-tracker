@@ -7,6 +7,7 @@ import { Transaction } from 'src/app/shared/interfaces/Transaction';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
 import { JsonForm } from 'src/app/shared/ui/dynamic-form/models/models';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'new-transaction',
@@ -49,13 +50,14 @@ export class TransactionComponent {
   })
 
   params = toSignal(this.route.params);
-  routerParam = computed(() => this.params()?.['transactionId']);
-  isNewTransaction = computed(() => !this.routerParam());
-  transaction: Signal<Transaction | Omit<Transaction, 'id'>> = computed(() =>
-    this.isNewTransaction() ?
-      this.service.transactions()?.find(t => t.id === this.routerParam()) ?? this.defaultNewTransaction() :
-      this.defaultNewTransaction()
-  );
+  routerParam = computed<string>(() => this.params()?.['transactionId']);
+  isNewTransaction = computed<boolean>(() => !this.routerParam());
+  transaction: Signal<Transaction | Omit<Transaction, 'id'>> = computed(() => {
+    const allTransactions = this.service.transactions();
+    const routerParam = this.routerParam();
+    const thisTransaction = allTransactions?.find(t => t.id === routerParam);
+    return thisTransaction || this.defaultNewTransaction();
+  });
 
   public closeDialog(): void {
     this.router.navigate(['..'], { relativeTo: this.route });

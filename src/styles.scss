@@ -23,3 +23,11 @@ html {
 .app-input:focus+.app-input-suffix {
     @apply border-b-sky-800;
 }
+
+input,
+textarea,
+button,
+select,
+a {
+    -webkit-tap-highlight-color: transparent;
+}

@@ -1,15 +1,16 @@
-import { ConnectionPositionPair, Overlay, OverlayConfig } from '@angular/cdk/overlay';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
 import { CdkPortal, PortalModule } from '@angular/cdk/portal';
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef, computed, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject } from 'rxjs';
+
 
 @Component({
   selector: 'app-dialog',
   template: `<ng-template cdkPortal>
-        <div class="w-full max-h-screen overflow-y-scroll px-8 py-4 bg-slate-100 rounded shadow">
-            <ng-content></ng-content>
-        </div>
+      <div class="w-full max-h-screen overflow-y-scroll px-8 py-4 bg-slate-100 rounded shadow">
+        <ng-content></ng-content>
+      </div>
     </ng-template>
   `,
   standalone: true,
@@ -50,8 +51,9 @@ export class DialogComponent implements OnInit {
     positionStrategy: this.positionStrategy(),
     scrollStrategy: this.overlay.scrollStrategies.block(),
     maxWidth: 500,
+    height: this.smallscreen() ? 'calc(100vh - 100px)' : 'auto',
     width: '100%',
-    maxHeight: '100vh',
+    maxHeight: 'calc(100vh - 100px)',
   });
   private overlayRef = this.overlay.create(this.overlayConfig);
 

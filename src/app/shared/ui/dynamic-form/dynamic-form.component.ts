@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { JsonForm } from './models/models';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { fromEvent } from 'rxjs';
@@ -23,7 +23,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   </form>
 `
 })
-export class DynamicFormComponent implements OnInit, AfterViewInit {
+export class DynamicFormComponent implements OnInit {
   @Input() form!: JsonForm;
   @Input() title!: string;
   @Input() defaultValues: { [key: string]: any } | undefined;
@@ -34,7 +34,6 @@ export class DynamicFormComponent implements OnInit, AfterViewInit {
   formBuilder = new FormBuilder();
   formControls?: { [key: string]: FormControl };
   formGroup?: FormGroup;
-
 
   private readonly el = inject(ElementRef);
 
@@ -56,12 +55,6 @@ export class DynamicFormComponent implements OnInit, AfterViewInit {
       this.formGroup.patchValue(this.defaultValues);
     }
 
-  }
-
-  public ngAfterViewInit(): void {
-    requestAnimationFrame(() => { // wait for angular to render
-      this.el.nativeElement.querySelector('input').focus();
-    });
   }
 
   public onSubmit() {

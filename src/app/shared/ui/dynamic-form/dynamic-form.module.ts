@@ -13,6 +13,7 @@ import { IconComponent } from "../../icons/icon/icon.component";
 import { CalloutComponent } from "../callout/callout.component";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { ScrollingModule } from "@angular/cdk/scrolling";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 @NgModule({
     declarations: [
