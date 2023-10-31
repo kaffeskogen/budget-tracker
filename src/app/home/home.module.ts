@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { HeaderComponent } from './header/header.component';
-import { SharedModule } from '../shared/shared.module';
+
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
-import { TableComponentModule } from '../shared/ui/table/table.module';
+
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
 import { TransactionComponent } from './transaction/transaction.component';
 import { EditTransactionComponent } from './edit-transaction/edit-transaction.component';
@@ -14,10 +14,16 @@ import { GroupChoiceComponent } from './transaction/controls/group-choice.compon
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../shared/icons/icon/icon.component';
 import { DialogComponent } from '../shared/ui/dialog/dialog.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
-  declarations: [
+    imports: [
+    CommonModule,
+    HomeRoutingModule,
+    FormsModule,
+    IconComponent,
+    DialogComponent,
     HomeComponent,
     HeaderComponent,
     CurrentBalanceComponent,
@@ -25,18 +31,9 @@ import { DialogComponent } from '../shared/ui/dialog/dialog.component';
     TransactionComponent,
     EditTransactionComponent,
     GroupChoiceComponent
-  ],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    SharedModule,
-    TableComponentModule,
-    FormsModule,
-    IconComponent,
-    DialogComponent
-  ],
-  providers: [
+],
+    providers: [
     // { provide: LOCALE_ID, useValue: 'sv' }
-  ]
+    ]
 })
 export class HomeModule { }

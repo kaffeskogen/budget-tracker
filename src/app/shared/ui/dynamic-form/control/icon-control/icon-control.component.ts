@@ -1,13 +1,16 @@
-import { ConnectionPositionPair } from '@angular/cdk/overlay';
+import { ConnectionPositionPair, CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
 import { Component, forwardRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent } from 'rxjs';
 import { IconComponents } from 'src/app/shared/icons';
+import { IconPickerComponent } from './icon-picker/icon-picker.component';
+import { NgIf } from '@angular/common';
+import { IconComponent } from '../../../../icons/icon/icon.component';
 
 @Component({
-  selector: 'app-icon-control',
-  template: `
+    selector: 'app-icon-control',
+    template: `
     <button (click)="isOpen = !isOpen" cdkOverlayOrigin #trigger="cdkOverlayOrigin" role="button" type="button" class="app-input" style="width: auto;">
       <app-icon [iconName]="value" [color]="'blue'" [size]="24"></app-icon>
     </button>
@@ -28,13 +31,15 @@ import { IconComponents } from 'src/app/shared/icons';
 
     </ng-template>
   `,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => IconControlComponent),
-      multi: true
-    }
-  ]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => IconControlComponent),
+            multi: true
+        }
+    ],
+    standalone: true,
+    imports: [CdkOverlayOrigin, IconComponent, CdkConnectedOverlay, NgIf, IconPickerComponent]
 })
 export class IconControlComponent implements ControlValueAccessor {
 

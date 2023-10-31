@@ -1,9 +1,9 @@
 import { Component, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-date-control',
-  template: `
+    selector: 'app-date-control',
+    template: `
       <input class="app-input"
         type="date"
         [ngModel]="value"
@@ -11,13 +11,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         (blur)="onInputBlurred()"
         [disabled]="disabled">
     `,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DateControlComponent),
-      multi: true
-    }
-  ]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => DateControlComponent),
+            multi: true
+        }
+    ],
+    standalone: true,
+    imports: [FormsModule]
 })
 export class DateControlComponent implements ControlValueAccessor {
   public value!: Date;

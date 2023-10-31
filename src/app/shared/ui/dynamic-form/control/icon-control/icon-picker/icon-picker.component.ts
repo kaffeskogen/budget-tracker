@@ -2,12 +2,14 @@ import { AfterViewInit, Component, ElementRef, ViewChild, ViewContainerRef, comp
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Observable, ReplaySubject, Subject, debounce, distinctUntilChanged, fromEvent, map, takeUntil, tap, timer } from 'rxjs';
 import { IconComponents } from 'src/app/shared/icons';
+import { IconComponent } from '../../../../../icons/icon/icon.component';
+import { NgFor, NgIf } from '@angular/common';
 
 type IconName = keyof typeof IconComponents;
 
 @Component({
-  selector: 'app-icon-picker',
-  template: `
+    selector: 'app-icon-picker',
+    template: `
   <div class="h-[200px] w-[300px] bg-white overflow-auto block">
     <input class="app-input w-[260px]"
         placeholder="Search icon"
@@ -21,7 +23,9 @@ type IconName = keyof typeof IconComponents;
     </div>
     <div class="p-2" *ngIf="showNoResultsText()"><i>No results</i></div>
   </div>
-  `
+  `,
+    standalone: true,
+    imports: [NgFor, IconComponent, NgIf]
 })
 export class IconPickerComponent implements AfterViewInit {
 

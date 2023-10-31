@@ -1,10 +1,13 @@
 import { Component, Input, OnChanges, computed, inject, signal } from '@angular/core';
 import { Group } from 'src/app/shared/interfaces/Group';
-import { style, transition, trigger, animate } from '@angular/animations';
 import { TransactionGroupsService } from 'src/app/shared/data-access/transaction-groups.service';
 import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
 import { Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CurrencyFormattedPipe } from '../../shared/pipes/currency-formatted.pipe';
+import { IconComponent } from '../../shared/icons/icon/icon.component';
+import { RouterLink } from '@angular/router';
+import { NgIf, NgStyle, NgFor } from '@angular/common';
 
 export interface TransactionsGroupState {
   groupId: string | null;
@@ -14,37 +17,11 @@ export interface TransactionsGroupState {
 }
 
 @Component({
-  selector: 'app-transactions-group',
-  templateUrl: './transactions-group.component.html',
-  styleUrls: ['./transactions-group.component.scss'],
-  animations: [
-    trigger(
-      'outAnimation',
-      [
-        transition(
-          ':leave',
-          [
-            style({ opacity: 1 }),
-            animate('0.25s ease-in',
-              style({ opacity: 0 }))
-          ]
-        )
-      ]
-    ),
-    trigger(
-      'inAnimation',
-      [
-        transition(
-          ':enter',
-          [
-            style({ opacity: 0 }),
-            animate('0.25s ease-out',
-              style({ opacity: 1 }))
-          ]
-        )
-      ]
-    )
-  ]
+    selector: 'app-transactions-group',
+    templateUrl: './transactions-group.component.html',
+    styleUrls: ['./transactions-group.component.scss'],
+    standalone: true,
+    imports: [NgIf, NgStyle, NgFor, RouterLink, IconComponent, CurrencyFormattedPipe]
 })
 export class TransactionsGroupComponent implements OnChanges {
   groupsService = inject(TransactionGroupsService);

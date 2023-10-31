@@ -1,6 +1,7 @@
-import { Component } from '@angular/core'; @Component({
-  selector: 'app-header',
-  template: `
+import { Component } from '@angular/core';
+import { OutlineIconsModule } from '@dimaslz/ng-heroicons'; @Component({
+    selector: 'app-header',
+    template: `
   <div class="flex place-content-between items-center mb-4">
     <div class="flex items-center">
       <div class="rounded-full w-12 h-12 bg-amber-500 mr-4"></div>
@@ -13,7 +14,9 @@ import { Component } from '@angular/core'; @Component({
       <cog-6-tooth-outline-icon [size]="18"></cog-6-tooth-outline-icon>
     </button>
   </div>
-  `
+  `,
+    standalone: true,
+    imports: [OutlineIconsModule]
 })
 export class HeaderComponent {
 

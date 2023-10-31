@@ -5,7 +5,8 @@ interface TableRowTemplateContext<TItem extends object> {
 }
 
 @Directive({
-  selector: 'ng-template[appTableRow]',
+    selector: 'ng-template[appTableRow]',
+    standalone: true,
 })
 export class TableRowTemplateDirective<TItem extends object> {
   @Input('appTableRow') data!: TItem[];

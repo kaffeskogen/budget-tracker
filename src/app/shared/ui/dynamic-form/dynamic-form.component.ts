@@ -1,12 +1,14 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { JsonForm } from './models/models';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DynamicControlComponent } from './control/dynamic-control.component';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-  selector: 'app-dynamic-form',
-  template: `
+    selector: 'app-dynamic-form',
+    template: `
   <form *ngIf="formGroup && formControls" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <h2 class="text-xl mt-2 mb-4 font-semibold">{{title}}</h2>
     <app-dynamic-control
@@ -21,7 +23,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         <button type="submit" class="rounded px-4 py-2 mt-4 border bg-sky-700 hover:bg-sky-800 text-white">Save</button>
       </div>
   </form>
-`
+`,
+    standalone: true,
+    imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, DynamicControlComponent]
 })
 export class DynamicFormComponent implements OnInit {
   @Input() form!: JsonForm;

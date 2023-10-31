@@ -2,7 +2,8 @@ import { Pipe, PipeTransform, inject } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 
 @Pipe({
-  name: 'currencyFormatted'
+    name: 'currencyFormatted',
+    standalone: true
 })
 export class CurrencyFormattedPipe extends CurrencyPipe implements PipeTransform {
   override transform(value: any): any {

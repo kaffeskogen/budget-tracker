@@ -7,9 +7,18 @@ const routes: Routes = [
   {
     path: '', component: HomeComponent,
     children: [
-      { path: 'new', component: TransactionComponent },
-      { path: 'edit', redirectTo: '' },
-      { path: 'edit/:transactionId', component: TransactionComponent }
+      {
+        path: 'new',
+        component: TransactionComponent
+      },
+      {
+        path: 'edit',
+        redirectTo: ''
+      },
+      {
+        path: 'edit/:transactionId',
+        component: TransactionComponent
+      }
     ]
   },
 ];

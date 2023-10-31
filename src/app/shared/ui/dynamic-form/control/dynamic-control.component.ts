@@ -4,19 +4,20 @@ import { JsonFormControlFactory } from '../utils/json-form-control-factory';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-dynamic-control',
-  template: `
+    selector: 'app-dynamic-control',
+    template: `
   <label class="flex flex-col mt-4">
     <small class="ml-4">{{control.name}}</small>
     <ng-container #vc></ng-container>
   </label>`,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DynamicControlComponent),
-      multi: true
-    }
-  ]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => DynamicControlComponent),
+            multi: true
+        }
+    ],
+    standalone: true
 })
 export class DynamicControlComponent implements ControlValueAccessor {
 

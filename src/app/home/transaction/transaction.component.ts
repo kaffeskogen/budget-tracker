@@ -1,4 +1,4 @@
-import { Component, Signal, computed, inject, signal } from '@angular/core';
+import { Component, HostBinding, Signal, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import formJson from './transaction.form.json'
 import { GroupChoiceComponent } from './controls/group-choice.component';
@@ -8,10 +8,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
 import { JsonForm } from 'src/app/shared/ui/dynamic-form/models/models';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { DynamicFormComponent } from '../../shared/ui/dynamic-form/dynamic-form.component';
+import { NgIf } from '@angular/common';
+import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
 
 @Component({
-  selector: 'new-transaction',
-  template: `
+    selector: 'new-transaction',
+    template: `
   <app-dialog (closeDialog)="closeDialog()">
     <ng-container>
 
@@ -27,7 +30,9 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
     </ng-container>
   </app-dialog>
-  `
+  `,
+    standalone: true,
+    imports: [DialogComponent, NgIf, DynamicFormComponent]
 })
 export class TransactionComponent {
 

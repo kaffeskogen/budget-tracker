@@ -3,12 +3,12 @@ import { ControlValueAccessor } from '@angular/forms';
 
 
 @Component({
-  selector: 'app-notimplemented-control',
-  template: `
+    selector: 'app-notimplemented-control',
+    template: `
     <pre class="px-2 py-4 text-red-700">Control of type \`{{controlType}}\` is not implemented</pre>
   `,
-  styles: [
-  ]
+    styles: [],
+    standalone: true
 })
 export class NotimplementedControlComponent implements ControlValueAccessor {
   @Input() controlType: string = "";

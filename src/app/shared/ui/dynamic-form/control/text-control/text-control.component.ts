@@ -1,22 +1,24 @@
 import { Component, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-text-control',
-  template: `
+    selector: 'app-text-control',
+    template: `
       <input class="app-input"
         [ngModel]="value"
         (ngModelChange)="onValueChange($event)"
         (blur)="onInputBlurred()"
         [disabled]="disabled">
     `,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TextControlComponent),
-      multi: true
-    }
-  ]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => TextControlComponent),
+            multi: true
+        }
+    ],
+    standalone: true,
+    imports: [FormsModule]
 })
 export class TextControlComponent implements ControlValueAccessor {
 

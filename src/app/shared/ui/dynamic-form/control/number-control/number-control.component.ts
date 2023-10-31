@@ -3,8 +3,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NumberParser } from '../../utils/number-formatting';
 
 @Component({
-  selector: 'app-number-control',
-  template: `
+    selector: 'app-number-control',
+    template: `
       <div class="flex">
         <input class="app-input with-suffix"
           style="border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 0;"
@@ -18,13 +18,14 @@ import { NumberParser } from '../../utils/number-formatting';
         </div>
       </div>
     `,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => NumberControlComponent),
-      multi: true
-    }
-  ]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => NumberControlComponent),
+            multi: true
+        }
+    ],
+    standalone: true
 })
 export class NumberControlComponent implements ControlValueAccessor {
 

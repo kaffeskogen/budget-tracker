@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-edit-transaction',
-  template: `
+    selector: 'app-edit-transaction',
+    template: `
     <p>
       edit-transaction works!
     </p>
   `,
-  styles: [
-  ]
+    styles: [],
+    standalone: true
 })
 export class EditTransactionComponent {
 

@@ -5,7 +5,8 @@ interface TableHeaderTemplateContext<TItem extends object> {
 }
 
 @Directive({
-  selector: 'ng-template[appTableHeader]',
+    selector: 'ng-template[appTableHeader]',
+    standalone: true,
 })
 export class TableHeaderTemplateDirective<TItem extends object> {
   @Input('appTableHeader') data!: TItem[] | '';
