@@ -6,13 +6,14 @@ import { TransactionsGroupComponent } from './transactions-group/transactions-gr
 import { NgIf, NgFor } from '@angular/common';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { HeaderComponent } from './header/header.component';
+import { SidenavComponent } from '../sidenav/sidenav.component';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet]
+    imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent]
 })
 export class HomeComponent {
 

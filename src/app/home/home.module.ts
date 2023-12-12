@@ -1,5 +1,4 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
@@ -15,25 +14,27 @@ import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../shared/icons/icon/icon.component';
 import { DialogComponent } from '../shared/ui/dialog/dialog.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
+import { SidenavComponent } from '../sidenav/sidenav.component';
 
 
 @NgModule({
     imports: [
-    CommonModule,
-    HomeRoutingModule,
-    FormsModule,
-    IconComponent,
-    DialogComponent,
-    HomeComponent,
-    HeaderComponent,
-    CurrentBalanceComponent,
-    TransactionsGroupComponent,
-    TransactionComponent,
-    EditTransactionComponent,
-    GroupChoiceComponent
-],
+        CommonModule,
+        HomeRoutingModule,
+        FormsModule,
+        IconComponent,
+        DialogComponent,
+        HomeComponent,
+        HeaderComponent,
+        CurrentBalanceComponent,
+        TransactionsGroupComponent,
+        TransactionComponent,
+        EditTransactionComponent,
+        GroupChoiceComponent
+    ],
     providers: [
-    // { provide: LOCALE_ID, useValue: 'sv' }
+        // { provide: LOCALE_ID, useValue: 'sv' }
     ]
 })
 export class HomeModule { }
