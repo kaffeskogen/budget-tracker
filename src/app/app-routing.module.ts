@@ -3,6 +3,8 @@ import {
   RouterModule,
   Routes
 } from '@angular/router';
+import { TransactionComponent } from './home/transaction/transaction.component';
+import { GroupComponent } from './group/group.component';
 
 const routes: Routes = [
   {
@@ -11,7 +13,17 @@ const routes: Routes = [
   },
   {
     path: 'g/:id',
-    loadComponent: () => import('./group/group.component').then(c => c.GroupComponent)
+    component: GroupComponent,
+    children: [
+      {
+        path: 'new',
+        component: TransactionComponent
+      },
+      {
+        path: ':transactionId',
+        component: TransactionComponent
+      }
+    ]
   }
 ];
 
