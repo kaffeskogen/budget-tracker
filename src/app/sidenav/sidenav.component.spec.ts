@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidenavComponent } from './sidenav.component';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
-import { MOCK_GROUPS } from '../shared/mocks/groups';
 import { By } from '@angular/platform-browser';
 
 describe('SidenavComponent', () => {
@@ -16,7 +15,23 @@ describe('SidenavComponent', () => {
         {
           provide: TransactionGroupsService,
           useValue: {
-            groups: jasmine.createSpy().and.returnValue(MOCK_GROUPS),
+            groups: jasmine.createSpy().and.returnValue([
+              {
+                id: '1',
+                name: 'Group 1',
+                icon: 'icon 1',
+              },
+              {
+                id: '2',
+                name: 'Group 2',
+                icon: 'icon 2',
+              },
+              {
+                id: '3',
+                name: 'Group 3',
+                icon: 'icon 3',
+              },
+            ]),
             add$: {
               next: jasmine.createSpy(),
             },
@@ -46,7 +61,7 @@ describe('SidenavComponent', () => {
   it('should check if there are links equal to MOCK_GROUPS', () => {
     fixture.detectChanges();
     const links = fixture.debugElement.queryAll(By.css('[data-qa="link"]'));
-    expect(links.length).toBe(MOCK_GROUPS.length);
+    expect(links.length).toBe(3);
   });
   
 });

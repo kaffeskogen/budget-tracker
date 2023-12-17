@@ -7,9 +7,12 @@ import { TransactionGroupsService } from '../shared/data-access/transaction-grou
   standalone: true,
   imports: [CommonModule],
   template: `
-    <p>
-        <a href="{{item.id}}" data-qa="link" *ngFor="let item of service.groups()">Home</a>
-    </p>
+    <a href="{{item.id}}"
+      data-qa="link"
+      *ngFor="let item of service.groups()"
+      class="block px-4 py-3 hover:bg-slate-300 font-semibold">
+        Home
+    </a>
   `,
   styles: [
   ]

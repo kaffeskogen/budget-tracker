@@ -1,3 +1,11 @@
-:host {
-    @apply block mt-8;
+.sidenav {
+    // @apply block flex-shrink-0 min-h-screen w-[200px] bg-white overflow-hidden shadow pt-2 fixed;
+    @apply bg-white overflow-hidden shadow w-full grid gap-x-0 gap-y-2 fixed bottom-0 z-10 px-4;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+
+    @apply sm:bottom-auto sm:block sm:w-[200px] sm:h-full;
+}
+
+.wrapper {
+    @apply sm:ml-[200px];
 }
