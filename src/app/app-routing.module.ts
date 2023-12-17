@@ -8,6 +8,10 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
+  },
+  {
+    path: 'g/:id',
+    loadComponent: () => import('./group/group.component').then(c => c.GroupComponent)
   }
 ];
 

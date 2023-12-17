@@ -1,9 +1,8 @@
 .sidenav {
     // @apply block flex-shrink-0 min-h-screen w-[200px] bg-white overflow-hidden shadow pt-2 fixed;
-    @apply bg-white overflow-hidden shadow w-full grid gap-x-0 gap-y-2 fixed bottom-0 z-10 px-4;
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    @apply flex bg-white shadow w-full fixed bottom-0 z-10 px-8 max-w-full overflow-y-auto;
 
-    @apply sm:bottom-auto sm:block sm:w-[200px] sm:h-full;
+    @apply sm:bottom-auto sm:block sm:w-[200px] sm:h-full sm:px-0 sm:pt-8;
 }
 
 .wrapper {

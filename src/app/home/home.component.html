@@ -1,7 +1,6 @@
-<div>
-    <app-header></app-header>
-    <app-current-balance></app-current-balance>
-</div>
+
+<app-header></app-header>
+<app-current-balance></app-current-balance>
 
 <ng-container *ngIf="service.status() === 'error'">
     {{service.error()}}
