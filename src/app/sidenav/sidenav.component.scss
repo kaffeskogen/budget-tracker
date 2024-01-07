@@ -1,0 +1,8 @@
+.sidenav-item {
+    @apply block px-8 py-3 hover:bg-gray-100 font-semibold box-content;
+
+    &.active {
+        @apply bg-gray-100 border-blue-500 border-t-4 pt-2;
+        @apply sm:border-t-0 sm:border-l-4 sm:pt-3 sm:pl-7;
+    }
+}

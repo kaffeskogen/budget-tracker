@@ -8,21 +8,20 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <a routerLink="/" routerLinkActive="bg-slate-200" [routerLinkActiveOptions]="{exact: true}"
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
       data-qa="link"
-      class="block px-8 py-4 hover:bg-slate-200 font-semibold box-border">
+      class="sidenav-item">
         Home
     </a>
-    <a [routerLink]="['g', item.id]" routerLinkActive="bg-slate-200"
+    <a [routerLink]="['g', item.id]" routerLinkActive="active"
       data-qa="link"
       *ngFor="let item of service.groups()"
-      [ngStyle]="{color: item.color}"
-      class="block px-8 py-4 hover:bg-slate-200 font-semibold box-border">
+      [ngStyle]="{color: item.color, borderColor: item.color}"
+      class="sidenav-item">
         {{item.name}}
     </a>
   `,
-  styles: [
-  ]
+  styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent {
   service = inject(TransactionGroupsService);

@@ -18,8 +18,8 @@ export interface TransactionsGroupState {
   standalone: true,
   imports: [NgIf, NgStyle, NgFor, RouterLink, IconComponent, CurrencyFormattedPipe, RouterModule],
   template: `
-    <div class="px-8 py-4">
-      <div class="pb-2 px-4 flex">
+    <div class="px-8 pt-8 pb-32">
+      <div class="p-4 flex">
           <div class="text-xl font-bold" [ngStyle]="{color: group()?.color ?? 'blue'}">
               {{group()?.name}}
           </div>
@@ -67,7 +67,7 @@ export class GroupComponent {
   status = computed(() => this.state().status);
   urlParams = toSignal(this.route.params);
   groupId = computed<string | undefined>(() => this.urlParams()?.['id']);
-  group = computed<Group | undefined>(() => this.groupsService.groups().find(g => g.id === this.groupId()));
-  transactions = computed(() => this.transactionsService.transactions().filter(t => t.groupId === this.groupId()));
+  group = computed<Group | undefined>(() => this.groupId() ? this.groupsService.groups().find(g => g.id === this.groupId()) : undefined);
+  transactions = computed(() => this.groupId() ? this.transactionsService.transactions().filter(t => t.groupId === this.groupId()): []);
 
 }
