@@ -10,7 +10,6 @@ import { NgIf, NgFor } from '@angular/common';
     selector: 'app-dynamic-form',
     template: `
   <form *ngIf="formGroup && formControls" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-    <h2 class="text-xl mt-2 mb-4 font-semibold">{{title}}</h2>
     <app-dynamic-control
       *ngFor="let control of form.controls"
       [controlOverrides]="controlOverrides"

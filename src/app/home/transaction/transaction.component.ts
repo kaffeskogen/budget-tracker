@@ -7,10 +7,12 @@ import { Transaction } from 'src/app/shared/interfaces/Transaction';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
 import { JsonForm } from 'src/app/shared/ui/dynamic-form/models/models';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { DynamicFormComponent } from '../../shared/ui/dynamic-form/dynamic-form.component';
 import { NgIf } from '@angular/common';
 import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
+import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
+import {CdkMenu, CdkMenuItem, CdkMenuTrigger} from '@angular/cdk/menu';
+import { ConnectionPositionPair } from '@angular/cdk/overlay';
 
 @Component({
     selector: 'new-transaction',
@@ -18,9 +20,23 @@ import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
   <app-dialog (closeDialog)="closeDialog()">
     <ng-container>
 
+
+      <div class="flex place-content-between items-center">
+        <h2 class="text-xl mt-2 mb-4 font-semibold">{{isNewTransaction() ? 'New transaction' : 'Editing transaction'}}</h2>
+
+        <button [cdkMenuTriggerFor]="menu" [cdkMenuPosition]="menuPositions" *ngIf="!isNewTransaction()">
+          <ellipsis-horizontal-outline-icon />
+        </button>
+
+        <ng-template #menu>
+          <div class="flex flex-col bg-white rounded shadow-sm p-4" cdkMenu>
+            <button cdkMenuItem (click)="deleteTransaction()">Delete</button>
+          </div>
+        </ng-template>
+      </div>
+      
       <app-dynamic-form
         *ngIf="formJson"
-        [title]="isNewTransaction() ? 'New transaction' : 'Editing transaction'"
         [form]="formJson"
         [controlOverrides]="controlOverrides"
         [defaultValues]="transaction()"
@@ -32,7 +48,7 @@ import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
   </app-dialog>
   `,
     standalone: true,
-    imports: [DialogComponent, NgIf, DynamicFormComponent]
+    imports: [DialogComponent, NgIf, DynamicFormComponent, OutlineIconsModule, CdkMenuTrigger, CdkMenu, CdkMenuItem]
 })
 export class TransactionComponent {
 
@@ -43,6 +59,13 @@ export class TransactionComponent {
   router = inject(Router);
 
   formJson = formJson as JsonForm;
+
+  menuPositions = [
+    new ConnectionPositionPair(
+      { originX: 'end', originY: 'bottom' },
+      { overlayX: 'end', overlayY: 'top' }
+    ),
+  ];
 
   controlOverrides = { group: GroupChoiceComponent };
 
@@ -63,6 +86,15 @@ export class TransactionComponent {
     const thisTransaction = allTransactions?.find(t => t.id === routerParam);
     return thisTransaction || this.defaultNewTransaction();
   });
+
+  public deleteTransaction() {
+    const transaction = this.transaction();
+    if (!('id' in transaction)) {
+      return;
+    }
+    this.service.remove$.next(transaction);
+    this.closeDialog();
+  }
 
   public closeDialog(): void {
     this.router.navigate(['..'], { relativeTo: this.route });

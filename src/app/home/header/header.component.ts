@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { OutlineIconsModule } from '@dimaslz/ng-heroicons'; @Component({
+import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
+
+@Component({
     selector: 'app-header',
     template: `
   <div class="flex place-content-between items-center">
