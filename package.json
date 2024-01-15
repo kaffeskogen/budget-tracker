@@ -13,7 +13,10 @@
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
-    "posttest": "npm.cmd run lint"
+    "posttest": "npm.cmd run lint",
+    "e2e": "playwright test --project=chromium",
+    "e2e:ui": "playwright test --ui",
+    "e2e:debug": "playwright test --project chromium --headed"
   },
   "private": true,
   "dependencies": {
@@ -35,6 +38,7 @@
     "@angular-devkit/build-angular": "^17.0.6",
     "@angular/cli": "~17.0.6",
     "@angular/compiler-cli": "^17.0.6",
+    "@playwright/test": "^1.40.1",
     "@types/jasmine": "~4.3.0",
     "@types/node": "^14.11.2",
     "autoprefixer": "^10.4.14",

@@ -18,12 +18,24 @@ export const LOCAL_STORAGE = new InjectionToken<Storage>(
   }
 );
 
+export const IN_MEMORY = new InjectionToken<Storage>(
+  'in memory storage object',
+  {
+    providedIn: 'root',
+    factory: () => {
+      const storage: {[key: string]: string} = {};
+      return { getItem: (name: string) => storage[name], setItem: (name: string, value: string) => { storage[name] = value; } } as Storage;
+    }
+  }
+);
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
 
-  storage = inject(LOCAL_STORAGE);
+  storage = inject(IN_MEMORY);
 
   loadTransactions(): Observable<Transaction[]> {
     const transactions = this.storage.getItem('transactions');

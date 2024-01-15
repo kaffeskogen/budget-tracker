@@ -28,14 +28,14 @@ export interface TransactionsGroupState {
             {{group()?.name}}
         </div>
 
-        <button [cdkMenuTriggerFor]="menu">
+        <button [cdkMenuTriggerFor]="menu" data-testid="group-menu">
           <ellipsis-horizontal-outline-icon />
         </button>
 
         <ng-template #menu>
           <div class="flex flex-col bg-white rounded shadow" cdkMenu>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm">Rename group</button>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" (click)="deleteGroup()">Delete group</button>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-testid="rename-group">Rename group</button>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-testid="delete-group" (click)="deleteGroup()">Delete group</button>
           </div>
         </ng-template>
 
@@ -95,11 +95,6 @@ export class GroupComponent {
     if (!group)
       return;
     this.groupsService.remove$.next(group);
-    const lastGroup = this.groupsService.groups().slice(-1);
-    if (!lastGroup.length) {
-      this.router.navigate(['new']);
-    } else {
-      this.router.navigate(['group', lastGroup[0].id]);
-    }
+    this.router.navigate(['']);
   }
 }

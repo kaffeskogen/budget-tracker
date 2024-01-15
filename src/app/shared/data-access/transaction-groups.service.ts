@@ -68,20 +68,20 @@ export class TransactionGroupsService {
             .subscribe((update) =>
                 this.state.update((state) => ({
                     ...state,
-                    transactions: state.groups.map((item) =>
+                    groups: state.groups.map((item) =>
                         item.id === update.id ? { ...update } : item
                     ),
-                }))
+                } satisfies TransactionGroupsServiceState))
             );
 
         this.remove$
             .pipe(takeUntilDestroyed())
-            .subscribe((group) =>
+            .subscribe((group) => 
                 this.state.update((state) => ({
                     ...state,
-                    transactions: state.groups.filter((item) => item.id !== group.id),
-                }))
-            );
+                    groups: state.groups.filter((item) => item.id !== group.id),
+                } satisfies TransactionGroupsServiceState))
+        );
 
 
         effect(() => {
