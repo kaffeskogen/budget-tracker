@@ -1,4 +1,4 @@
-import { Component, HostBinding, Signal, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import formJson from './transaction.form.json'
 import { GroupChoiceComponent } from './controls/group-choice.component';
@@ -11,15 +11,16 @@ import { DynamicFormComponent } from '../../shared/ui/dynamic-form/dynamic-form.
 import { NgIf } from '@angular/common';
 import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
 import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
-import {CdkMenu, CdkMenuItem, CdkMenuTrigger} from '@angular/cdk/menu';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 
 @Component({
     selector: 'new-transaction',
+    standalone: true,
+    imports: [DialogComponent, NgIf, DynamicFormComponent, OutlineIconsModule, CdkMenuTrigger, CdkMenu, CdkMenuItem],
     template: `
   <app-dialog (closeDialog)="closeDialog()">
     <ng-container>
-
 
       <div class="flex place-content-between items-center">
         <h2 class="text-xl mt-2 mb-4 font-semibold">{{isNewTransaction() ? 'New transaction' : 'Editing transaction'}}</h2>
@@ -46,9 +47,7 @@ import { ConnectionPositionPair } from '@angular/cdk/overlay';
 
     </ng-container>
   </app-dialog>
-  `,
-    standalone: true,
-    imports: [DialogComponent, NgIf, DynamicFormComponent, OutlineIconsModule, CdkMenuTrigger, CdkMenu, CdkMenuItem]
+  `
 })
 export class TransactionComponent {
 
@@ -80,16 +79,16 @@ export class TransactionComponent {
   params = toSignal(this.route.params);
   routerParam = computed<string>(() => this.params()?.['transactionId']);
   isNewTransaction = computed<boolean>(() => !this.routerParam());
-  transaction: Signal<Transaction | Omit<Transaction, 'id'>> = computed(() => {
-    const allTransactions = this.service.transactions();
-    const routerParam = this.routerParam();
-    const thisTransaction = allTransactions?.find(t => t.id === routerParam);
-    return thisTransaction || this.defaultNewTransaction();
-  });
+  transaction = computed<Transaction | Omit<Transaction, 'id'> | undefined>(
+    () => this.isNewTransaction() ?
+      this.defaultNewTransaction() :
+      this.service.transaction(this.routerParam())()
+  );
+  notfound = computed<boolean>(() => !this.isNewTransaction() && !this.transaction());
 
   public deleteTransaction() {
     const transaction = this.transaction();
-    if (!('id' in transaction)) {
+    if (!transaction || !('id' in transaction)) {
       return;
     }
     this.service.remove$.next(transaction);
@@ -102,8 +101,13 @@ export class TransactionComponent {
 
   public onSave(formValue: object) {
 
+    const currentValue = this.transaction();
+    if (!currentValue) {
+      return;
+    }
+
     const transaction: Transaction | Omit<Transaction, 'id'> = {
-      ...this.transaction(),
+      ...currentValue,
       ...formValue
     };
 

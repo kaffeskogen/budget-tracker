@@ -1,4 +1,4 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, effect, inject, signal } from '@angular/core';
 import { Subject, of } from "rxjs";
 import { MOCK_TRANSACTIONS } from '../mocks/transactions';
 import { MOCK_GROUPS } from '../mocks/groups';
@@ -36,6 +36,10 @@ export class TransactionsService {
     transactions = computed(() => this.state().transactions);
     status = computed(() => this.state().status);
     error = computed(() => this.state().error);
+
+    transaction(id: string): Signal<Transaction | undefined> {
+        return computed(() => this.transactions()?.find((t) => t.id === id));
+    }
 
     constructor() {
 

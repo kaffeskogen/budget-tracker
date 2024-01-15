@@ -1,12 +1,15 @@
 import { NgIf, NgStyle, NgFor } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { IconComponent } from '../shared/icons/icon/icon.component';
 import { CurrencyFormattedPipe } from '../shared/pipes/currency-formatted.pipe';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
 import { TransactionsService } from '../shared/data-access/transactions.service';
 import { Group } from '../shared/interfaces/Group';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { CdkMenuTrigger, CdkMenu, CdkMenuItem } from '@angular/cdk/menu';
+import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
+import { GroupSettingsComponent } from './ui/group-settings/group-settings.component';
 
 export interface TransactionsGroupState {
   error: string | null;
@@ -16,13 +19,26 @@ export interface TransactionsGroupState {
 @Component({
   selector: 'app-group',
   standalone: true,
-  imports: [NgIf, NgStyle, NgFor, RouterLink, IconComponent, CurrencyFormattedPipe, RouterModule],
+  imports: [NgIf, NgStyle, NgFor, RouterLink, IconComponent, CurrencyFormattedPipe, RouterModule, CdkMenuTrigger, CdkMenu, CdkMenuItem, OutlineIconsModule, GroupSettingsComponent],
   template: `
-    <div class="px-8 pt-8 pb-32">
-      <div class="p-4 flex">
-          <div class="text-xl font-bold" [ngStyle]="{color: group()?.color ?? 'blue'}">
-              {{group()?.name}}
+    <div class="px-8 pt-8 pb-32 ">
+      <div class="p-4 flex items-end">
+
+        <div class="text-xl font-bold mr-2" [ngStyle]="{color: group()?.color ?? 'blue'}">
+            {{group()?.name}}
+        </div>
+
+        <button [cdkMenuTriggerFor]="menu">
+          <ellipsis-horizontal-outline-icon />
+        </button>
+
+        <ng-template #menu>
+          <div class="flex flex-col bg-white rounded shadow" cdkMenu>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm">Rename group</button>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" (click)="deleteGroup()">Delete group</button>
           </div>
+        </ng-template>
+
       </div>
 
       <a [routerLink]="transaction.id" *ngFor="let transaction of transactions()"
@@ -57,17 +73,33 @@ export class GroupComponent {
   groupsService = inject(TransactionGroupsService);
   transactionsService = inject(TransactionsService);
   route = inject(ActivatedRoute);
+  router = inject(Router);
 
   private state = signal<TransactionsGroupState>({
     error: null,
     status: 'loading'
   });
 
+  
+
   error = computed(() => this.state().error);
   status = computed(() => this.state().status);
   urlParams = toSignal(this.route.params);
   groupId = computed<string | undefined>(() => this.urlParams()?.['id']);
   group = computed<Group | undefined>(() => this.groupId() ? this.groupsService.groups().find(g => g.id === this.groupId()) : undefined);
-  transactions = computed(() => this.groupId() ? this.transactionsService.transactions().filter(t => t.groupId === this.groupId()): []);
+  transactions = computed(() => this.groupId() ? this.transactionsService.transactions().filter(t => t.groupId === this.groupId()) : []);
 
+  
+  deleteGroup() {
+    const group = this.group();
+    if (!group)
+      return;
+    this.groupsService.remove$.next(group);
+    const lastGroup = this.groupsService.groups().slice(-1);
+    if (!lastGroup.length) {
+      this.router.navigate(['new']);
+    } else {
+      this.router.navigate(['group', lastGroup[0].id]);
+    }
+  }
 }
