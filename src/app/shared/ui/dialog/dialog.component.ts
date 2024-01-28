@@ -1,7 +1,7 @@
 import { Overlay, OverlayConfig, OverlayModule } from '@angular/cdk/overlay';
 import { CdkPortal, PortalModule } from '@angular/cdk/portal';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, computed, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
@@ -21,7 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     PortalModule, OverlayModule
   ]
 })
-export class DialogComponent implements OnInit {
+export class DialogComponent implements OnInit, OnDestroy {
 
   @ViewChild(CdkPortal, { static: true }) public readonly portal?: CdkPortal;
 

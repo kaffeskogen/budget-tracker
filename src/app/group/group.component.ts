@@ -80,15 +80,12 @@ export class GroupComponent {
     status: 'loading'
   });
 
-  
-
   error = computed(() => this.state().error);
   status = computed(() => this.state().status);
   urlParams = toSignal(this.route.params);
-  groupId = computed<string | undefined>(() => this.urlParams()?.['id']);
+  groupId = computed<string | undefined>(() => this.urlParams()?.['groupId']);
   group = computed<Group | undefined>(() => this.groupId() ? this.groupsService.groups().find(g => g.id === this.groupId()) : undefined);
   transactions = computed(() => this.groupId() ? this.transactionsService.transactions().filter(t => t.groupId === this.groupId()) : []);
-
   
   deleteGroup() {
     const group = this.group();

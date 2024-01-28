@@ -1,8 +1,9 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, effect, inject, signal } from '@angular/core';
 import { Subject } from "rxjs";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
 import { Group } from '../interfaces/Group';
+import { Transaction } from '../interfaces/Transaction';
 
 export interface TransactionGroupsServiceState {
     groups: Group[];
@@ -33,6 +34,10 @@ export class TransactionGroupsService {
     groups = computed(() => this.state().groups);
     status = computed(() => this.state().status);
     error = computed(() => this.state().error);
+
+    group(id: string): Signal<Group | undefined> {
+        return computed(() => this.groups()?.find((t) => t.id === id));
+    }
 
     constructor() {
 
@@ -86,6 +91,7 @@ export class TransactionGroupsService {
 
         effect(() => {
             if (this.status() === 'success') {
+                console.log('Updating groups', this.groups());
                 this.storageService.saveGroups(this.groups());
             }
         });
