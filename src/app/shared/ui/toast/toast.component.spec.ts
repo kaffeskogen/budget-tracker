@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ToastComponent } from './toast.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { By } from '@angular/platform-browser';
 
 describe('ToastComponent', () => {
   let component: ToastComponent;
@@ -8,7 +10,7 @@ describe('ToastComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ToastComponent]
+      imports: [ToastComponent, NoopAnimationsModule]
     })
     .compileComponents();
     
@@ -20,4 +22,13 @@ describe('ToastComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display a message', () => {
+    component.service.add({ content: 'Hello World', action: { click: () => {}, label: 'OK' } });
+    fixture.detectChanges();
+    
+    const messageContainer = fixture.debugElement.query(By.css('[data-qa="message-content"]'));
+    expect(messageContainer.nativeElement.textContent).toContain('Hello World');
+  });
+
 });

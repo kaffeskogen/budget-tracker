@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GroupComponent } from './group.component';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('GroupComponent', () => {
   let component: GroupComponent;
@@ -8,7 +10,15 @@ describe('GroupComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GroupComponent]
+      imports: [GroupComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({groupId: 'income'})
+          }
+        }
+      ]
     })
     .compileComponents();
     

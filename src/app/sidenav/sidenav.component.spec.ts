@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidenavComponent } from './sidenav.component';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
 import { By } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('SidenavComponent', () => {
   let component: SidenavComponent;
@@ -41,6 +43,12 @@ describe('SidenavComponent', () => {
             edit$: {
               next: jasmine.createSpy(),
             },
+          }
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of ({groupId: 'income'})
           }
         }
       ]

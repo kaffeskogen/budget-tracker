@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-      data-qa="link"
       class="sidenav-item">
         Home
     </a>
