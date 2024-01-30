@@ -24,24 +24,25 @@ export interface TransactionsGroupState {
     <div class="px-8 pt-8 pb-32 ">
       <div class="p-4 flex items-end">
 
-        <div class="text-xl font-bold mr-2" [ngStyle]="{color: group()?.color ?? 'blue'}">
+        <div class="text-xl font-bold mr-2" [ngStyle]="{color: group()?.color ?? 'blue'}" data-qa="group-name">
             {{group()?.name}}
         </div>
 
-        <button [cdkMenuTriggerFor]="menu" data-testid="group-menu">
+        <button [cdkMenuTriggerFor]="menu" data-qa="group-menu">
           <ellipsis-horizontal-outline-icon />
         </button>
 
         <ng-template #menu>
           <div class="flex flex-col bg-white rounded shadow" cdkMenu>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-testid="rename-group">Rename group</button>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-testid="delete-group" (click)="deleteGroup()">Delete group</button>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-qa="rename-group">Rename group</button>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-qa="delete-group" (click)="deleteGroup()">Delete group</button>
           </div>
         </ng-template>
 
       </div>
 
       <a [routerLink]="transaction.id" *ngFor="let transaction of transactions()"
+          data-qa="transaction-item"
           class="rounded bg-slate-50 mb-1 flex whitespace-nowrap py-2 px-4 shadow items-center">
           <app-icon [iconName]="transaction.icon" [color]="group()?.color ?? 'blue'" class="mr-2"></app-icon>
           <div class="flex-1">

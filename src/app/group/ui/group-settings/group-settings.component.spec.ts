@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GroupSettingsComponent } from './group-settings.component';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { TransactionGroupsService } from 'src/app/shared/data-access/transaction-groups.service';
 
 describe('GroupSettingsComponent', () => {
   let component: GroupSettingsComponent;
@@ -17,6 +18,13 @@ describe('GroupSettingsComponent', () => {
           useValue: {
             params: of({groupId: 'income'})
           }
+        },
+        {
+          provide: TransactionGroupsService,
+          useValue: {
+            group: (name: string) => () => ({id: 'income', name: 'Income', color: 'blue'}),
+            $edit: () => undefined
+          }
         }
       ]
     })
@@ -29,5 +37,16 @@ describe('GroupSettingsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it(`should set default value of group name to 'Income'`, () => {
+    expect(component.form()?.controls[0].defaultValue).toBe('Income');
+  });
+
+  it('should rename group', () => {
+    const service = TestBed.inject(TransactionGroupsService);
+    const spy = spyOn(service.edit$, 'next');
+    component.onSave({name: 'New name'});
+    expect(spy).toHaveBeenCalledWith({id: 'income', name: 'New name', color: 'blue'} as any);
   });
 });
