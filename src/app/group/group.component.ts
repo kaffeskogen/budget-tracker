@@ -28,14 +28,14 @@ export interface TransactionsGroupState {
             {{group()?.name}}
         </div>
 
-        <button [cdkMenuTriggerFor]="menu" data-qa="group-menu">
+        <button [cdkMenuTriggerFor]="menu" data-qa="group-menu" [cdkMenuTriggerData]="{  }">
           <ellipsis-horizontal-outline-icon />
         </button>
 
         <ng-template #menu>
           <div class="flex flex-col bg-white rounded shadow" cdkMenu>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-qa="rename-group">Rename group</button>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm" data-qa="delete-group" (click)="deleteGroup()">Delete group</button>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm text-left" data-qa="rename-group">Rename group</button>
+            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm text-left" data-qa="delete-group" (click)="deleteGroup()">Delete group</button>
           </div>
         </ng-template>
 

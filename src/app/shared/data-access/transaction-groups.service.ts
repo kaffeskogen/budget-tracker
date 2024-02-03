@@ -91,7 +91,6 @@ export class TransactionGroupsService {
 
         effect(() => {
             if (this.status() === 'success') {
-                console.log('Updating groups', this.groups());
                 this.storageService.saveGroups(this.groups());
             }
         });

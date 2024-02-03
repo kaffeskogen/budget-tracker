@@ -86,7 +86,6 @@ export class TransactionsService {
 
         effect(() => {
             if (this.status() === 'success') {
-                console.log('updating transactions', this.transactions());
                 this.storageService.saveTransactions(this.transactions());
             }
         });
