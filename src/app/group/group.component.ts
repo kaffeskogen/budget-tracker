@@ -1,5 +1,5 @@
 import { NgIf, NgStyle, NgFor } from '@angular/common';
-import { Component, Input, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { IconComponent } from '../shared/icons/icon/icon.component';
 import { CurrencyFormattedPipe } from '../shared/pipes/currency-formatted.pipe';
@@ -10,6 +10,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { CdkMenuTrigger, CdkMenu, CdkMenuItem } from '@angular/cdk/menu';
 import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
 import { GroupSettingsComponent } from './ui/group-settings/group-settings.component';
+import * as colors from 'tailwindcss/colors';
 
 export interface TransactionsGroupState {
   error: string | null;
@@ -33,9 +34,23 @@ export interface TransactionsGroupState {
         </button>
 
         <ng-template #menu>
-          <div class="flex flex-col bg-white rounded shadow" cdkMenu>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm text-left" data-qa="rename-group">Rename group</button>
-            <button cdkMenuItem [routerLink]="['settings']" class="px-4 py-2 hover:bg-gray-100 text-sm text-left" data-qa="delete-group" (click)="deleteGroup()">Delete group</button>
+          <div class="flex flex-col bg-white rounded shadow-lg border border-gray-200" cdkMenu>
+            <button
+              cdkMenuItem
+              [routerLink]="['settings']"
+              class="px-4 py-2 hover:bg-gray-100 text-sm text-left flex items-center"
+              data-qa="rename-group">
+              <app-icon iconName='Pencil' [color]="group()?.color ?? 'blue'" class="mr-2" [size]="16"></app-icon>
+              <span>Rename group</span>
+            </button>
+            <button
+              cdkMenuItem
+              class="px-4 py-2 hover:bg-gray-100 text-sm text-left flex items-center"
+              data-qa="delete-group"
+              (click)="deleteGroup()">
+                <app-icon iconName='Trash' [color]="colors.red['800']" class="mr-2" [size]="16"></app-icon>
+                <span>Delete group</span>
+              </button>
           </div>
         </ng-template>
 
@@ -76,6 +91,8 @@ export class GroupComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
 
+  colors = colors;
+  
   private state = signal<TransactionsGroupState>({
     error: null,
     status: 'loading'

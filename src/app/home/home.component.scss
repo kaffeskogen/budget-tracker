@@ -1,4 +1,4 @@
-:host {
-    @apply w-full grid gap-x-8 gap-y-4 px-8 py-8;
+.wrapper {
+    @apply w-full grid gap-x-8 gap-y-4 px-8 pt-8;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }

@@ -4,32 +4,27 @@ import * as colors from 'tailwindcss/colors';
 export const MOCK_GROUPS: Group[] = [
     {
         id: 'income',
-        name: 'Income',
-        icon: '🫰',
+        name: '🫰 Income',
         color: colors.green['700']
     },
     {
         id: 'planned',
-        name: 'Planned',
-        icon: '⌚',
+        name: '⌚ Planned',
         color: colors.sky['700']
     },
     {
         id: 'savings',
-        name: 'Savings',
-        icon: '💰',
+        name: '💰 Savings',
         color: colors.red['700']
     },
     {
         id: 'food',
-        name: 'Food',
-        icon: '🍕',
+        name: '🍕 Food',
         color: colors.blue['700']
     },
     {
         id: 'other',
-        name: 'Other',
-        icon: '💸',
+        name: '💸 Other',
         color: colors.yellow['700']
     }
 ];
