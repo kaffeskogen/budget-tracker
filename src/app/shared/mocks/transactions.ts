@@ -4,7 +4,7 @@ const transactions: Transaction[] = [
     {
         id: '1',
         icon: 'CurrencyEuro',
-        value: 50_000,
+        value: 20_000,
         groupId: 'income',
         title: 'Salary husband',
         category: 'Wage',
@@ -14,7 +14,7 @@ const transactions: Transaction[] = [
     {
         id: '2',
         icon: 'CurrencyEuro',
-        value: 50_000,
+        value: 20_000,
         title: 'Salary wife',
         category: 'Wage',
         groupId: 'income',
