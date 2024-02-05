@@ -11,9 +11,9 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
-    "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint",
+    "prepare": "tsc",
+    "pretest": "tsc",
+    "posttest": "gts lint",
     "e2e": "playwright test --project=chromium",
     "e2e:ui": "playwright test --ui",
     "e2e:debug": "playwright test --project chromium --headed"
