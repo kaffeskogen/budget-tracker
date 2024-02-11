@@ -63,7 +63,7 @@ const transactions: Transaction[] = [
         id: '7',
         icon: 'EllipsisHorizontalCircle',
         value: -100.0,
-        estimation: 120.0,
+        budget: 120.0,
         title: 'Oil change',
         category: 'Transportation',
         groupId: 'planned',

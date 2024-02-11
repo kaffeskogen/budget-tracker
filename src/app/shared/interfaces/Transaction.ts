@@ -3,7 +3,7 @@ import { IconComponents } from "../icons";
 export interface Transaction {
     id: string;
     icon: keyof typeof IconComponents;
-    estimation?: number;
+    budget?: number;
     value?: number;
     title: string;
     category: string;
