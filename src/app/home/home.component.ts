@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
 import { RouterOutlet } from '@angular/router';
 import { trigger, transition, style, animate, state } from '@angular/animations';
@@ -8,6 +8,7 @@ import { CurrentBalanceComponent } from './current-balance/current-balance.compo
 import { HeaderComponent } from './header/header.component';
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { GraphComponent } from '../shared/ui/graph/graph.component';
+import { TransactionsService } from '../shared/data-access/transactions.service';
 
 @Component({
     selector: 'app-home',
@@ -19,21 +20,21 @@ import { GraphComponent } from '../shared/ui/graph/graph.component';
       
       <div class="wrapper">
           <app-current-balance></app-current-balance>
-          <app-graph type="piechart" [data]="graphs"></app-graph>
+          <app-graph type="piechart" [data]="graphs()"></app-graph>
       </div>
       
       <div class="wrapper">
           
-          <ng-container *ngIf="service.status() === 'error'">
-              {{service.error()}}
+          <ng-container *ngIf="groupsService.status() === 'error'">
+              {{groupsService.error()}}
           </ng-container>
           
-          <ng-container *ngIf="service.status() === 'success'">
-              <app-transactions-group *ngFor="let group of service.groups()" [group]="group" [color]="group.color">
+          <ng-container *ngIf="groupsService.status() === 'success'">
+              <app-transactions-group *ngFor="let group of groupsService.groups()" [group]="group" [color]="group.color">
               </app-transactions-group>
           </ng-container>
           
-          <ng-container *ngIf="service.status() === 'loading'">
+          <ng-container *ngIf="groupsService.status() === 'loading'">
               <app-transactions-group>
               </app-transactions-group>
           </ng-container>
@@ -47,20 +48,23 @@ import { GraphComponent } from '../shared/ui/graph/graph.component';
 })
 export class HomeComponent {
 
-  service = inject(TransactionGroupsService);
+  groupsService = inject(TransactionGroupsService);
+  transactionsService = inject(TransactionsService);
 
-  graphs = [{
-    label: 'Food',
-    value: 30
-  }, {
-    label: 'Transportation',
-    value: 20
-  }, {
-    label: 'Entertainment',
-    value: 15
-  }, {
-    label: 'Shopping',
-    value: 350
-  }]
+  groups = computed(() => this.groupsService.groups());
+  graphs = computed(() => {
+    const transactions = this.transactionsService.transactions();
+    return this.groups().map(group => {
+      const groupTransactions = transactions.filter(t => t.groupId === group.id);
+      const values = groupTransactions.map(t => (t.value||0)*-1).filter(v => v>0);
+      const totale = values.reduce((a,b) => a + b, 0)
+      console.log(groupTransactions, values, totale);
+      return {
+        label: group.name,
+        value: totale,
+        color: group.color
+      };
+    })
+});
 
 }

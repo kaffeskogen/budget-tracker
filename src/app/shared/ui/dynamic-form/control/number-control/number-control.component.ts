@@ -6,7 +6,10 @@ import { NumberParser } from '../../utils/number-formatting';
     selector: 'app-number-control',
     template: `
       <div class="flex">
-        <input class="app-input with-suffix"
+        <button class="app-input-prefix active:bg-slate-200 cursor-pointer" role="button" type="button">
+          -
+        </button>
+        <input class="app-input with-suffix with-prefix text-right"
           style="border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 0;"
           #input
           (keydown)="onKeyDown($event)"
@@ -36,9 +39,10 @@ export class NumberControlComponent implements ControlValueAccessor {
   public onChange!: (value: number) => void;
   public onTouched!: () => void;
   public nbr = new NumberParser('sv-SE');
+  public positive = false;
 
   public writeValue(value: number): void {
-    this.value = Math.abs(value);
+    this.value = value;
     const el = this.input.nativeElement;
     const cursorPos = el.selectionStart;
     const formatted = this.nbr.format(this.value);
@@ -62,8 +66,9 @@ export class NumberControlComponent implements ControlValueAccessor {
   public onKeyDown(evt: Event) {
     const e = evt as KeyboardEvent;
     const isNumber = /delete|end|home|arrow|backspace|tab|enter|escape|[0-9]|,|\./.test(e.key.toLowerCase());
+    const isDash = /-/.test(e.key.toLowerCase());
     const specialIsDown = [e.altKey, e.ctrlKey, e.metaKey].some(Boolean);
-    if (!isNumber && !specialIsDown) {
+    if (!isNumber && !specialIsDown && !isDash) {
       evt.preventDefault();
       return false;
     }

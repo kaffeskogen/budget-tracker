@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnChanges, OnInit, ViewChild, computed, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, fromEvent, map, subscribeOn } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, fromEvent, map, subscribeOn } from 'rxjs';
 import { getCircularArcPathCommand } from './getCircularArcPathCommand';
 
 @Component({
@@ -9,36 +9,40 @@ import { getCircularArcPathCommand } from './getCircularArcPathCommand';
   standalone: true,
   imports: [],
   template: `
-    <p>
+    <div>
       <svg width="200" height="200">
-        @for (path of paths; track $index) {
-          <path [attr.d]="path.path" [attr.fill]="path.color" class=' stroke-white stroke-2'/>
+        @for (path of paths(); track $index) {
+          <path [attr.d]="path.path" [attr.fill]="path.color" class='stroke-white stroke-2'/>
         }
       </svg>
-    </p>
+      </div>
   `,
   styles: ``
 })
-export class GraphComponent implements OnChanges {
+export class GraphComponent {
   
-  @ViewChild('range', { static: true }) range!: ElementRef<HTMLInputElement>;
+  rangeValue = signal<number>(0);
 
   @Input() type!: 'piechart';
-  @Input() data!: {label: string, value: number}[];
-
-  paths: {path: string, color: string}[] = [];
-
-  ngOnChanges() {
+  @Input() data!: {label: string, value: number, color: string}[];
+  
+  totaleValue = signal(0);
+  paths = computed(() => {
     let previousDegree = 0;
-    const totale = this.data.reduce((acc, item) => acc + item.value, 0);
-    this.paths = this.data.map((item, index) => {
-      const degree = (item.value / totale) * 360;
+    const newValue = this.data.map(item => {
+      const degree = (item.value / this.totaleValue()) * 360;
       const path = getCircularArcPathCommand({
         start_angle: previousDegree,
         sweep_angle: degree,
       });
       previousDegree += (degree + 0);
-      return {path, color: `hsl(${index * 30}, 100%, 50%)`};
+      return {path, color: item.color};
     });
+    return newValue;
+  })
+
+  ngOnChanges() {
+    this.totaleValue.update(() => this.data.reduce((a,b) => a+b.value, 0));
   }
+
 }
