@@ -24,6 +24,12 @@ html {
     @apply bg-gray-100 border-r-0 text-gray-500 border-b-2 border-b-slate-300 border-l border-y rounded-l w-10 flex items-center justify-center
 }
 
+
+.app-input-prefix-button {
+    @apply bg-white border-r-0 border-b-2 border-b-slate-300 border-l border-y rounded-l w-10 flex items-center justify-center
+}
+
+
 .app-input-suffix {
     @apply bg-gray-100 border-l-0 text-gray-500 border-b-2 border-b-slate-300 border-r border-y rounded-r w-10 flex items-center justify-center
 }

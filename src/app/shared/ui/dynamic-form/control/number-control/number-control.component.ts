@@ -6,8 +6,8 @@ import { NumberParser } from '../../utils/number-formatting';
     selector: 'app-number-control',
     template: `
       <div class="flex">
-        <button class="app-input-prefix active:bg-slate-200 cursor-pointer" role="button" type="button">
-          -
+        <button class="app-input-prefix-button cursor-pointer important bg-white" role="button" type="button" (click)="positive = !positive; this.onInput();">
+          {{positive ? '+' : '-'}}
         </button>
         <input class="app-input with-suffix with-prefix text-right"
           style="border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 0;"
@@ -39,16 +39,25 @@ export class NumberControlComponent implements ControlValueAccessor {
   public onChange!: (value: number) => void;
   public onTouched!: () => void;
   public nbr = new NumberParser('sv-SE');
-  public positive = false;
+  public positive: boolean|null = null;
 
-  public writeValue(value: number): void {
-    this.value = value;
+  public writeValue(value: number|string): void {
+    if (value === undefined || value === null) {
+      return;
+    }
+    if (typeof value === 'string') {
+      value = this.nbr.parse(value);
+    }
+    if (this.positive === null) {
+      this.positive = value >= 0;
+    }
+    this.value = this.positive ? Math.abs(value) : Math.abs(value) * -1;
     const el = this.input.nativeElement;
     const cursorPos = el.selectionStart;
-    const formatted = this.nbr.format(this.value);
+    const formatted = this.nbr.format(Math.abs(this.value));
     if (el.value !== formatted) {
+      el.value = formatted;
       const diff = formatted.length - el.value.length;
-      el.value = this.nbr.format(this.value);
       if (cursorPos) {
         el.setSelectionRange(cursorPos + diff, cursorPos + diff);
       }
@@ -65,8 +74,22 @@ export class NumberControlComponent implements ControlValueAccessor {
 
   public onKeyDown(evt: Event) {
     const e = evt as KeyboardEvent;
-    const isNumber = /delete|end|home|arrow|backspace|tab|enter|escape|[0-9]|,|\./.test(e.key.toLowerCase());
+
     const isDash = /-/.test(e.key.toLowerCase());
+    if (isDash) {
+      this.positive = false;
+      evt.preventDefault();
+      return false;
+    }
+
+    const isPlus = /\+/.test(e.key.toLowerCase());
+    if (isPlus) {
+      this.positive = true;
+      evt.preventDefault();
+      return false;
+    }
+
+    const isNumber = /delete|end|home|arrow|backspace|tab|enter|escape|[0-9]|,|\./.test(e.key.toLowerCase());
     const specialIsDown = [e.altKey, e.ctrlKey, e.metaKey].some(Boolean);
     if (!isNumber && !specialIsDown && !isDash) {
       evt.preventDefault();
@@ -104,8 +127,9 @@ export class NumberControlComponent implements ControlValueAccessor {
     if (isNaN(parsed)) {
       return;
     }
-    this.writeValue(parsed);
-    this.onChange(parsed);
+    const absoluteValue = this.positive ? Math.abs(parsed) : Math.abs(parsed) * -1;
+    this.writeValue(absoluteValue);
+    this.onChange(absoluteValue);
   }
 
   public onInputBlurred(): void {
