@@ -33,10 +33,8 @@ import { TransactionsService } from '../shared/data-access/transactions.service'
             </ng-container>
           </div>
 
-
           <div class="w-full max-w-xs mt-16">
             <app-graph title="Expenses" type="piechart" [data]="expensesGraphData()"></app-graph>
-            <app-graph title="Incomes" type="piechart" [data]="incomesGraphData()"></app-graph>
           </div>
 
         </div>

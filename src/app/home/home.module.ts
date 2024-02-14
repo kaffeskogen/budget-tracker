@@ -13,9 +13,7 @@ import { GroupChoiceComponent } from './transaction/controls/group-choice.compon
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../shared/icons/icon/icon.component';
 import { DialogComponent } from '../shared/ui/dialog/dialog.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
-import { SidenavComponent } from '../sidenav/sidenav.component';
 
 
 @NgModule({
