@@ -34,7 +34,7 @@ import { TransactionsService } from '../shared/data-access/transactions.service'
           </div>
 
 
-          <div class="w-full max-w-md mt-16">
+          <div class="w-full max-w-xs mt-16">
             <app-graph title="Expenses" type="piechart" [data]="expensesGraphData()"></app-graph>
             <app-graph title="Incomes" type="piechart" [data]="incomesGraphData()"></app-graph>
           </div>
