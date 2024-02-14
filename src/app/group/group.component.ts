@@ -117,11 +117,14 @@ export class GroupComponent {
   transactionsGraphData = computed(() => {
     const transactions = this.transactions();
     return this.group()
-      ? transactions.map(transaction => {
+      ? transactions
+        .sort((a, b) => (b.value||0) - (a.value||0))
+        .filter(t => t.value !== 0)
+        .map((transaction, index) => {
           return {
             label: transaction.title,
             value: transaction.value||0,
-            color: this.group()?.color||'#000'
+            color: this.generateHue(this.group()?.color, index)
           };
         })
       : [];
@@ -133,5 +136,42 @@ export class GroupComponent {
       return;
     this.groupsService.remove$.next(group);
     this.router.navigate(['']);
+  }
+
+  generateHue(baseColor: string|undefined, index: number) {
+    const color = baseColor || "#000";
+    const hue = color.replace(/^#/, '');
+    const r = parseInt(hue.substring(0, 2), 16);
+    const g = parseInt(hue.substring(2, 4), 16);
+    const b = parseInt(hue.substring(4, 6), 16);
+    const hsl = this.rgbToHsl(r, g, b);
+    const h = hsl[0];
+    const s = hsl[1];
+    const l = hsl[2];
+    const newHue = (h * 360 + index * 35) % 360;
+    const newColor = `hsl(${newHue},${s * 100}%,${l * 100}%)`;
+    return newColor;
+  }
+
+  
+  rgbToHsl(r: number, g: number, b: number) {
+    r /= 255, g /= 255, b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = (max + min) / 2, s = (max + min) / 2, l = (max + min) / 2;
+  
+    if (max == min) {
+      h = s = 0; // achromatic
+    } else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+  
+    return [h, s, l];
   }
 }

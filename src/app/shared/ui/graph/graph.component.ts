@@ -14,7 +14,7 @@ const removeSpecialCharacters = (txt: string) => txt.replace(/[^\sa-zA-Z0-9åä�
   template: `
     <div class="flex w-fill flex-col mb-8">
       <h2 class="text-xl">{{title}}</h2>
-      <div class="flex">
+      <div class="flex flex-wrap">
         @for (item of paths(); track $index) {
           <div class="inline-block mr-4 mb-2">
             <div class="flex flex-row items-center w-full">
@@ -45,6 +45,8 @@ export class GraphComponent {
 
   totaleValue = signal(0);
   paths = computed(() => {
+    const totale = this.totaleValue();
+    if (totale === 0) return [];
     let previousDegree = 0;
     const newValue = this.data.map(item => {
       const degree = (item.value / this.totaleValue()) * 359.99;
@@ -59,7 +61,9 @@ export class GraphComponent {
   })
 
   ngOnChanges() {
-    this.totaleValue.update(() => this.data.reduce((a, b) => a + b.value, 0));
+    console.log('data', this.data);
+    const totale = this.data.reduce((a, b) => a + b.value, 0);
+    this.totaleValue.update(() => totale);
   }
 
 }
