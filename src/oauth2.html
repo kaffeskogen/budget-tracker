@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logging in...</title>
+</head>
+<body>
+    Logging in...
+    <script>
+        const hashParts = window.location.hash.split('&');
+        const keyValues = hashParts.map((part) => part.split('=')).reduce((acc, [key, value]) => ({...acc, [key]: value}), {});
+        window.opener.postMessage(keyValues, "*");
+        // window.close();
+    </script>
+    </script>
+</body>
+    </html>

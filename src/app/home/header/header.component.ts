@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
 
 @Component({
@@ -12,13 +13,13 @@ import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
         <div class="font-bold">Alfred Gårdeskog</div>
       </div>
     </div>
-    <button class="rounded-md bg-white p-1 hover:bg-slate-100 active:bg-white cursor-pointer">
+    <button class="rounded-md bg-white p-1 hover:bg-slate-100 active:bg-white cursor-pointer" [routerLink]="['settings']">
       <cog-6-tooth-outline-icon [size]="18"></cog-6-tooth-outline-icon>
     </button>
   </div>
   `,
     standalone: true,
-    imports: [OutlineIconsModule]
+    imports: [OutlineIconsModule, RouterLink]
 })
 export class HeaderComponent {
 

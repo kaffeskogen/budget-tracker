@@ -61,7 +61,6 @@ export class GraphComponent {
   })
 
   ngOnChanges() {
-    console.log('data', this.data);
     const totale = this.data.reduce((a, b) => a + b.value, 0);
     this.totaleValue.update(() => totale);
   }

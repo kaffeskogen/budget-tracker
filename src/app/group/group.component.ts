@@ -85,7 +85,7 @@ export interface TransactionsGroupState {
           </div>
         </div>
 
-        <div class="w-full max-w-xs mt-16">
+        <div class="w-full max-w-xs sm:mt-16">
           <app-graph title="Expenses" type="piechart" [data]="transactionsGraphData()"></app-graph>
         </div>
       </div>

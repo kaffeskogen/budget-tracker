@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home.component';
 import { TransactionComponent } from './transaction/transaction.component';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,10 @@ const routes: Routes = [
       {
         path: 'edit',
         redirectTo: ''
+      },
+      {
+        path: 'settings',
+        component: SettingsComponent
       },
       {
         path: 'edit/:transactionId',
