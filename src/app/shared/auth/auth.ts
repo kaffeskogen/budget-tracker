@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 
-export interface AuthProps {
+export interface Oauth2PopupConfig {
     baseUrl: string;
     queryParams: {
         client_id: string;
@@ -12,8 +12,8 @@ export interface AuthProps {
 }
 
 export class Auth {
-    props: AuthProps;
-    constructor(props: AuthProps) {
+    props: Oauth2PopupConfig;
+    constructor(props: Oauth2PopupConfig) {
         this.props = props;
         this.props.queryParams.redirect_uri = this.props.queryParams.redirect_uri || window.location.origin + '/oauth2.html';
         this.props.queryParams.response_type = this.props.queryParams.response_type || 'token';
