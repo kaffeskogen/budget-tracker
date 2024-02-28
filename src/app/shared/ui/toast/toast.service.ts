@@ -2,9 +2,9 @@ import { Injectable, signal } from '@angular/core';
 
 type ToastMessage = {
   id: number,
-  content: string,
+  message: string,
   position: number,
-  action: { click: () => void, label: string }
+  action?: { click: () => void, label: string }
   timeout: number
 };
 
@@ -14,7 +14,8 @@ type ToastMessage = {
 export class ToastService {
   messages = signal<ToastMessage[]>([]);
 
-  add(message: Omit<ToastMessage, 'id'|'timeout'|'position'>) {
+  show(message: string, action?: { click: () => void, label: string }) {
+    console.log('showing toast');
     const id = Math.floor(Math.random() * 1000000);
 
     const currentPoisitions = this.messages().map(m => m.position);
@@ -24,7 +25,7 @@ export class ToastService {
     }
 
     const timeout = window.setTimeout(() => this.remove(id), 5000);
-    const toastMessage: ToastMessage = { ...message, id, timeout, position };
+    const toastMessage: ToastMessage = { message, id, timeout, position, action };
     this.messages.update(messages => [...messages, toastMessage]);
   }
 

@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
 import { RouterOutlet } from '@angular/router';
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
-import { NgIf, NgFor } from '@angular/common';
+import { NgIf, NgFor, JsonPipe } from '@angular/common';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { HeaderComponent } from './header/header.component';
 import { SidenavComponent } from '../sidenav/sidenav.component';
@@ -17,10 +17,6 @@ import { TransactionsService } from '../shared/data-access/transactions.service'
           <div class="grid gap-y-8 w-full max-w-md mr-16">
             <app-header></app-header>
             <app-current-balance></app-current-balance>
-
-            <ng-container *ngIf="groupsService.status() === 'error'">
-              {{groupsService.error()}}
-            </ng-container>
 
             <ng-container *ngIf="groupsService.status() === 'success'">
               <app-transactions-group *ngFor="let group of groupsService.groups()" [group]="group" [color]="group.color">
@@ -44,7 +40,7 @@ import { TransactionsService } from '../shared/data-access/transactions.service'
     `,
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent, GraphComponent]
+    imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent, GraphComponent, JsonPipe]
 })
 export class HomeComponent {
 

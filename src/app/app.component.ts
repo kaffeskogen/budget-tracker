@@ -7,7 +7,6 @@ import { ToastService } from './shared/ui/toast/toast.service';
 @Component({
   selector: 'app-root',
   template: `
-    <app-sidenav class="sidenav"></app-sidenav>
     <div class="wrapper">
         <router-outlet></router-outlet>
     </div>

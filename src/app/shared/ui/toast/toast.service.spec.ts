@@ -16,7 +16,7 @@ describe('ToastService', () => {
 
   it('should add a message', () => {
     service.add({ content: 'Hello World', action: { click: () => {}, label: 'OK' } });
-    expect(service.messages()[0].content).toBe('Hello World');
+    expect(service.messages()[0].message).toBe('Hello World');
   });
 
   it('should remove a message', () => {

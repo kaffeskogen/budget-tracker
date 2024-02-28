@@ -1,26 +1,36 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Oauth2 } from './auth';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { fromEvent, map } from 'rxjs';
+
+export interface Oauth2TokenResponse {
+  access_token: string;
+  expires_in: number;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  token?: string;
+  private tokenResponse = toSignal<Oauth2TokenResponse>(fromEvent<MessageEvent>(window, 'message')
+    .pipe(map(event => event.data satisfies Oauth2TokenResponse)));
 
-  login() {
-    const auth = new Oauth2({
-      baseUrl: 'https://accounts.google.com/o/oauth2/auth',
-      queryParams: {
-        client_id: environment.oauth2.google_client_id,
-        scope: 'https://www.googleapis.com/auth/drive.appdata',
-      }
-    });
-    auth.getToken().then((token) => {
-      this.token = token;
-      console.log('TOKEN', token);
-    });
+  token = computed(() => this.tokenResponse()?.access_token);
+  loggedIn = computed(() => !!this.token());
+
+  async login() {
+    const endpoint = 'https://accounts.google.com/o/oauth2/auth';
+    const params = {
+      client_id: environment.oauth2.google_client_id,
+      scope: 'https://www.googleapis.com/auth/drive.appdata',
+      response_type: 'token',
+      redirect_uri: window.location.origin + '/oauth2.html',
+    };
+
+    const url = endpoint + '?' + new URLSearchParams(params).toString();
+    console.log(url);
+    window.open(url, 'kaffeskogen-oauth', 'popup,height=570,width=520');
   }
 
 }

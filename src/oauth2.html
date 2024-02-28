@@ -8,11 +8,15 @@
 <body>
     Logging in...
     <script>
-        const hashParts = window.location.hash.split('&');
+        const hash = window.location.hash;
+        if (!hash) {
+            window.close();
+        }
+        const hashParts = window.location.hash.replace('#','').split('&');
         const keyValues = hashParts.map((part) => part.split('=')).reduce((acc, [key, value]) => ({...acc, [key]: value}), {});
         window.opener.postMessage(keyValues, "*");
-        // window.close();
+        window.close();
     </script>
     </script>
 </body>
-    </html>
+</html>

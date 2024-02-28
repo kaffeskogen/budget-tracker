@@ -3,7 +3,7 @@ import { Subject, of } from "rxjs";
 import { MOCK_TRANSACTIONS } from '../mocks/transactions';
 import { MOCK_GROUPS } from '../mocks/groups';
 import { Transaction } from '../interfaces/Transaction';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
 
 export interface TransactionsServiceState {
@@ -52,7 +52,9 @@ export class TransactionsService {
                         transactions,
                         status: 'success',
                     } satisfies TransactionsServiceState)),
-                error: (err) => this.state.update((state) => ({ ...state, status: 'error', error: err }))
+                error: (response) => {
+                    this.state.update((state) => ({ ...state, status: 'error', error: response?.error?.error?.message || 'Unknown error' }));
+                }
             });
 
         this.add$.pipe(takeUntilDestroyed()).subscribe((transaction) => {

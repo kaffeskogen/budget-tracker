@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
 import { Group } from '../interfaces/Group';
 import { Transaction } from '../interfaces/Transaction';
+import { ToastService } from '../ui/toast/toast.service';
 
 export interface TransactionGroupsServiceState {
     groups: Group[];
@@ -18,6 +19,7 @@ export interface TransactionGroupsServiceState {
 export class TransactionGroupsService {
 
     storageService = inject(StorageService);
+    toast = inject(ToastService);
 
     groupsLoaded$ = this.storageService.loadGroups();
 
@@ -81,11 +83,14 @@ export class TransactionGroupsService {
 
         this.remove$
             .pipe(takeUntilDestroyed())
-            .subscribe((group) => 
+            .subscribe((group) => {
                 this.state.update((state) => ({
                     ...state,
                     groups: state.groups.filter((item) => item.id !== group.id),
-                } satisfies TransactionGroupsServiceState))
+                } satisfies TransactionGroupsServiceState));
+                console.log(`Group ${group.name} removed`);
+                this.toast.show(`Group ${group.name} removed`);
+            }
         );
 
 

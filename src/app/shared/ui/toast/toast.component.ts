@@ -43,8 +43,10 @@ import { trigger, transition, style, animate } from '@angular/animations';
           (click)="service.resetTimeout(msg.id)"
           (touchstart)="service.resetTimeout(msg.id)"
           (focus)="service.resetTimeout(msg.id)">
-        <div data-qa="message-content">{{msg.content}}</div>
-        <button type="button" role="button" (click)="msg.action.click()" class="text-sky-500 hover:text-sky-400 active:text-sky-600 font-semibold">{{msg.action.label}}</button>
+        <div data-qa="message-content">{{msg.message}}</div>
+        @if(msg.action) {
+          <button type="button" role="button" (click)="msg.action.click()" class="text-sky-500 hover:text-sky-400 active:text-sky-600 font-semibold">{{msg.action.label}}</button>
+        }
       </div>
     }
   </div>

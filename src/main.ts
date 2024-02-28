@@ -7,6 +7,7 @@ import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { LOCALE_ID, DEFAULT_CURRENCY_CODE, importProvidersFrom } from '@angular/core';
 
 import localeSwedish from '@angular/common/locales/sv';
+import { provideHttpClient } from '@angular/common/http';
 registerLocaleData(localeSwedish);
 
 bootstrapApplication(AppComponent, {
@@ -14,7 +15,8 @@ bootstrapApplication(AppComponent, {
         importProvidersFrom(BrowserModule, AppRoutingModule, CommonModule, NgHeroiconsModule),
         { provide: LOCALE_ID, useValue: 'sv' },
         { provide: DEFAULT_CURRENCY_CODE, useValue: 'SEK' },
-        provideAnimations()
+        provideAnimations(),
+        provideHttpClient()
     ]
 })
     .catch(err => console.error(err));

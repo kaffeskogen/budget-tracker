@@ -1,10 +1,17 @@
-import { Injectable, InjectionToken, PLATFORM_ID, inject } from '@angular/core';
-import { Observable, Subject, of } from "rxjs";
+import { Injectable, InjectionToken, Injector, PLATFORM_ID, Signal, computed, inject } from '@angular/core';
+import { BehaviorSubject, Observable, map, mergeMap, of, tap } from "rxjs";
 import { MOCK_TRANSACTIONS } from '../mocks/transactions';
 import { MOCK_GROUPS } from '../mocks/groups';
 import { Transaction } from '../interfaces/Transaction';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Group } from '../interfaces/Group';
+import { AuthService } from '../auth/auth.service';
+import { CloudDriveService } from './cloud-drive.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+
+const test = new BehaviorSubject<string>("hello");
+
+test.next('test')
+
 
 export const LOCAL_STORAGE = new InjectionToken<Storage>(
   'window local storage object',
@@ -29,31 +36,44 @@ export const IN_MEMORY = new InjectionToken<Storage>(
   }
 );
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
+  private injector = inject(Injector);
 
-  storage = inject(IN_MEMORY);
+  private browserStorage = inject(IN_MEMORY);
+  private authService = inject(AuthService);
+  private cloudDriveService = inject(CloudDriveService);
 
+  mockTransactions = computed(() => MOCK_TRANSACTIONS);
+
+  cloudTransactions = this.cloudDriveService.getFileContentsOrEmptyString('transactions.json')
+    .pipe(map(contents => contents ? JSON.parse(contents) as Transaction[] : []));
+
+  mockGroups = computed(() => MOCK_GROUPS);
+  
   loadTransactions(): Observable<Transaction[]> {
-    const transactions = this.storage.getItem('transactions');
-    return of(transactions ? (JSON.parse(transactions) as Transaction[]) : MOCK_TRANSACTIONS);
+    return toObservable(this.authService.loggedIn)
+      .pipe(tap(loggedIn => { console.log('logged in', loggedIn); }))
+      .pipe(mergeMap(loggedIn => loggedIn ? this.cloudTransactions : of(MOCK_TRANSACTIONS)));
   }
 
   loadGroups(): Observable<Group[]> {
-    const groups = this.storage.getItem('groups');
+    const groups = this.browserStorage.getItem('groups');
     return of(groups ? (JSON.parse(groups) as Group[]) : MOCK_GROUPS);
   }
 
-  saveTransactions(transactions: Transaction[]) {
-    this.storage.setItem('transactions', JSON.stringify(transactions));
+  saveTransactions(transactions: Transaction[]): Observable<void>  {
+    this.browserStorage.setItem('transactions', JSON.stringify(transactions));
+    return of(undefined);
   }
 
-  saveGroups(groups: Group[]) {
-    this.storage.setItem('groups', JSON.stringify(groups));
+  saveGroups(groups: Group[]): Observable<void>  {
+    this.browserStorage.setItem('groups', JSON.stringify(groups));
+    return of(undefined);
   }
+
 
 
 }

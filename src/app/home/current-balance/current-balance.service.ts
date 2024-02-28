@@ -8,8 +8,8 @@ export class CurrentBalanceService {
   private service = inject(TransactionsService);
 
   values = computed<number[]>(() => this.service.transactions().map(t => t.value).filter(notEmpty));
-  totalIncomes = computed<number>(() => this.values().filter(v => v > 0).reduce((a, b) => b + a));
-  totalExpenses = computed<number>(() => this.values().filter(v => v < 0).reduce((a, b) => b + a));
+  totalIncomes = computed<number>(() => this.values().filter(v => v > 0).reduce((a, b) => b + a, 0));
+  totalExpenses = computed<number>(() => this.values().filter(v => v < 0).reduce((a, b) => b + a, 0));
   totalSum = computed<number>(() => this.totalIncomes() + this.totalExpenses())
 
 }

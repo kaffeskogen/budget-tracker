@@ -12,6 +12,7 @@ import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
 import { GroupSettingsComponent } from './ui/group-settings/group-settings.component';
 import * as colors from 'tailwindcss/colors';
 import { GraphComponent } from '../shared/ui/graph/graph.component';
+import { DialogComponent } from '../shared/ui/dialog/dialog.component';
 
 export interface TransactionsGroupState {
   error: string | null;
@@ -21,11 +22,16 @@ export interface TransactionsGroupState {
 @Component({
   selector: 'app-group',
   standalone: true,
-  imports: [NgIf, NgStyle, NgFor, RouterLink, IconComponent, CurrencyFormattedPipe, RouterModule, CdkMenuTrigger, CdkMenu, CdkMenuItem, OutlineIconsModule, GroupSettingsComponent, GraphComponent],
+  imports: [NgIf, NgStyle, NgFor, RouterLink, IconComponent, CurrencyFormattedPipe, RouterModule, CdkMenuTrigger, CdkMenu, CdkMenuItem, OutlineIconsModule, GroupSettingsComponent, GraphComponent, DialogComponent],
   template: `
     <div class="p-8 mb-32">
       <div class="flex flex-col lg:flex-row">
         <div class="w-full max-w-md mr-16">
+
+          <div class="pl-2">
+            <a routerLink="/" class="flex items-center"><app-icon iconName="ArrowLeft" class="pr-2" [size]="16"></app-icon> Go back home</a>
+          </div>
+
           <div class="p-4 flex items-end w-full">
 
             <div class="text-xl font-bold mr-2" [ngStyle]="{color: group()?.color ?? 'blue'}" data-qa="group-name">
@@ -50,7 +56,7 @@ export interface TransactionsGroupState {
                   cdkMenuItem
                   class="px-4 py-2 hover:bg-gray-100 text-sm text-left flex items-center"
                   data-qa="delete-group"
-                  (click)="deleteGroup()">
+                  (click)="showConfirmDeletionDialog()">
                     <app-icon iconName='Trash' [color]="colors.red['800']" class="mr-2" [size]="16"></app-icon>
                     <span>Delete group</span>
                   </button>
@@ -91,6 +97,22 @@ export interface TransactionsGroupState {
       </div>
     </div>
     <router-outlet></router-outlet>
+    <app-dialog *ngIf="confirmDelete()">
+      <ng-container>
+        <div class="text-xl font-bold mb-4 mt-2">Delete group</div>
+        <div class="mb-2">
+          Are you sure you want to delete the group <span class="whitespace-nowrap font-bold">{{group()?.name}}</span>?
+        </div>
+        <div class="flex justify-end">
+          <button class="rounded px-4 py-2 mt-4 mr-2 border border-slate-300 hover:bg-gray-100 text-gray-800 bg-white" (click)="hideConfirmDeletionDialog()">
+            Cancel
+          </button>
+          <button class="rounded px-4 py-2 mt-4 border bg-orange-700 hover:bg-orange-800 text-white" (click)="deleteGroup()">
+            Delete
+          </button>
+        </div>
+      </ng-container>
+    </app-dialog>
   `,
   styles: ``
 })
@@ -114,6 +136,8 @@ export class GroupComponent {
   group = computed<Group | undefined>(() => this.groupId() ? this.groupsService.groups().find(g => g.id === this.groupId()) : undefined);
   transactions = computed(() => this.groupId() ? this.transactionsService.transactions().filter(t => t.groupId === this.groupId()) : []);
 
+  confirmDelete = signal<boolean>(false);
+
   transactionsGraphData = computed(() => {
     const transactions = this.transactions();
     return this.group()
@@ -132,10 +156,18 @@ export class GroupComponent {
   
   deleteGroup() {
     const group = this.group();
+    this.hideConfirmDeletionDialog();
     if (!group)
       return;
     this.groupsService.remove$.next(group);
     this.router.navigate(['']);
+  }
+
+  showConfirmDeletionDialog() {
+    this.confirmDelete.update(() => true);
+  }
+  hideConfirmDeletionDialog() {
+    this.confirmDelete.update(() => false);
   }
 
   generateHue(baseColor: string|undefined, index: number) {

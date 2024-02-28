@@ -21,11 +21,11 @@
 </div>
 <div *ngIf="status() === 'success' && !!group">
 
-    <div class="pb-2 px-4 flex">
+    <a [routerLink]="['g', group.id]" class="pb-2 flex">
         <div class="text-xl font-bold" [ngStyle]="{color: color}">
             {{group.name}}
         </div>
-    </div>
+    </a>
 
     <a [routerLink]="['edit', transaction.id]" *ngFor="let transaction of visibleTransactions()"
         class="rounded bg-slate-50 mb-1 flex whitespace-nowrap py-2 px-4 shadow items-center">
