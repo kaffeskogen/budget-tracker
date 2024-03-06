@@ -1,7 +1,7 @@
 import { Injectable, computed } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { fromEvent, map } from 'rxjs';
+import { fromEvent, map, tap } from 'rxjs';
 
 export interface Oauth2TokenResponse {
   access_token: string;
@@ -14,7 +14,9 @@ export interface Oauth2TokenResponse {
 export class AuthService {
 
   private tokenResponse = toSignal<Oauth2TokenResponse>(fromEvent<MessageEvent>(window, 'message')
-    .pipe(map(event => event.data satisfies Oauth2TokenResponse)));
+    .pipe(
+      map(event => event.data satisfies Oauth2TokenResponse))
+    );
 
   token = computed(() => this.tokenResponse()?.access_token);
   loggedIn = computed(() => !!this.token());
@@ -29,7 +31,6 @@ export class AuthService {
     };
 
     const url = endpoint + '?' + new URLSearchParams(params).toString();
-    console.log(url);
     window.open(url, 'kaffeskogen-oauth', 'popup,height=570,width=520');
   }
 

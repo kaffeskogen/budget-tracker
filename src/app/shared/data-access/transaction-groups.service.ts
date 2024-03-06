@@ -88,7 +88,6 @@ export class TransactionGroupsService {
                     ...state,
                     groups: state.groups.filter((item) => item.id !== group.id),
                 } satisfies TransactionGroupsServiceState));
-                console.log(`Group ${group.name} removed`);
                 this.toast.show(`Group ${group.name} removed`);
             }
         );

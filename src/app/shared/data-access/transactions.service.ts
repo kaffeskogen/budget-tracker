@@ -1,9 +1,7 @@
 import { Injectable, Signal, computed, effect, inject, signal } from '@angular/core';
-import { Subject, of } from "rxjs";
-import { MOCK_TRANSACTIONS } from '../mocks/transactions';
-import { MOCK_GROUPS } from '../mocks/groups';
+import { Subject, tap } from "rxjs";
 import { Transaction } from '../interfaces/Transaction';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
 
 export interface TransactionsServiceState {
@@ -44,7 +42,9 @@ export class TransactionsService {
     constructor() {
 
         this.transactionsLoaded$
-            .pipe(takeUntilDestroyed())
+            .pipe(
+                takeUntilDestroyed()
+            )
             .subscribe({
                 next: (transactions) =>
                     this.state.update((state) => ({
@@ -53,7 +53,7 @@ export class TransactionsService {
                         status: 'success',
                     } satisfies TransactionsServiceState)),
                 error: (response) => {
-                    this.state.update((state) => ({ ...state, status: 'error', error: response?.error?.error?.message || 'Unknown error' }));
+                    this.state.update((state) => ({ ...state, status: 'error', error: response?.message || response?.error?.error?.message || 'Unknown error' }));
                 }
             });
 
@@ -88,7 +88,8 @@ export class TransactionsService {
 
         effect(() => {
             if (this.status() === 'success') {
-                this.storageService.saveTransactions(this.transactions());
+                this.storageService.saveTransactions(this.transactions())
+                    .subscribe();
             }
         });
     }

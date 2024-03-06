@@ -115,8 +115,6 @@ export class TransactionComponent {
       this.saveLastSelectedDate(formValue.date);
     }
 
-    console.log('ONSAVE', transaction.value);
-
     if ('id' in transaction) {
       this.service.edit$.next(transaction);
     } else {
