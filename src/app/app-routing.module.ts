@@ -7,15 +7,22 @@ import {
 import { TransactionComponent } from './home/transaction/transaction.component';
 import { GroupComponent } from './group/group.component';
 import { GroupSettingsComponent } from './group/ui/group-settings/group-settings.component';
+import { storageStrategyGuard } from './shared/guards/storage-strategy.guard';
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
+    loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
+    canActivate: [storageStrategyGuard]
+  },
+  {
+    path: 'first-run',
+    loadComponent: () => import('./first-run/first-run.component').then(m => m.FirstRunComponent)
   },
   {
     path: 'g/:groupId',
     component: GroupComponent,
+    canActivate: [storageStrategyGuard],
     children: [
       {
         path: 'new',
