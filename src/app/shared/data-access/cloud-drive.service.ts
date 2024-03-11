@@ -11,21 +11,26 @@ export class CloudDriveService {
   http = inject(HttpClient);
   files?: Promise<any[]>;
 
-  getFileContentsOrEmptyString(fileName: string) {
+  getFileContentsByFileName<T>(fileName: string): Observable<T|null> {
     return this.getListOfFiles().pipe(
+      tap(() => console.log(`Getting file ${fileName}...`)),
       map(files => files.find(file => file.name === fileName)),
-      map(file => file?.id || ''),
-      mergeMap(fileId => fileId ? this.getFileContents(fileId) : of(''))
+      tap(file => console.log(file?.id ? `File ${fileName} found, returning contents` : `File ${fileName} not found, returning empty string`)),
+      map(file => file?.id || null),
+      mergeMap(fileId => fileId ? this.getFileContents<T>(fileId) : of(null))
     )
   }
 
   saveFileContents(fileName: string, contents: string): Observable<void> {
     return this.getListOfFiles().pipe(
+      tap(() => console.log(`Finding file ${fileName}`)),
       map(files => files.find(file => file.name === fileName)),
+      tap(file => console.log(file?.id ? `File ${fileName} found` : `File ${fileName} not found`)),
       mergeMap(file => {
         if (file) {
           return of(file);
         }
+        console.log(`Creating file ${fileName}`);
         return this.http.post('https://www.googleapis.com/drive/v3/files', {
           name: fileName,
           parents: ['appDataFolder']
@@ -38,6 +43,7 @@ export class CloudDriveService {
           );
       }),
       mergeMap((response: any) => {
+        console.log(`Patching file ${fileName}`);
         return this.http.patch(`https://www.googleapis.com/upload/drive/v3/files/${response?.id}`, contents, {
           headers: {
             'Content-Type': 'text/plain',
@@ -64,7 +70,7 @@ export class CloudDriveService {
     );
   }
 
-  getFileContents(fileId: string): Observable<string> {
+  getFileContents<T>(fileId: string): Observable<T> {
     return this.http.get<any>(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
       headers: {
         'Authorization': `Bearer ${this.authService.token()}`

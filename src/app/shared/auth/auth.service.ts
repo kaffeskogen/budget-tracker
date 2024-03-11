@@ -1,7 +1,9 @@
-import { Injectable, computed } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { fromEvent, map, tap } from 'rxjs';
+import { AppStateService } from '../data-access/app-state.service';
+import { Router } from '@angular/router';
 
 export interface Oauth2TokenResponse {
   access_token: string;
@@ -13,10 +15,19 @@ export interface Oauth2TokenResponse {
 })
 export class AuthService {
 
+  appState = inject(AppStateService);
+  router = inject(Router);
+
   private tokenResponse = toSignal<Oauth2TokenResponse>(fromEvent<MessageEvent>(window, 'message')
     .pipe(
-      map(event => event.data satisfies Oauth2TokenResponse))
-    );
+      map(event => event.data satisfies Oauth2TokenResponse),
+      tap(response => {
+        if (response.access_token) {
+          this.appState.storageStrategy.update(() => 'google-drive');
+          this.router.navigate(['']);
+        }
+      })
+    ));
 
   token = computed(() => this.tokenResponse()?.access_token);
   loggedIn = computed(() => !!this.token());

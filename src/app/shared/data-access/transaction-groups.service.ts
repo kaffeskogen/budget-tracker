@@ -23,7 +23,7 @@ export class TransactionGroupsService {
 
     groupsLoaded$ = this.storageService.loadGroups();
 
-    add$ = new Subject<Omit<Group, 'id'>>();
+    add$ = new Subject<Group>();
     remove$ = new Subject<Group>();
     edit$ = new Subject<Group>();
 
@@ -46,29 +46,31 @@ export class TransactionGroupsService {
         this.groupsLoaded$
             .pipe(takeUntilDestroyed())
             .subscribe({
-                next: (groups) =>
+                next: (groups) => {
+                    console.log('Got groups', groups);
                     this.state.update((state) => ({
                         ...state,
                         groups,
                         status: 'success',
-                    } satisfies TransactionGroupsServiceState)),
+                    } satisfies TransactionGroupsServiceState))
+                },
                 error: (err) => this.state.update((state) => ({ ...state, status: 'error', error: err }))
             });
 
         this.add$
             .pipe(takeUntilDestroyed())
-            .subscribe((groups) =>
+            .subscribe((group) => {
+                console.log('Adding group', group);
                 this.state.update((state) => ({
                     ...state,
                     groups: [
                         ...state.groups,
                         {
-                            ...groups,
-                            id: Date.now().toString()
+                            ...group
                         }
                     ]
                 } satisfies TransactionGroupsServiceState))
-            );
+            });
 
         this.edit$
             .pipe(takeUntilDestroyed())
@@ -95,6 +97,7 @@ export class TransactionGroupsService {
 
         effect(() => {
             if (this.status() === 'success') {
+                console.log('saving groups', this.groups());
                 this.storageService.saveGroups(this.groups());
             }
         });

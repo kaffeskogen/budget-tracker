@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home.component';
 import { TransactionComponent } from './transaction/transaction.component';
 import { SettingsComponent } from './settings/settings.component';
+import { CreateGroupComponent } from './create-group/create-group.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,10 @@ const routes: Routes = [
       {
         path: 'new',
         component: TransactionComponent
+      },
+      {
+        path: 'create-group',
+        component: CreateGroupComponent
       },
       {
         path: 'edit',

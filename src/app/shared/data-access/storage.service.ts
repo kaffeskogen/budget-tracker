@@ -54,22 +54,25 @@ export class StorageService {
       .pipe(
         mergeMap(loggedIn => !loggedIn
           ? of(MOCK_TRANSACTIONS)
-          : this.cloudDriveService.getFileContentsOrEmptyString('transactions.json')
+          : this.cloudDriveService.getFileContentsByFileName<Transaction[]>('transactions.json')
             .pipe(
-              map(contents => typeof contents === 'string' ? JSON.parse(contents) as Transaction[] : contents)
+              map(contents => contents ? contents : []),
             )
         )
       );
   }
 
   loadGroups(): Observable<Group[]> {
+    console.log('Loading groups')
     return toObservable(this.authService.loggedIn)
       .pipe(
         mergeMap(loggedIn => !loggedIn
           ? of(MOCK_GROUPS)
-          : this.cloudDriveService.getFileContentsOrEmptyString('groups.json')
+          : this.cloudDriveService.getFileContentsByFileName<Group[]>('groups.json')
             .pipe(
-              map(contents => typeof contents === 'string' ? JSON.parse(contents) as Group[] : contents)
+              tap(content => console.log('Got content', content)),
+              map(content => content ? content : []),
+              tap(groups => console.log('Got groups', groups))
             )
         )
       );
@@ -80,8 +83,7 @@ export class StorageService {
   }
 
   saveGroups(groups: Group[]): Observable<void>  {
-    this.browserStorage.setItem('groups', JSON.stringify(groups));
-    return of(undefined);
+    return this.cloudDriveService.saveFileContents('groups.json', JSON.stringify(groups));
   }
 
 }

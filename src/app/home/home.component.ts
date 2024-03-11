@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
 import { NgIf, NgFor, JsonPipe } from '@angular/common';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
@@ -8,6 +8,7 @@ import { HeaderComponent } from './header/header.component';
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { GraphComponent } from '../shared/ui/graph/graph.component';
 import { TransactionsService } from '../shared/data-access/transactions.service';
+import { Group } from '../shared/interfaces/Group';
 
 @Component({
     selector: 'app-home',
@@ -18,20 +19,29 @@ import { TransactionsService } from '../shared/data-access/transactions.service'
             <app-header></app-header>
             <app-current-balance></app-current-balance>
 
+            <button class="bg-white p-4 rounded-md border border-gray-200 hover:bg-slate-50 cursor-pointer" [routerLink]="['create-group']">+ Create group</button>
+
             <ng-container *ngIf="groupsService.status() === 'success'">
               <app-transactions-group *ngFor="let group of groupsService.groups()" [group]="group" [color]="group.color">
               </app-transactions-group>
             </ng-container>
 
+            <app-transactions-group *ngIf="orphanedTransactions().length" [group]="orphanedGroup()" [transactions]="orphanedTransactions()" [color]="orphanedGroup().color">
+              </app-transactions-group>
+
             <ng-container *ngIf="groupsService.status() === 'loading'">
               <app-transactions-group>
               </app-transactions-group>
             </ng-container>
+
+
           </div>
 
-          <div class="w-full max-w-xs mt-16">
-            <app-graph title="Expenses" type="piechart" [data]="expensesGraphData()"></app-graph>
-          </div>
+          @if(expensesGraphData().length) {
+            <div class="w-full max-w-xs mt-16">
+              <app-graph title="Expenses" type="piechart" [data]="expensesGraphData()"></app-graph>
+            </div>
+          }
 
         </div>
 
@@ -40,7 +50,7 @@ import { TransactionsService } from '../shared/data-access/transactions.service'
     `,
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent, GraphComponent, JsonPipe]
+    imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent, GraphComponent, JsonPipe, RouterLink]
 })
 export class HomeComponent {
 
@@ -48,6 +58,15 @@ export class HomeComponent {
   transactionsService = inject(TransactionsService);
 
   groups = computed(() => this.groupsService.groups());
+  orphanedGroup = computed<Group>(() => ({
+    id: 'orphaned',
+    name: 'Transactions without group',
+    color: 'gray-400'
+  }));
+
+  orphanedTransactions = computed(() => this.transactionsService.transactions()
+    .filter(t => this.groups().find(g => g.id === t.groupId) === undefined)
+    .map(t => ({...t, group: this.orphanedGroup() })));
 
   graphData = computed(() => {
     const transactions = this.transactionsService.transactions();

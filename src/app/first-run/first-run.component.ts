@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../shared/auth/auth.service';
 
 @Component({
   selector: 'app-first-run',
@@ -31,7 +32,7 @@ import { Component } from '@angular/core';
           </h2>
           
           @for (item of savingStrategies; track $index) {
-            <button class="flex items-center mt-4 text-left" type="button" role="button" [disabled]="item.disabled">
+            <button class="flex items-center mt-4 text-left" type="button" role="button" [disabled]="item.disabled" (click)="item.onclick()">
               <div class="w-10 h-10 bg-gray-200 mr-4 overflow-hidden flex-shrink-0 flex-grow-0 flex">
                 @if(item.icon.startsWith('/')) {
                   <img [src]="item.icon" class="w-10" alt="icon" [ngClass]="item.extraClass"/>
@@ -56,36 +57,43 @@ import { Component } from '@angular/core';
       opacity: 0.3;
       filter: grayscale(1);
     }
-    button:active {
+    button:not([disabled]):active {
       transform: scale(0.98);
     }
   `
 })
 export class FirstRunComponent {
+
+  authService = inject(AuthService);
+
   savingStrategies = [
     {
       name: 'Lokalt',
       description: 'Spara allt lokalt på enheten. Inga synkroniseringar, inget tjafs.',
       icon: '📦',
-      disabled: true
+      disabled: true,
+      onclick: () => undefined
     },
     {
       name: 'Dropbox',
       description: 'Ge Evenflow Inc tillgång till allt du äger och har.',
       icon: '/assets/images/dropbox.png',
       extraClass: 'rounded-fullitem.icon',
-      disabled: true
+      disabled: true,
+      onclick: () => undefined
     },
     {
       name: 'Google Drive',
       description: 'För att Alphabet redan vet var du spenderar dina pengar.',
-      icon: '/assets/images/google-drive.png'
+      icon: '/assets/images/google-drive.png',
+      onclick: () => this.authService.login()
     },
     {
       name: 'OneDrive',
       description: 'Microsoft törstar mer data. Ge dem vad de vill ha.',
       icon: '/assets/images/microsoft.png',
-      disabled: true
+      disabled: true,
+      onclick: () => undefined
     }
   ]
 }
