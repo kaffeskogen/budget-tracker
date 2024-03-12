@@ -5,6 +5,8 @@ const path = require('path');
 const dir = "src/environments";
 const file = "environment.ts";
 
+console.log('Setting enviroment file', dir + "/" + file);
+
 const content = `${process.env.ENVIROMENT_FILE_CONTENT}`;
 
 try {
