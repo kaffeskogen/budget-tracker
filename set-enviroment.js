@@ -5,7 +5,7 @@ const path = require('path');
 const dir = "src/environments";
 const file = "environment.ts";
 
-const content = `${process.env.FIREBASE_DETAILS}`;
+const content = `${process.env.ENVIROMENT_FILE_CONTENT}`;
 
 try {
     fs.accessSync(dir, fs.constants.F_OK);
