@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: set enviroment variables
-        run: node ./scripts/set-env.js
+        run: node ./set-enviroment.js
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
