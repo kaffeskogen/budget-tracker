@@ -35,3 +35,9 @@ try {
     console.error(error);
     process.exit(1);
 }
+
+
+console.log('Getting file contents')
+const str = fs.readFileSync(dir + "/" + file).toString();
+console.log('Contents:')
+console.log(str);
