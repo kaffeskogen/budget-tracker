@@ -4,6 +4,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { fromEvent, map, tap } from 'rxjs';
 import { AppStateService } from '../data-access/app-state.service';
 import { Router } from '@angular/router';
+import { StorageService } from '../data-access/storage.service';
+import { GoogleDriveStorageProvider } from '../data-access/google-drive-storage-provider';
+import { HttpClient } from '@angular/common/http';
 
 export interface Oauth2TokenResponse {
   access_token: string;
@@ -17,6 +20,8 @@ export class AuthService {
 
   appState = inject(AppStateService);
   router = inject(Router);
+  storageService = inject(StorageService);
+  http = inject(HttpClient);
 
   private tokenResponse = toSignal<Oauth2TokenResponse>(fromEvent<MessageEvent>(window, 'message')
     .pipe(
@@ -24,6 +29,7 @@ export class AuthService {
       tap(response => {
         if (response.access_token) {
           this.appState.storageStrategy.update(() => 'google-drive');
+          this.storageService.storageProvider = new GoogleDriveStorageProvider(this.http, response);
           this.router.navigate(['']);
         }
       })
@@ -36,7 +42,10 @@ export class AuthService {
     const endpoint = 'https://accounts.google.com/o/oauth2/auth';
     const params = {
       client_id: environment.oauth2.google_client_id,
-      scope: 'https://www.googleapis.com/auth/drive.appdata',
+      scope: [
+        'https://www.googleapis.com/auth/drive.appdata',
+        'https://www.googleapis.com/auth/drive.file'
+      ].join(' '),
       response_type: 'token',
       redirect_uri: window.location.origin + '/oauth2.html',
     };

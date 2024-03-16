@@ -4,9 +4,7 @@ import { MOCK_TRANSACTIONS } from '../mocks/transactions';
 import { MOCK_GROUPS } from '../mocks/groups';
 import { Transaction } from '../interfaces/Transaction';
 import { Group } from '../interfaces/Group';
-import { AuthService } from '../auth/auth.service';
-import { CloudDriveService } from './cloud-drive.service';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { AppStorageProvider } from '../interfaces/AppStorageProvider';
 
 const test = new BehaviorSubject<string>("hello");
 
@@ -41,49 +39,40 @@ export const IN_MEMORY = new InjectionToken<Storage>(
 })
 export class StorageService {
 
-  private browserStorage = inject(IN_MEMORY);
-  private authService = inject(AuthService);
-  private cloudDriveService = inject(CloudDriveService);
-
   mockTransactions = computed(() => MOCK_TRANSACTIONS);
 
   mockGroups = computed(() => MOCK_GROUPS);
+
+  public storageProvider?: AppStorageProvider;
   
   loadTransactions(): Observable<Transaction[]> {
-    return toObservable(this.authService.loggedIn)
+    if (!this.storageProvider) {
+      throw new Error('No storage provider set');
+    }
+    return this.storageProvider.getAppStorage()
       .pipe(
-        mergeMap(loggedIn => !loggedIn
-          ? of(MOCK_TRANSACTIONS)
-          : this.cloudDriveService.getFileContentsByFileName<Transaction[]>('transactions.json')
-            .pipe(
-              map(contents => contents ? contents : []),
-            )
-        )
+        map(appStorage => appStorage.transactions)
       );
   }
 
   loadGroups(): Observable<Group[]> {
-    console.log('Loading groups')
-    return toObservable(this.authService.loggedIn)
+    if (!this.storageProvider) {
+      throw new Error('No storage provider set');
+    }
+    return this.storageProvider.getAppStorage()
       .pipe(
-        mergeMap(loggedIn => !loggedIn
-          ? of(MOCK_GROUPS)
-          : this.cloudDriveService.getFileContentsByFileName<Group[]>('groups.json')
-            .pipe(
-              tap(content => console.log('Got content', content)),
-              map(content => content ? content : []),
-              tap(groups => console.log('Got groups', groups))
-            )
-        )
+        map(appStorage => appStorage.groups)
       );
   }
 
   saveTransactions(transactions: Transaction[]): Observable<void>  {
-    return this.cloudDriveService.saveFileContents('transactions.json', JSON.stringify(transactions));
+    // return this.storageProvider.saveFileContents('transactions.json', JSON.stringify(transactions));
+    throw new Error('Not implemented');
   }
 
   saveGroups(groups: Group[]): Observable<void>  {
-    return this.cloudDriveService.saveFileContents('groups.json', JSON.stringify(groups));
+    // return this.cloudDriveService.saveFileContents('groups.json', JSON.stringify(groups));
+    throw new Error('Not implemented');
   }
 
 }
