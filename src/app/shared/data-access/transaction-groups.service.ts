@@ -21,16 +21,17 @@ export class TransactionGroupsService {
     storageService = inject(StorageService);
     toast = inject(ToastService);
 
-    groupsLoaded$ = this.storageService.loadGroups();
+    groupsLoaded$ = this.storageService.groups$;
 
     add$ = new Subject<Group>();
     remove$ = new Subject<Group>();
     edit$ = new Subject<Group>();
 
+
     private state = signal<TransactionGroupsServiceState>({
         groups: [],
         status: 'loading',
-        error: null,
+        error: null
     });
 
     groups = computed(() => this.state().groups);
@@ -47,6 +48,7 @@ export class TransactionGroupsService {
             .pipe(takeUntilDestroyed())
             .subscribe({
                 next: (groups) => {
+                    if (!groups) return;
                     console.log('Got groups', groups);
                     this.state.update((state) => ({
                         ...state,

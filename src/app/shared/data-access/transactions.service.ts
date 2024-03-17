@@ -18,17 +18,18 @@ export class TransactionsService {
 
     storageService = inject(StorageService);
 
-    transactionsLoaded$ = this.storageService.loadTransactions();
+    transactionsLoaded$ = this.storageService.transactions$;
 
     add$ = new Subject<Omit<Transaction, 'id'>>();
     remove$ = new Subject<Transaction>();
     edit$ = new Subject<Transaction>();
 
+
     // state
     private state = signal<TransactionsServiceState>({
         transactions: [],
         status: 'loading',
-        error: null,
+        error: null
     });
 
     transactions = computed(() => this.state().transactions);
@@ -46,12 +47,14 @@ export class TransactionsService {
                 takeUntilDestroyed()
             )
             .subscribe({
-                next: (transactions) =>
+                next: (transactions) =>{
+                    if (!transactions) return;
                     this.state.update((state) => ({
                         ...state,
                         transactions,
                         status: 'success',
-                    } satisfies TransactionsServiceState)),
+                    } satisfies TransactionsServiceState))
+                },
                 error: (response) => {
                     this.state.update((state) => ({ ...state, status: 'error', error: response?.message || response?.error?.error?.message || 'Unknown error' }));
                 }
@@ -73,6 +76,7 @@ export class TransactionsService {
         this.edit$.pipe(takeUntilDestroyed()).subscribe((update) => {
             return this.state.update((state) => ({
                 ...state,
+                loadedAtLeastOnce: true,
                 transactions: state.transactions.map((item) =>
                     item.id === update.id ? { ...update } : item
                 )
@@ -82,14 +86,15 @@ export class TransactionsService {
         this.remove$.pipe(takeUntilDestroyed()).subscribe((transaction) =>
             this.state.update((state) => ({
                 ...state,
+                loadedAtLeastOnce: true,
                 transactions: state.transactions.filter((item) => item.id !== transaction.id),
             }))
         );
 
         effect(() => {
             if (this.status() === 'success') {
-                this.storageService.saveTransactions(this.transactions())
-                    .subscribe();
+                console.log('Saving transactions', this.transactions());
+                this.storageService.saveTransactions(this.transactions());
             }
         });
     }

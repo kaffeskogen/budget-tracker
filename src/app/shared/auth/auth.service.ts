@@ -29,7 +29,7 @@ export class AuthService {
       tap(response => {
         if (response.access_token) {
           this.appState.storageStrategy.update(() => 'google-drive');
-          this.storageService.storageProvider = new GoogleDriveStorageProvider(this.http, response);
+          this.storageService.storageProvider.update(() => new GoogleDriveStorageProvider(this.http, response));
           this.router.navigate(['']);
         }
       })

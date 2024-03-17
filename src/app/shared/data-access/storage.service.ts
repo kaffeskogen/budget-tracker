@@ -1,10 +1,12 @@
-import { Injectable, InjectionToken, PLATFORM_ID, computed, inject } from '@angular/core';
-import { BehaviorSubject, Observable, map, mergeMap, of, tap } from "rxjs";
+import { Injectable, InjectionToken, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { BehaviorSubject, Observable, Subject, map, mergeMap, of, tap } from "rxjs";
 import { MOCK_TRANSACTIONS } from '../mocks/transactions';
 import { MOCK_GROUPS } from '../mocks/groups';
 import { Transaction } from '../interfaces/Transaction';
 import { Group } from '../interfaces/Group';
 import { AppStorageProvider } from '../interfaces/AppStorageProvider';
+import { AppStorage } from '../interfaces/AppStorage';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 const test = new BehaviorSubject<string>("hello");
 
@@ -28,7 +30,7 @@ export const IN_MEMORY = new InjectionToken<Storage>(
   {
     providedIn: 'root',
     factory: () => {
-      const storage: {[key: string]: string} = {};
+      const storage: { [key: string]: string } = {};
       return { getItem: (name: string) => storage[name], setItem: (name: string, value: string) => { storage[name] = value; } } as Storage;
     }
   }
@@ -43,36 +45,41 @@ export class StorageService {
 
   mockGroups = computed(() => MOCK_GROUPS);
 
-  public storageProvider?: AppStorageProvider;
-  
-  loadTransactions(): Observable<Transaction[]> {
-    if (!this.storageProvider) {
-      throw new Error('No storage provider set');
-    }
-    return this.storageProvider.getAppStorage()
+  public storageProvider = signal<AppStorageProvider | null>(null);
+
+  transactions$ = new BehaviorSubject<Transaction[]|null>(null);
+  groups$ = new BehaviorSubject<Group[]|null>(null);
+
+  constructor() {
+    toObservable(this.storageProvider)
       .pipe(
-        map(appStorage => appStorage.transactions)
-      );
+        takeUntilDestroyed(),
+        mergeMap(provider => provider ? provider.getAppStorage() : of(null))
+      ).subscribe({
+        next: appStorage => {
+          if (appStorage) {
+            this.transactions$.next(appStorage.transactions);
+            this.groups$.next(appStorage.groups);
+          }
+        }
+      });
   }
 
-  loadGroups(): Observable<Group[]> {
-    if (!this.storageProvider) {
-      throw new Error('No storage provider set');
+  saveTransactions(transactions: Transaction[]): void {
+    if (!this.groups$.value) {
+      console.error('Groups not loaded, cannot save transactions');
+      return;
     }
-    return this.storageProvider.getAppStorage()
-      .pipe(
-        map(appStorage => appStorage.groups)
-      );
+      
+    this.storageProvider()?.saveAppStorage({ transactions: transactions, groups: this.groups$.value });
   }
 
-  saveTransactions(transactions: Transaction[]): Observable<void>  {
-    // return this.storageProvider.saveFileContents('transactions.json', JSON.stringify(transactions));
-    throw new Error('Not implemented');
-  }
-
-  saveGroups(groups: Group[]): Observable<void>  {
-    // return this.cloudDriveService.saveFileContents('groups.json', JSON.stringify(groups));
-    throw new Error('Not implemented');
+  saveGroups(groups: Group[]): void {
+    if (!this.transactions$.value) {
+      console.error('Transactions not loaded, cannot save groups');
+      return;
+    }
+    this.storageProvider()?.saveAppStorage({ transactions: this.transactions$.value, groups: groups });
   }
 
 }
