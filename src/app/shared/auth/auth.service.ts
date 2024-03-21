@@ -44,7 +44,8 @@ export class AuthService {
       client_id: environment.oauth2.google_client_id,
       scope: [
         'https://www.googleapis.com/auth/drive.appdata',
-        'https://www.googleapis.com/auth/drive.file'
+        'https://www.googleapis.com/auth/drive.file',
+        'https://www.googleapis.com/auth/drive.install'
       ].join(' '),
       response_type: 'token',
       redirect_uri: window.location.origin + '/oauth2.html',
