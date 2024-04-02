@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../shared/auth/auth.service';
 
 @Component({
-  selector: 'app-first-run',
+  selector: 'app-landing',
   standalone: true,
   imports: [NgClass],
   template: `
@@ -62,7 +62,7 @@ import { AuthService } from '../shared/auth/auth.service';
     }
   `
 })
-export class FirstRunComponent {
+export class LandingComponent {
 
   authService = inject(AuthService);
 

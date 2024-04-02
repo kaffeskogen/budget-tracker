@@ -1,4 +1,4 @@
-import { Injectable, Signal, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Subject, tap } from "rxjs";
 import { Transaction } from '../interfaces/Transaction';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -8,6 +8,7 @@ export interface TransactionsServiceState {
     transactions: Transaction[];
     status: 'error' | 'success' | 'loading';
     error: string | null;
+    save: boolean;
 }
 
 
@@ -29,12 +30,14 @@ export class TransactionsService {
     private state = signal<TransactionsServiceState>({
         transactions: [],
         status: 'loading',
-        error: null
+        error: null,
+        save: false
     });
 
     transactions = computed(() => this.state().transactions);
     status = computed(() => this.state().status);
     error = computed(() => this.state().error);
+    save = computed(() => this.state().save);
 
     transaction(id: string): Signal<Transaction | undefined> {
         return computed(() => this.transactions()?.find((t) => t.id === id));
@@ -52,7 +55,7 @@ export class TransactionsService {
                     this.state.update((state) => ({
                         ...state,
                         transactions,
-                        status: 'success',
+                        status: 'success'
                     } satisfies TransactionsServiceState))
                 },
                 error: (response) => {
@@ -63,6 +66,7 @@ export class TransactionsService {
         this.add$.pipe(takeUntilDestroyed()).subscribe((transaction) => {
             return this.state.update((state) => ({
                 ...state,
+                save: true,
                 transactions: [
                     ...state.transactions,
                     {
@@ -76,26 +80,31 @@ export class TransactionsService {
         this.edit$.pipe(takeUntilDestroyed()).subscribe((update) => {
             return this.state.update((state) => ({
                 ...state,
-                loadedAtLeastOnce: true,
+                save: true,
                 transactions: state.transactions.map((item) =>
                     item.id === update.id ? { ...update } : item
                 )
-            }))
+            } satisfies TransactionsServiceState))
         });
 
         this.remove$.pipe(takeUntilDestroyed()).subscribe((transaction) =>
             this.state.update((state) => ({
                 ...state,
-                loadedAtLeastOnce: true,
+                save: true,
                 transactions: state.transactions.filter((item) => item.id !== transaction.id),
-            }))
+            } satisfies TransactionsServiceState))
         );
 
         effect(() => {
-            if (this.status() === 'success') {
-                console.log('Saving transactions', this.transactions());
-                this.storageService.saveTransactions(this.transactions());
+
+            if (!this.save()) {
+                return;
             }
+
+            console.log('Saving transactions', this.transactions());
+            this.storageService.saveTransactions(this.transactions());
+            return;
+
         });
     }
 }

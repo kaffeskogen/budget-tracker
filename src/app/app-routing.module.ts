@@ -16,8 +16,8 @@ const routes: Routes = [
     canActivate: [storageStrategyGuard]
   },
   {
-    path: 'first-run',
-    loadComponent: () => import('./first-run/first-run.component').then(m => m.FirstRunComponent)
+    path: 'landing',
+    loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
   },
   {
     path: 'g/:groupId',

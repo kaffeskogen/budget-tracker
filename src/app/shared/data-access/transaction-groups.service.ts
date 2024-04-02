@@ -1,4 +1,4 @@
-import { Injectable, Signal, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Subject } from "rxjs";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
@@ -10,6 +10,7 @@ export interface TransactionGroupsServiceState {
     groups: Group[];
     status: 'error' | 'success' | 'loading';
     error: string | null;
+    save: boolean;
 }
 
 
@@ -27,16 +28,17 @@ export class TransactionGroupsService {
     remove$ = new Subject<Group>();
     edit$ = new Subject<Group>();
 
-
     private state = signal<TransactionGroupsServiceState>({
         groups: [],
         status: 'loading',
-        error: null
+        error: null,
+        save: false
     });
 
     groups = computed(() => this.state().groups);
     status = computed(() => this.state().status);
     error = computed(() => this.state().error);
+    save = computed(() => this.state().save);
 
     group(id: string): Signal<Group | undefined> {
         return computed(() => this.groups()?.find((t) => t.id === id));
@@ -49,11 +51,10 @@ export class TransactionGroupsService {
             .subscribe({
                 next: (groups) => {
                     if (!groups) return;
-                    console.log('Got groups', groups);
                     this.state.update((state) => ({
                         ...state,
                         groups,
-                        status: 'success',
+                        status: 'success'
                     } satisfies TransactionGroupsServiceState))
                 },
                 error: (err) => this.state.update((state) => ({ ...state, status: 'error', error: err }))
@@ -65,6 +66,7 @@ export class TransactionGroupsService {
                 console.log('Adding group', group);
                 this.state.update((state) => ({
                     ...state,
+                    save: true,
                     groups: [
                         ...state.groups,
                         {
@@ -79,6 +81,7 @@ export class TransactionGroupsService {
             .subscribe((update) =>
                 this.state.update((state) => ({
                     ...state,
+                    save: true,
                     groups: state.groups.map((item) =>
                         item.id === update.id ? { ...update } : item
                     ),
@@ -90,6 +93,7 @@ export class TransactionGroupsService {
             .subscribe((group) => {
                 this.state.update((state) => ({
                     ...state,
+                    save: true,
                     groups: state.groups.filter((item) => item.id !== group.id),
                 } satisfies TransactionGroupsServiceState));
                 this.toast.show(`Group ${group.name} removed`);
@@ -98,10 +102,14 @@ export class TransactionGroupsService {
 
 
         effect(() => {
-            if (this.status() === 'success') {
-                console.log('saving groups', this.groups());
-                this.storageService.saveGroups(this.groups());
+            if(!this.save()) {
+                return;
             }
+
+            console.log('saving groups', this.groups());
+            this.storageService.saveGroups(this.groups());
+            return;
+
         });
     }
 }
