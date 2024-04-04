@@ -54,6 +54,7 @@ export class TransactionGroupsService {
                     this.state.update((state) => ({
                         ...state,
                         groups,
+                        save: false,
                         status: 'success'
                     } satisfies TransactionGroupsServiceState))
                 },

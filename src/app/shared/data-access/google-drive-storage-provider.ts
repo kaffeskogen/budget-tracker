@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from "@angular/core";
 import { AppStorageProvider } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
-import { Observable, tap, map, mergeMap, of, firstValueFrom, BehaviorSubject, EMPTY, switchMap, distinctUntilChanged } from "rxjs";
+import { Observable, tap, map, mergeMap, of, firstValueFrom, BehaviorSubject, EMPTY, switchMap, distinctUntilChanged, lastValueFrom } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
 import { MOCK_APP_STORAGE } from "../mocks/appdata";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
@@ -29,21 +29,28 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
             switchMap(appdata => appdata ? of(appdata) : EMPTY)
         ) as BehaviorSubject<AppStorage>;
 
-    constructor(httpClient: HttpClient, oauth2Token: Oauth2Token) {
+    constructor(httpClient: HttpClient, oauth2Token: Oauth2Token, fileId?: string) {
         this.oauth2Token = oauth2Token;
         this.http = httpClient;
+
+        if (fileId) {
+            this._setGoogleDriveAppData({ storageFileId: fileId})
+                .subscribe({
+                    next: value => this.googleDriveAppData.next(value)
+                });
+        } else {
+            this._getGoogleDriveAppData()
+                .pipe(switchMap(appdata => appdata ? of(appdata) : EMPTY))
+                .subscribe({
+                    next: value => this.googleDriveAppData.next(value)
+                });
+        }
         
-        this._getGoogleDriveAppData()
-            .pipe(
-                distinctUntilChanged(),
-                switchMap(appdata => appdata ? of(appdata) : EMPTY)
-            ).subscribe(this.googleDriveAppData);
-            
         this._getAppStorage()
-            .pipe(
-                distinctUntilChanged(),
-                switchMap(appdata => appdata ? of(appdata) : EMPTY)
-            ).subscribe(this.appStorage);
+            .pipe(switchMap(appdata => appdata ? of(appdata) : EMPTY))
+            .subscribe({
+                next: value => this.appStorage.next(value)
+            });
     }
 
     get token() {
@@ -66,19 +73,24 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
             );
     }
 
+    private _setGoogleDriveAppData(appData: GoogleDriveAppData): Observable<GoogleDriveAppData> {
+        return this.saveFileContents('appDataFolder', 'google-drive-config.json', JSON.stringify(appData))
+            .pipe(map(() => appData));
+    }
+
+
     getAppStorage(): Observable<AppStorage> {
-        return this.appStorage
-            .pipe(
-                distinctUntilChanged(),
-                switchMap(appStorage => appStorage ? of(appStorage) : EMPTY)
-            );
+        return this.appStorage;
     }
 
     async saveAppStorage(appStorage: AppStorage): Promise<void> {
+        console.log('Saving 2');
         const appData = await firstValueFrom(this.googleDriveAppData);
+        console.log('Saving 3');
         if (!appData?.storageFileId) {
             throw new Error('No storage file found');
         }
+        console.log('Saving 4');
         await firstValueFrom(this.saveFileContentsById(appData.storageFileId, JSON.stringify(appStorage)));
     }
 
@@ -165,7 +177,7 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         return this.http.patch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}`, contents, {
             headers: {
                 'Content-Type': 'text/plain',
-                'Content-Length': contents.length.toString(),
+                'Content-Length': contents.length.toString(), 
                 'Authorization': `Bearer ${this.token}`
             }
         }).pipe(map(() => { }));

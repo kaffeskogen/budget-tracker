@@ -55,6 +55,7 @@ export class TransactionsService {
                     this.state.update((state) => ({
                         ...state,
                         transactions,
+                        save: false,
                         status: 'success'
                     } satisfies TransactionsServiceState))
                 },
@@ -103,7 +104,6 @@ export class TransactionsService {
 
             console.log('Saving transactions', this.transactions());
             this.storageService.saveTransactions(this.transactions());
-            return;
 
         });
     }

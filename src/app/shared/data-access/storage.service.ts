@@ -65,12 +65,11 @@ export class StorageService {
       });
   }
 
-  saveTransactions(transactions: Transaction[]): void {
+  async saveTransactions(transactions: Transaction[]): Promise<void> {
     if (!this.groups$.value) {
       console.error('Groups not loaded, cannot save transactions');
       return;
     }
-      
     this.storageProvider()?.saveAppStorage({ transactions: transactions, groups: this.groups$.value });
   }
 
