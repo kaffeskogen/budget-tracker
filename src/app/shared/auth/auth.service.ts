@@ -30,7 +30,8 @@ export class AuthService {
         if (response.access_token) {
           this.appState.storageStrategy.update(() => 'google-drive');
           this.storageService.storageProvider.update(() => new GoogleDriveStorageProvider(this.http, response));
-          this.router.navigate(['']);
+          const routerParam = this.router.parseUrl(this.router.url).queryParamMap.get('redirect');
+          this.router.navigateByUrl(routerParam || '/');
         }
       })
     ));

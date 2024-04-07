@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AuthService } from '../shared/auth/auth.service';
 
 @Component({
@@ -62,9 +62,13 @@ import { AuthService } from '../shared/auth/auth.service';
     }
   `
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
 
   authService = inject(AuthService);
+
+  ngOnInit(): void {
+    this.authService.login();
+  }
 
   savingStrategies = [
     {

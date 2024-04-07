@@ -8,6 +8,6 @@ export const storageStrategyGuard: CanActivateFn = (route, state) => {
     console.log('Storage strategy selected')
     return true;
   }
-  console.log('Storage strategy not selected')
-  return inject(Router).createUrlTree(['landing']);
+  console.log('Storage strategy not selected');
+  return inject(Router).createUrlTree(['landing'], { queryParams: { redirect: state.url } });
 };

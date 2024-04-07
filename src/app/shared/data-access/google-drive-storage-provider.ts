@@ -1,10 +1,7 @@
-import { Injectable, computed, signal } from "@angular/core";
 import { AppStorageProvider } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
-import { Observable, tap, map, mergeMap, of, firstValueFrom, BehaviorSubject, EMPTY, switchMap, distinctUntilChanged, lastValueFrom } from "rxjs";
+import { Observable, tap, map, mergeMap, of, firstValueFrom, BehaviorSubject, EMPTY, switchMap } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
-import { MOCK_APP_STORAGE } from "../mocks/appdata";
-import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 
 interface Oauth2Token {
     access_token: string;
@@ -33,18 +30,14 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         this.oauth2Token = oauth2Token;
         this.http = httpClient;
 
-        if (fileId) {
-            this._setGoogleDriveAppData({ storageFileId: fileId})
-                .subscribe({
-                    next: value => this.googleDriveAppData.next(value)
-                });
-        } else {
-            this._getGoogleDriveAppData()
-                .pipe(switchMap(appdata => appdata ? of(appdata) : EMPTY))
-                .subscribe({
-                    next: value => this.googleDriveAppData.next(value)
-                });
-        }
+        of(fileId).pipe(
+            mergeMap(fileId => fileId ?
+                this._setGoogleDriveAppData({ storageFileId: fileId}) :
+                this._getGoogleDriveAppData()
+            ))
+            .subscribe({
+                next: value => this.googleDriveAppData.next(value)
+            });
         
         this._getAppStorage()
             .pipe(switchMap(appdata => appdata ? of(appdata) : EMPTY))
@@ -57,7 +50,7 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         return this.oauth2Token.access_token;
     }
 
-    private _getAppStorage(): Observable<AppStorage> {
+    private _getAppStorage(): Observable<AppStorage|null> {
         return this.googleDriveAppData
             .pipe(
                 map(data => data && data.storageFileId && data.storageFileId),
@@ -69,7 +62,7 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
                             .pipe(mergeMap(id =>
                                 this.saveFileContents('appDataFolder', 'google-drive-config.json', JSON.stringify({ storageFileId: id }))))
                 ),
-                map(contents => contents || MOCK_APP_STORAGE)
+                map(contents => contents || null)
             );
     }
 
