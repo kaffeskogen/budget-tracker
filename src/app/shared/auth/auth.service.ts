@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { fromEvent, map, tap } from 'rxjs';
 import { AppStateService } from '../data-access/app-state.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../data-access/storage.service';
 import { GoogleDriveStorageProvider } from '../data-access/google-drive-storage-provider';
 import { HttpClient } from '@angular/common/http';
@@ -19,6 +19,7 @@ export interface Oauth2TokenResponse {
 export class AuthService {
 
   appState = inject(AppStateService);
+  route = inject(ActivatedRoute);
   router = inject(Router);
   storageService = inject(StorageService);
   http = inject(HttpClient);
@@ -29,8 +30,8 @@ export class AuthService {
       tap(response => {
         if (response.access_token) {
           this.appState.storageStrategy.update(() => 'google-drive');
-          this.storageService.storageProvider.update(() => new GoogleDriveStorageProvider(this.http, response));
-          const routerParam = this.router.parseUrl(this.router.url).queryParamMap.get('redirect');
+          this.storageService.storageProvider.update(() => new GoogleDriveStorageProvider(this.http));
+          const routerParam = this.route.snapshot.queryParamMap.get('redirect');
           this.router.navigateByUrl(routerParam || '/');
         }
       })

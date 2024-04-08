@@ -1,6 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { AuthService } from '../shared/auth/auth.service';
+import { StorageService } from '../shared/data-access/storage.service';
+import { AppStateService } from '../shared/data-access/app-state.service';
 
 @Component({
   selector: 'app-landing',
@@ -64,10 +66,10 @@ import { AuthService } from '../shared/auth/auth.service';
 })
 export class LandingComponent implements OnInit {
 
-  authService = inject(AuthService);
+  appState = inject(AppStateService);
 
   ngOnInit(): void {
-    this.authService.login();
+    this.appState.storageStrategy.update(() => 'google-drive')
   }
 
   savingStrategies = [
@@ -90,7 +92,7 @@ export class LandingComponent implements OnInit {
       name: 'Google Drive',
       description: 'För att Alphabet redan vet var du spenderar dina pengar.',
       icon: '/assets/images/google-drive.png',
-      onclick: () => this.authService.login()
+      onclick: () => this.appState.storageStrategy.update(() => 'google-drive')
     },
     {
       name: 'OneDrive',

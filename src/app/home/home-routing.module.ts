@@ -4,6 +4,8 @@ import { HomeComponent } from './home.component';
 import { TransactionComponent } from './transaction/transaction.component';
 import { SettingsComponent } from './settings/settings.component';
 import { CreateGroupComponent } from './create-group/create-group.component';
+import { GeneralSettingsComponent } from './settings/ui/general-settings/general-settings.component';
+import { SetStorageFileComponent } from './settings/ui/set-storage-file/set-storage-file.component';
 
 const routes: Routes = [
   {
@@ -23,7 +25,17 @@ const routes: Routes = [
       },
       {
         path: 'settings',
-        component: SettingsComponent
+        component: SettingsComponent,
+        children: [
+          {
+            path: '',
+            component: GeneralSettingsComponent
+          },
+          {
+            path: 'set-storage-file',
+            component: SetStorageFileComponent
+          }
+        ]
       },
       {
         path: 'edit/:transactionId',
