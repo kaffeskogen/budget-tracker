@@ -96,7 +96,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/oauth2.html"
+              "src/oauth2.html",
+              "staticwebapp.config.json"
             ],
             "styles": [
               "src/styles.scss"
