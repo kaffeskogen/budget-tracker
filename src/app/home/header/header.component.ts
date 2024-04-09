@@ -13,7 +13,7 @@ import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
         <div class="font-bold">Alfred Gårdeskog</div>
       </div>
     </div>
-    <button class="rounded-md bg-white p-1 hover:bg-slate-100 active:bg-white cursor-pointer" [routerLink]="['settings']">
+    <button class="rounded-md bg-white p-1 hover:bg-slate-100 active:bg-white cursor-pointer" [routerLink]="['/settings']">
       <cog-6-tooth-outline-icon [size]="18"></cog-6-tooth-outline-icon>
     </button>
   </div>

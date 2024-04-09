@@ -20,6 +20,11 @@ const routes: Routes = [
     loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
   },
   {
+    path: 'settings',
+    canActivate: [storageStrategyGuard],
+    loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
+  },
+  {
     path: 'g/:groupId',
     component: GroupComponent,
     canActivate: [storageStrategyGuard],
