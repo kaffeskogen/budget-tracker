@@ -1,6 +1,5 @@
 import { NgClass } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { AuthService } from '../shared/auth/auth.service';
 import { StorageService } from '../shared/data-access/storage.service';
 import { AppStateService } from '../shared/data-access/app-state.service';
 

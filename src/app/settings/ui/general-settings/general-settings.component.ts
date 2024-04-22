@@ -1,7 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { EMPTY } from 'rxjs';
-import { GoogleDriveStorageProvider } from 'src/app/shared/data-access/google-drive-storage-provider';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { EMPTY, Observable, of, switchMap, tap } from 'rxjs';
+import { GoogleDriveAppData, GoogleDriveStorageProvider } from 'src/app/shared/data-access/google-drive-storage-provider';
 import { StorageService } from 'src/app/shared/data-access/storage.service';
 import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
 
@@ -33,9 +33,9 @@ export class GeneralSettingsComponent {
   transactionsService = inject(TransactionsService);
   storageService = inject(StorageService);
 
-  googleDriveAppData = toSignal((this.storageService.storageProvider() as GoogleDriveStorageProvider)?.googleDriveAppData || EMPTY);
-  fileId = computed(() => this.googleDriveAppData()?.storageFileId);
+  googleDriveAppData = computed(() => this.storageService.storageProvider() as GoogleDriveStorageProvider);
 
+  fileId = computed(() => this.googleDriveAppData().fileId());
   fileLink = computed(() => `https://drive.google.com/file/d/${this.fileId()}/view`);
   
 }
