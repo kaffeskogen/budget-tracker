@@ -1,4 +1,4 @@
-import { Injectable, WritableSignal, inject, signal } from '@angular/core';
+import { Injectable, Injector, WritableSignal, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
 import { GoogleDriveStorageProvider } from './google-drive-storage-provider';
@@ -22,6 +22,7 @@ export class AppStateService implements AppState {
   http = inject(HttpClient);
   route = inject(ActivatedRoute);
   router = inject(Router);
+  injector = inject(Injector);
 
   lastSelectedFormattedDate = signal<string>(defaultFormattedDate);
   storageStrategy = signal<StorageStrategy>('unselected');
@@ -29,7 +30,9 @@ export class AppStateService implements AppState {
   constructor() {
     toObservable(this.storageStrategy).subscribe(strategy => {
       if (strategy === 'google-drive') {
-        this.storageService.storageProvider.update(() => new GoogleDriveStorageProvider(this.http));
+        const service = this.injector.get(GoogleDriveStorageProvider);
+        // service.loadAppStorage();
+        this.storageService.storageProvider.update(() => service);
         
         const routerParam = this.route.snapshot.queryParamMap.get('redirect');
         this.router.navigateByUrl(routerParam || '/');

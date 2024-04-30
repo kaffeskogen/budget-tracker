@@ -1,4 +1,4 @@
-import { Injectable, computed, inject } from '@angular/core';
+import { Injectable, Injector, computed, inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { fromEvent, map, tap } from 'rxjs';
@@ -23,6 +23,8 @@ export class AuthService {
   router = inject(Router);
   storageService = inject(StorageService);
   http = inject(HttpClient);
+  injector = inject(Injector);
+
 
   private tokenResponse = toSignal<Oauth2TokenResponse>(fromEvent<MessageEvent>(window, 'message')
     .pipe(
@@ -30,7 +32,9 @@ export class AuthService {
       tap(response => {
         if (response.access_token) {
           this.appState.storageStrategy.update(() => 'google-drive');
-          this.storageService.storageProvider.update(() => new GoogleDriveStorageProvider(this.http));
+          const service = this.injector.get(GoogleDriveStorageProvider);
+          // service.loadAppStorage();
+          this.storageService.storageProvider.update(() => service);
           const routerParam = this.route.snapshot.queryParamMap.get('redirect');
           this.router.navigateByUrl(routerParam || '/');
         }

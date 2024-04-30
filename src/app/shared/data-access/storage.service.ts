@@ -54,9 +54,10 @@ export class StorageService {
     toObservable(this.storageProvider)
       .pipe(
         takeUntilDestroyed(),
-        mergeMap(provider => provider ? provider.getAppStorage() : of(null))
+        mergeMap((provider: AppStorageProvider|null) => provider ? provider.getAppStorage() : of(null))
       ).subscribe({
-        next: appStorage => {
+        next: (appStorage: AppStorage|null) => {
+          console.log('Subscribed', appStorage);
           if (appStorage) {
             this.transactions$.next(appStorage.transactions);
             this.groups$.next(appStorage.groups);
