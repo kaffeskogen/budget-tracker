@@ -57,7 +57,6 @@ export class StorageService {
         mergeMap((provider: AppStorageProvider|null) => provider ? provider.getAppStorage() : of(null))
       ).subscribe({
         next: (appStorage: AppStorage|null) => {
-          console.log('Subscribed', appStorage);
           if (appStorage) {
             this.transactions$.next(appStorage.transactions);
             this.groups$.next(appStorage.groups);

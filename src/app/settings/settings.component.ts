@@ -8,10 +8,10 @@ import { IconComponent } from '../shared/icons/icon/icon.component';
   standalone: true,
   imports: [RouterModule,IconComponent],
   template: `
-    <div class="p-8 mb-32">
-      <div class="flex flex-col lg:flex-row">
+    <div class="p-8 mb-32 w-full">
+      <div class="flex flex-col lg:flex-row w-full">
         <div class="grid gap-y-8 w-full max-w-md mr-16">
-          <div class="pb-4">
+          <div class="pb-4 w-full">
 
             <a [routerLink]="['/']" class="text-slate-500 hover:text-slate-600 flex items-center">
               <app-icon [size]="14" iconName="ArrowLeft"></app-icon>

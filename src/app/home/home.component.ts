@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
@@ -9,6 +9,7 @@ import { SidenavComponent } from '../sidenav/sidenav.component';
 import { GraphComponent } from '../shared/ui/graph/graph.component';
 import { TransactionsService } from '../shared/data-access/transactions.service';
 import { Group } from '../shared/interfaces/Group';
+import { ToastService } from '../shared/ui/toast/toast.service';
 
 @Component({
     selector: 'app-home',
@@ -57,7 +58,10 @@ export class HomeComponent {
   groupsService = inject(TransactionGroupsService);
   transactionsService = inject(TransactionsService);
 
+  toastService = inject(ToastService);
+
   groups = computed(() => this.groupsService.groups());
+
   orphanedGroup = computed<Group>(() => ({
     id: 'orphaned',
     name: 'Transactions without group',

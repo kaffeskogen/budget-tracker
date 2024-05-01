@@ -33,7 +33,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
     )
   ],
   template: `<ng-template cdkPortal>
-    <div class="relative mb-2 h-0">
+    <div class="relative mb-2 h-0 w-[320px]">
     @for (msg of service.messages(); track msg.id) {
       <div class="absolute bottom-0 w-screen max-w-xs overflow-y-scroll py-4 px-8 mb-2 bg-slate-800 rounded shadow text-white flex place-content-between"
           [@position]="{value:'*', params: { bottom: 4 - (4 * msg.position), top: -4 * msg.position}}"
