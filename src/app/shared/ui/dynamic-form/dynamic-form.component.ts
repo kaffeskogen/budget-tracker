@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { JsonForm } from './models/models';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { fromEvent } from 'rxjs';
@@ -26,11 +26,12 @@ import { NgIf, NgFor } from '@angular/common';
     standalone: true,
     imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, DynamicControlComponent]
 })
-export class DynamicFormComponent implements OnInit {
+export class DynamicFormComponent implements OnInit,AfterViewInit {
   @Input() form!: JsonForm;
   @Input() title!: string;
   @Input() defaultValues: { [key: string]: any } | undefined;
   @Input() controlOverrides?: { [key: string]: any };
+  @Input() focus?: boolean;
   @Output() onSave = new EventEmitter<any>();
   @Output() onCancel = new EventEmitter<any>();
 
@@ -44,6 +45,13 @@ export class DynamicFormComponent implements OnInit {
     fromEvent(document, "keydown")
       .pipe(takeUntilDestroyed())
       .subscribe((e) => (e as any as KeyboardEvent).key === 'Escape' && this.onCancel.emit())
+  }
+
+  ngAfterViewInit(): void {
+    if (!this.focus) {
+      return;
+    }
+    this.el.nativeElement.querySelector('input')?.focus();
   }
 
   public ngOnInit(): void {

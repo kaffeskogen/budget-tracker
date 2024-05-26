@@ -35,7 +35,7 @@ export class GeneralSettingsComponent {
   fileLink?: string;
 
   constructor() {
-    this.storageProvider().fileId$.pipe(
+    this.storageProvider().appFolderId$.pipe(
       takeUntilDestroyed()
     ).subscribe(fileId => {
       if (!fileId) return;

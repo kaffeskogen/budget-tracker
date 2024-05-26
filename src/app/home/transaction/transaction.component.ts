@@ -42,7 +42,8 @@ import { ConnectionPositionPair } from '@angular/cdk/overlay';
         [controlOverrides]="controlOverrides"
         [defaultValues]="transaction()"
         (onCancel)="closeDialog()"
-        (onSave)="onSave($event)">
+        (onSave)="onSave($event)"
+        [focus]="isNewTransaction()">
       </app-dynamic-form>
 
     </ng-container>
@@ -66,7 +67,9 @@ export class TransactionComponent {
     ),
   ];
 
-  controlOverrides = { group: GroupChoiceComponent };
+  controlOverrides = {
+    group: GroupChoiceComponent
+  };
 
   defaultNewTransaction = signal<Omit<Transaction, 'id'>>({
     groupId: this.router.getCurrentNavigation()?.extras.state?.['groupId'] ?? '',

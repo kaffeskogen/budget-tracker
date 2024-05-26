@@ -10,7 +10,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { CdkMenuTrigger, CdkMenu, CdkMenuItem } from '@angular/cdk/menu';
 import { OutlineIconsModule } from '@dimaslz/ng-heroicons';
 import { GroupSettingsComponent } from './ui/group-settings/group-settings.component';
-import * as colors from 'tailwindcss/colors';
 import { GraphComponent } from '../shared/ui/graph/graph.component';
 import { DialogComponent } from '../shared/ui/dialog/dialog.component';
 
@@ -57,7 +56,7 @@ export interface TransactionsGroupState {
                   class="px-4 py-2 hover:bg-gray-100 text-sm text-left flex items-center"
                   data-qa="delete-group"
                   (click)="showConfirmDeletionDialog()">
-                    <app-icon iconName='Trash' [color]="colors.red['800']" class="mr-2" [size]="16"></app-icon>
+                    <app-icon iconName='Trash' color="#991b1b" class="mr-2" [size]="16"></app-icon>
                     <span>Delete group</span>
                   </button>
               </div>
@@ -121,8 +120,6 @@ export class GroupComponent {
   transactionsService = inject(TransactionsService);
   route = inject(ActivatedRoute);
   router = inject(Router);
-
-  colors = colors;
   
   private state = signal<TransactionsGroupState>({
     error: null,

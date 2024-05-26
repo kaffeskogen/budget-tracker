@@ -51,6 +51,10 @@
                     {
                         "title": "date",
                         "$ref": "#/definitions/date"
+                    },
+                    {
+                        "title": "date",
+                        "$ref": "#/definitions/date"
                     }
                 ]
             }
