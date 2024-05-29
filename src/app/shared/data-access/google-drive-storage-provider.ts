@@ -18,7 +18,7 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     http = inject(HttpClient);
 
     private tokenResponse$ = fromEvent<MessageEvent>(window, 'message');
-    private token$ = new BehaviorSubject<string | null>(null)
+    private token$ = new BehaviorSubject<string | null>(null);
     
     private googleDriveAppDataFolderContents$ = this.token$.pipe(
         mergeMap(token => !token ?
@@ -30,13 +30,50 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         )
     )
 
-    private googleDriveConfig$ = this.googleDriveAppDataFolderContents$
+    constructor() {
+
+        this.tokenResponse$
+            .pipe(
+                map(event => event.data as Oauth2TokenResponse),
+            ).subscribe(response => {
+                if (response.access_token) {
+                    this.token$.next(response.access_token);
+                }
+            });
+
+        this.openPopup();
+    }
+
+    async openPopup() {
+        const endpoint = 'https://accounts.google.com/o/oauth2/auth';
+        const params = {
+            client_id: environment.oauth2.google_client_id,
+            scope: [
+                'https://www.googleapis.com/auth/drive.appdata',
+                'https://www.googleapis.com/auth/drive.file',
+                'https://www.googleapis.com/auth/drive.install'
+            ].join(' '),
+            response_type: 'token',
+            redirect_uri: window.location.origin + '/oauth2.html',
+        };
+
+        const url = endpoint + '?' + new URLSearchParams(params).toString();
+        window.open(url, 'kaffeskogen-oauth', 'popup,height=570,width=520');
+    }
+
+
+    appFolderId$ = this.googleDriveAppDataFolderContents$
         .pipe(
             map(files => files.find(file => file.name === 'google-drive-config.json')),
-            mergeMap(file => file?.id ? of(file?.id) : EMPTY),
+            mergeMap(file => file?.id ? of(file?.id) : EMPTY)
+        );
+
+    private googleDriveConfig$ = this.appFolderId$
+        .pipe(
             mergeMap((fileId: string) => fileId ? this.getFileContents<GoogleDriveAppData>(fileId) : of(null)),
             map(data => data || { storageFileId: null })
         );
+    
 
     appFolderContents$ = this.googleDriveConfig$.pipe(
         map(data => data.storageFileId),
@@ -47,14 +84,17 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         map(files => files.map((file: any) => ({name: file.name, id: file.id})))
     );
 
-    selectedPeriod$ = new BehaviorSubject<string | null>(null);
+    selectedPeriod$ = new BehaviorSubject<string>([
+        new Date().getFullYear().toString(),
+        (new Date().getMonth() + 1).toString().padStart(2, '0')
+    ].join('-'));
 
-    periodAppStorage$ = zip(
+    periodAppStorage$: Observable<AppStorage> = zip(
         this.periods$,
         this.selectedPeriod$
     ).pipe(
         map(([periods, selectedPeriod]) => selectedPeriod && periods.find((period) => period.name === selectedPeriod)),
-        mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : EMPTY),
+        mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : of({ transactions: [], groups: [] })),
         mergeMap(data => data ? of(data) : EMPTY)
     );
 
