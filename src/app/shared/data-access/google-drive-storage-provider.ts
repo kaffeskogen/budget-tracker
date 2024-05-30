@@ -77,7 +77,7 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     appFolderId$ = this.googleDriveConfig$.pipe(
         mergeMap(googleDriveConfig => googleDriveConfig?.storageFileId
             ? of(googleDriveConfig.storageFileId)
-            : this.createFolder(window.location.origin)
+            : this.createFolder(window.location.hostname)
                 .pipe(
                     zipWith(this.googleDriveConfigFileId$),
                     mergeMap(([folderId, fileId]) => 
