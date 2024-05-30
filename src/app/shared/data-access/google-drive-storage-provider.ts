@@ -1,6 +1,6 @@
 import { AppStorageProvider } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
-import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, switchMap, fromEvent, tap, BehaviorSubject, pipe, merge, concat, zip } from "rxjs";
+import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, switchMap, fromEvent, tap, BehaviorSubject, pipe, merge, concat, zip, find, zipWith } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
 import { environment } from "src/environments/environment";
 import { Oauth2TokenResponse } from "../auth/auth.service";
@@ -19,16 +19,6 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
 
     private tokenResponse$ = fromEvent<MessageEvent>(window, 'message');
     private token$ = new BehaviorSubject<string | null>(null);
-    
-    private googleDriveAppDataFolderContents$ = this.token$.pipe(
-        mergeMap(token => !token ?
-            EMPTY :
-            this.http.get<{ files: {name:string, id: string}[] }>('https://www.googleapis.com/drive/v3/files', {
-                headers: { 'Authorization': `Bearer ${token}` },
-                params: { spaces: 'appDataFolder', fields: 'files(id, name)', pageSize: '1000' }
-            }).pipe( map(response => response.files) )
-        )
-    )
 
     constructor() {
 
@@ -61,23 +51,45 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         window.open(url, 'kaffeskogen-oauth', 'popup,height=570,width=520');
     }
 
+    
+    private googleDriveAppDataFolderContents$ = this.token$.pipe(
+        mergeMap(token => !token ?
+            EMPTY :
+            this.http.get<{ files: {name:string, id: string}[] }>('https://www.googleapis.com/drive/v3/files', {
+                headers: { 'Authorization': `Bearer ${token}` },
+                params: { spaces: 'appDataFolder', fields: 'files(id, name)', pageSize: '1000' }
+            }).pipe( map(response => response.files) )
+        )
+    )
 
-    appFolderId$ = this.googleDriveAppDataFolderContents$
+    googleDriveConfigFileId$ = this.googleDriveAppDataFolderContents$
         .pipe(
             map(files => files.find(file => file.name === 'google-drive-config.json')),
-            mergeMap(file => file?.id ? of(file?.id) : EMPTY)
+            mergeMap(file => file?.id ? of(file?.id) : this.createGoogleDriveConfigFile('google-drive-config.json'))
         );
 
-    private googleDriveConfig$ = this.appFolderId$
-        .pipe(
-            mergeMap((fileId: string) => fileId ? this.getFileContents<GoogleDriveAppData>(fileId) : of(null)),
-            map(data => data || { storageFileId: null })
-        );
+    googleDriveConfig$ = this.googleDriveConfigFileId$.pipe(
+        mergeMap(fileId => fileId ?
+            this.getFileContents<GoogleDriveAppData>(fileId) :
+            of({ storageFileId: null }))
+    );
     
+    appFolderId$ = this.googleDriveConfig$.pipe(
+        mergeMap(googleDriveConfig => googleDriveConfig?.storageFileId
+            ? of(googleDriveConfig.storageFileId)
+            : this.createFolder(window.location.origin)
+                .pipe(
+                    zipWith(this.googleDriveConfigFileId$),
+                    mergeMap(([folderId, fileId]) => 
+                        this.saveFileContents(fileId, JSON.stringify({ storageFileId: folderId }))
+                            .pipe(map(() => folderId))
+                    )
+                )
+            )
+    );
 
-    appFolderContents$ = this.googleDriveConfig$.pipe(
-        map(data => data.storageFileId),
-        mergeMap(folderId => folderId ? this.getFolderItems(folderId) : EMPTY)
+    appFolderContents$ = this.appFolderId$.pipe(
+        mergeMap(folderId => this.getFolderItems(folderId))
     );
 
     periods$: Observable<{name: string, id: string}[]> = this.appFolderContents$.pipe(
@@ -98,8 +110,18 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         mergeMap(data => data ? of(data) : EMPTY)
     );
 
-    saveAppStorage(appStorage: AppStorage): Promise<void> {
-        throw new Error("Method not implemented.");
+    async saveAppStorage(appStorage: AppStorage): Promise<void> {
+        const selectedPeriod = this.selectedPeriod$.value;
+        let periodFileId = await firstValueFrom(this.periods$.pipe(map(periods => periods.find(period => period.name === selectedPeriod)?.id)));
+        if (!periodFileId) {
+            periodFileId = await firstValueFrom(
+                this.appFolderId$.pipe(
+                    mergeMap(folderId => this.createFile(folderId, selectedPeriod)),
+                )
+            );
+        }
+
+        return firstValueFrom(this.saveFileContents(periodFileId, JSON.stringify(appStorage)));
     }
 
     getFolderItems(folderId: string) {
@@ -145,5 +167,75 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
             )
         );
     }
+    
+    saveFileContents(fileId: string, contents: string): Observable<void> {
+        return this.token$.pipe(
+            mergeMap(token => token ?
+                this.http.patch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}`, contents, {
+                    headers: {
+                        'Content-Type': 'text/plain',
+                        'Content-Length': contents.length.toString(),
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).pipe(map(() => { })) : EMPTY
+            )
+        );
+    }
 
+    createFolder(name: string): Observable<string> {
+        return this.token$.pipe(
+            mergeMap(token => token ?
+                this.http.post('https://www.googleapis.com/drive/v3/files', {
+                    name: name,
+                    mimeType: 'application/vnd.google-apps.folder'
+                },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                ).pipe(
+                    map((response: any) => response.id)
+                ) : EMPTY
+            )
+        );
+    }
+
+    createFile(parentFolderId: string, fileName: string): Observable<string> {
+        return this.token$.pipe(
+            mergeMap(token => token ?
+                this.http.post('https://www.googleapis.com/drive/v3/files', {
+                    name: fileName,
+                    parents: [parentFolderId]
+                },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                ).pipe(
+                    map((response: any) => response.id)
+                ) : EMPTY
+            )
+        );
+    }
+
+    createGoogleDriveConfigFile(fileName: string): Observable<string> {
+        return this.token$.pipe(
+            mergeMap(token => token ?
+                this.http.post('https://www.googleapis.com/drive/v3/files', {
+                    name: fileName,
+                    parents: ['appDataFolder']
+                },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                ).pipe(
+                    map((response: any) => response.id)
+                ) : EMPTY
+            )
+    );
+    }
 }
