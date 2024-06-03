@@ -106,7 +106,6 @@ export class TransactionGroupsService {
                 return;
             }
 
-            console.log('saving groups', this.groups());
             this.storageService.saveGroups(this.groups());
             return;
 

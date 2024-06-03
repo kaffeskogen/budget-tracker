@@ -15,7 +15,6 @@ export class ToastService {
   messages = signal<ToastMessage[]>([]);
 
   show(message: string, action?: { click: () => void, label: string }) {
-    console.log('showing toast');
     const id = Math.floor(Math.random() * 1000000);
 
     const currentPoisitions = this.messages().map(m => m.position);

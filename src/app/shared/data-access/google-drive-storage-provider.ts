@@ -117,15 +117,12 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         this.periods$,
         this.selectedPeriod$
     ]).pipe(
-        tap(([periods, selectedPeriod]) => console.log('PERIODS', periods, selectedPeriod)),
         map(([periods, selectedPeriod]) => selectedPeriod && periods.find((period) => period.name === selectedPeriod)),
-        tap(period => console.log('PERIOD', period)),
         mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : of({ transactions: [], groups: [] })),
         mergeMap(data => data ? of(data) : EMPTY)
     );
 
     async saveAppStorage(appStorage: AppStorage): Promise<void> {
-        console.log('SAVING', appStorage);
         const selectedPeriod = this.selectedPeriod$.value;
         let periodFileId = await firstValueFrom(this.periods$.pipe(map(periods => periods.find(period => period.name === selectedPeriod)?.id)));
         if (!periodFileId) {

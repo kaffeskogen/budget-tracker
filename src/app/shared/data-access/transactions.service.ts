@@ -111,7 +111,6 @@ export class TransactionsService {
                 return;
             }
 
-            console.log('Saving transactions', this.transactions());
             this.storageService.saveTransactions(this.transactions());
 
         });
