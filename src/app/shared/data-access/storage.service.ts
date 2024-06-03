@@ -1,5 +1,5 @@
 import { Injectable, InjectionToken, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, map, mergeMap, of, tap } from "rxjs";
+import { BehaviorSubject, Observable, Subject, firstValueFrom, lastValueFrom, map, mergeMap, of, tap } from "rxjs";
 import { MOCK_TRANSACTIONS } from '../mocks/transactions';
 import { MOCK_GROUPS } from '../mocks/groups';
 import { Transaction } from '../interfaces/Transaction';
@@ -66,19 +66,23 @@ export class StorageService {
   }
 
   async saveTransactions(transactions: Transaction[]): Promise<void> {
-    if (!this.groups$.value) {
-      console.error('Groups not loaded, cannot save transactions');
+    const provider = this.storageProvider();
+    if (!provider) {
+      console.error('No storage provider set, cannot save transactions');
       return;
     }
-    await this.storageProvider()?.saveAppStorage({ transactions: transactions, groups: this.groups$.value });
+    const { groups } = await firstValueFrom(provider?.periodAppStorage$);
+    await this.storageProvider()?.saveAppStorage({ groups, transactions });
   }
 
   async saveGroups(groups: Group[]): Promise<void> {
-    if (!this.transactions$.value) {
-      console.error('Transactions not loaded, cannot save groups');
+    const provider = this.storageProvider();
+    if (!provider) {
+      console.error('No storage provider set, cannot save transactions');
       return;
     }
-    await this.storageProvider()?.saveAppStorage({ transactions: this.transactions$.value, groups: groups });
+    const { transactions } = await firstValueFrom(provider.periodAppStorage$);
+    await this.storageProvider()?.saveAppStorage({ transactions, groups });
   }
 
 }
