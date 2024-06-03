@@ -3,6 +3,7 @@ import { Subject, tap } from "rxjs";
 import { Transaction } from '../interfaces/Transaction';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
+import { ToastService } from '../ui/toast/toast.service';
 
 export interface TransactionsServiceState {
     transactions: Transaction[];
@@ -24,6 +25,9 @@ export class TransactionsService {
     add$ = new Subject<Omit<Transaction, 'id'>>();
     remove$ = new Subject<Transaction>();
     edit$ = new Subject<Transaction>();
+
+
+    toast = inject(ToastService);
 
 
     // state
@@ -64,37 +68,42 @@ export class TransactionsService {
                 }
             });
 
-        this.add$.pipe(takeUntilDestroyed()).subscribe((transaction) => {
-            return this.state.update((state) => ({
-                ...state,
-                save: true,
-                transactions: [
-                    ...state.transactions,
-                    {
-                        ...transaction,
-                        id: Date.now().toString()
-                    }
-                ]
-            } satisfies TransactionsServiceState))
-        });
+        this.add$
+            .pipe(takeUntilDestroyed())
+            .subscribe((transaction) => {
+                this.state.update((state) => ({
+                    ...state,
+                    save: true,
+                    transactions: [
+                        ...state.transactions,
+                        {
+                            ...transaction,
+                            id: Date.now().toString()
+                        }
+                    ]
+                } satisfies TransactionsServiceState));
+                this.toast.show('Transaction added');
+            });
 
         this.edit$.pipe(takeUntilDestroyed()).subscribe((update) => {
-            return this.state.update((state) => ({
+            this.state.update((state) => ({
                 ...state,
                 save: true,
                 transactions: state.transactions.map((item) =>
                     item.id === update.id ? { ...update } : item
                 )
-            } satisfies TransactionsServiceState))
+            } satisfies TransactionsServiceState));
+            this.toast.show(`Transaction ${update.title} updated`);
         });
 
-        this.remove$.pipe(takeUntilDestroyed()).subscribe((transaction) =>
+        this.remove$.pipe(takeUntilDestroyed()).subscribe((transaction) => {
             this.state.update((state) => ({
                 ...state,
                 save: true,
                 transactions: state.transactions.filter((item) => item.id !== transaction.id),
-            } satisfies TransactionsServiceState))
-        );
+            } satisfies TransactionsServiceState));
+            this.toast.show(`Transaction ${transaction.title} removed`);
+        });
 
         effect(() => {
 

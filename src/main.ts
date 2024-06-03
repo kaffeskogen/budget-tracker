@@ -8,6 +8,7 @@ import { LOCALE_ID, DEFAULT_CURRENCY_CODE, importProvidersFrom } from '@angular/
 
 import localeSwedish from '@angular/common/locales/sv';
 import { provideHttpClient } from '@angular/common/http';
+import { ToastService } from './app/shared/ui/toast/toast.service';
 registerLocaleData(localeSwedish);
 
 bootstrapApplication(AppComponent, {
@@ -16,7 +17,8 @@ bootstrapApplication(AppComponent, {
         { provide: LOCALE_ID, useValue: 'sv' },
         { provide: DEFAULT_CURRENCY_CODE, useValue: 'SEK' },
         provideAnimations(),
-        provideHttpClient()
+        provideHttpClient(),
+        ToastService
     ]
 })
     .catch(err => console.error(err));

@@ -1,9 +1,8 @@
-import { Injectable, Signal, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Injectable, Self, Signal, SkipSelf, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Subject } from "rxjs";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from './storage.service';
 import { Group } from '../interfaces/Group';
-import { Transaction } from '../interfaces/Transaction';
 import { ToastService } from '../ui/toast/toast.service';
 
 export interface TransactionGroupsServiceState {
@@ -20,6 +19,7 @@ export interface TransactionGroupsServiceState {
 export class TransactionGroupsService {
 
     storageService = inject(StorageService);
+
     toast = inject(ToastService);
 
     groupsLoaded$ = this.storageService.groups$;
@@ -45,7 +45,6 @@ export class TransactionGroupsService {
     }
 
     constructor() {
-
         this.groupsLoaded$
             .pipe(takeUntilDestroyed())
             .subscribe({
@@ -64,7 +63,6 @@ export class TransactionGroupsService {
         this.add$
             .pipe(takeUntilDestroyed())
             .subscribe((group) => {
-                console.log('Adding group', group);
                 this.state.update((state) => ({
                     ...state,
                     save: true,
@@ -74,12 +72,13 @@ export class TransactionGroupsService {
                             ...group
                         }
                     ]
-                } satisfies TransactionGroupsServiceState))
+                } satisfies TransactionGroupsServiceState));
+                this.toast.show(`Group added`);
             });
 
         this.edit$
             .pipe(takeUntilDestroyed())
-            .subscribe((update) =>
+            .subscribe((update) => {
                 this.state.update((state) => ({
                     ...state,
                     save: true,
@@ -87,7 +86,8 @@ export class TransactionGroupsService {
                         item.id === update.id ? { ...update } : item
                     ),
                 } satisfies TransactionGroupsServiceState))
-            );
+                this.toast.show(`Group updated`);
+            });
 
         this.remove$
             .pipe(takeUntilDestroyed())
@@ -97,13 +97,12 @@ export class TransactionGroupsService {
                     save: true,
                     groups: state.groups.filter((item) => item.id !== group.id),
                 } satisfies TransactionGroupsServiceState));
-                this.toast.show(`Group ${group.name} removed`);
-            }
-        );
+                this.toast.show(`Group removed`);
+            });
 
 
         effect(() => {
-            if(!this.save()) {
+            if (!this.save()) {
                 return;
             }
 

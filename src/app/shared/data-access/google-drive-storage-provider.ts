@@ -189,7 +189,6 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
                 this.http.patch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}`, contents, {
                     headers: {
                         'Content-Type': 'text/plain',
-                        'Content-Length': contents.length.toString(),
                         'Authorization': `Bearer ${token}`
                     }
                 }).pipe(map(() => { })) : EMPTY

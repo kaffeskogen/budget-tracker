@@ -1,6 +1,6 @@
 import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
 import { CdkPortal, PortalModule } from '@angular/cdk/portal';
-import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, SkipSelf, ViewChild, inject } from '@angular/core';
 import { ToastService } from './toast.service';
 import { NgClass, NgFor } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -56,6 +56,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 export class ToastComponent implements OnDestroy, OnInit {
 
   overlay = inject(Overlay);
+
   service = inject(ToastService);
 
   @ViewChild(CdkPortal, { static: true }) public readonly portal?: CdkPortal;

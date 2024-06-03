@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { ToastComponent } from './shared/ui/toast/toast.component';
-import { ToastService } from './shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -14,8 +13,7 @@ import { ToastService } from './shared/ui/toast/toast.service';
     `,
   styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [RouterOutlet, SidenavComponent, ToastComponent],
-  providers: [ToastService]
+  imports: [RouterOutlet, SidenavComponent, ToastComponent]
 })
 export class AppComponent {
   title = 'budget-tracker';

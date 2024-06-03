@@ -24,7 +24,7 @@ describe('ToastComponent', () => {
   });
 
   it('should display a message', () => {
-    component.service.add({ content: 'Hello World', action: { click: () => {}, label: 'OK' } });
+    component.service.show('Hello world', { click: () => {}, label: 'OK' } );
     fixture.detectChanges();
     
     const messageContainer = fixture.debugElement.query(By.css('[data-qa="message-content"]'));
