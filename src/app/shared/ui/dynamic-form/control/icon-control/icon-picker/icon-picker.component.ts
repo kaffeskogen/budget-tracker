@@ -16,7 +16,7 @@ type IconName = keyof typeof IconComponents;
         placeholder="Search icon"
         (input)="inputValue$.next($event)"
         #inputElement>
-    <div class="h-[200px] overflow-y-scroll">
+    <div class="h-[300px] overflow-y-scroll">
       <button type="button" role="button" (click)="iconSelected.emit(icon)" *ngFor="let icon of filteredIcons()" class="px-2 py-1 flex w-full hover:bg-slate-50 active:bg-white">
         <app-icon [iconName]="icon" [size]="32" class="block mr-2"></app-icon>
         <span>{{icon}}</span>

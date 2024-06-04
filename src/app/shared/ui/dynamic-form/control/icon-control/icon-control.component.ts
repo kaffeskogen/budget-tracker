@@ -45,6 +45,7 @@ import { IconComponent } from '../../../../icons/icon/icon.component';
 export class IconControlComponent implements ControlValueAccessor {
 
   @ViewChild('trigger', { static: true, read: ElementRef }) trigger!: ElementRef<HTMLButtonElement>;
+  @ViewChild(IconPickerComponent, { static: false, read: ElementRef }) iconPicker!: ElementRef<HTMLElement>;
 
   public value!: keyof typeof IconComponents;
   public disabled = false;
@@ -58,7 +59,10 @@ export class IconControlComponent implements ControlValueAccessor {
   public set isOpen(value: boolean) {
     this._isOpen = value;
     if (value) {
-      this.trigger.nativeElement.scrollIntoView();
+      // this.trigger.nativeElement.scrollIntoView();
+      setTimeout(() => {
+        this.iconPicker.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 650);
     }
   }
 
