@@ -18,7 +18,7 @@ import { IconComponent } from '../../../../icons/icon/icon.component';
       cdkConnectedOverlay immitateWidth
       [cdkConnectedOverlayOrigin]="trigger"
       [cdkConnectedOverlayOpen]="isOpen"
-      [cdkConnectedOverlayBackdropClass]="'bg-transparent'"
+      cdkConnectedOverlayBackdropClass="bg-transparent"
       [cdkConnectedOverlayHasBackdrop]="true"
       [cdkConnectedOverlayPositions]="positions"
       [cdkConnectedOverlayWidth]="(containerWidth$ | async) || 200"
@@ -44,11 +44,23 @@ import { IconComponent } from '../../../../icons/icon/icon.component';
 })
 export class IconControlComponent implements ControlValueAccessor {
 
+  @ViewChild('trigger', { static: true, read: ElementRef }) trigger!: ElementRef<HTMLButtonElement>;
+
   public value!: keyof typeof IconComponents;
   public disabled = false;
-  public isOpen = false;
   public onChange!: (value: string) => void;
   public onTouched!: () => void;
+
+  _isOpen = false;
+  public get isOpen(): boolean {
+    return this._isOpen;
+  }
+  public set isOpen(value: boolean) {
+    this._isOpen = value;
+    if (value) {
+      this.trigger.nativeElement.scrollIntoView();
+    }
+  }
 
   public positions = [
     new ConnectionPositionPair({
@@ -82,6 +94,10 @@ export class IconControlComponent implements ControlValueAccessor {
 
   public onInputBlurred(): void {
     this.onTouched();
+  }
+
+  public onInputFocused(): void {
+    
   }
 
   public setDisabledState(isDisabled: boolean): void {
