@@ -9,9 +9,10 @@ type IconName = keyof typeof IconComponents;
 
 @Component({
     selector: 'app-icon-picker',
+    styleUrl: './icon-picker.component.scss',
     template: `
-  <div class="h-[200px] w-[300px] bg-white overflow-auto block">
-    <input class="app-input w-[260px]"
+  <div class="h-[200px] w-full bg-white overflow-auto block">
+    <input class="app-input w-full"
         placeholder="Search icon"
         (input)="inputValue$.next($event)"
         #inputElement>

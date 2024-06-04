@@ -124,19 +124,15 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
 
     async saveAppStorage(appStorage: AppStorage): Promise<void> {
         const selectedPeriod = this.selectedPeriod$.value;
-        console.log('saving app storage', appStorage, selectedPeriod);
         let periodFileId = await firstValueFrom(this.periods$.pipe(map(periods => periods.find(period => period.name === selectedPeriod)?.id)));
         if (!periodFileId) {
-            console.log('No period file id, creating new file');
             periodFileId = await firstValueFrom(
                 this.appFolderId$.pipe(
                     mergeMap(folderId => folderId ? this.createFile(folderId, selectedPeriod) : throwError(() => new Error('No app id'))),
                 )
             );
-            console.log('Created new file', periodFileId);
         }
 
-        console.log('Saving to file', periodFileId);
         return firstValueFrom(this.saveFileContents(periodFileId, JSON.stringify(appStorage)));
     }
 

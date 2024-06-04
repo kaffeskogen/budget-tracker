@@ -1,8 +1,8 @@
-import { ConnectionPositionPair, CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
-import { ChangeDetectorRef, Component, forwardRef, inject } from '@angular/core';
+import { ConnectionPositionPair, CdkOverlayOrigin, CdkConnectedOverlay, ViewportRuler } from '@angular/cdk/overlay';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, ViewContainerRef, forwardRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { fromEvent, interval, map } from 'rxjs';
+import { EMPTY, Observable, combineLatest, fromEvent, interval, map, mergeMap, of, startWith } from 'rxjs';
 import { IconComponents } from 'src/app/shared/icons';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -21,6 +21,7 @@ import { IconComponent } from '../../../../icons/icon/icon.component';
       [cdkConnectedOverlayBackdropClass]="'bg-transparent'"
       [cdkConnectedOverlayHasBackdrop]="true"
       [cdkConnectedOverlayPositions]="positions"
+      [cdkConnectedOverlayWidth]="(containerWidth$ | async) || 0"
       (backdropClick)="isOpen = false">
 
       <div class="border rounded inline-block border-slate-400 box-border w-full" *ngIf="isOpen">
@@ -86,5 +87,17 @@ export class IconControlComponent implements ControlValueAccessor {
   public setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
+
+
+  /**
+   * Set the width of the overlay to the width of the container
+   */
+  viewportRuler = inject(ViewportRuler);
+  viewContainerRef = inject(ViewContainerRef);
+  containerWidth$: Observable<number | string> = this.viewportRuler.change()
+    .pipe(
+      startWith(null),
+      map(() => this.viewContainerRef.element.nativeElement.getBoundingClientRect().width)
+    );
 
 }
