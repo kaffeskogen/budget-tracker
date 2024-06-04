@@ -11,12 +11,12 @@ type IconName = keyof typeof IconComponents;
     selector: 'app-icon-picker',
     styleUrl: './icon-picker.component.scss',
     template: `
-  <div class="h-[200px] w-full bg-white overflow-auto block">
+  <div class="w-full bg-white overflow-auto block">
     <input class="app-input w-full"
         placeholder="Search icon"
         (input)="inputValue$.next($event)"
         #inputElement>
-    <div>
+    <div class="h-[200px] overflow-y-scroll">
       <button type="button" role="button" (click)="iconSelected.emit(icon)" *ngFor="let icon of filteredIcons()" class="px-2 py-1 flex w-full hover:bg-slate-50 active:bg-white">
         <app-icon [iconName]="icon" [size]="32" class="block mr-2"></app-icon>
         <span>{{icon}}</span>

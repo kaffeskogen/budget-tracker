@@ -21,7 +21,7 @@ import { IconComponent } from '../../../../icons/icon/icon.component';
       [cdkConnectedOverlayBackdropClass]="'bg-transparent'"
       [cdkConnectedOverlayHasBackdrop]="true"
       [cdkConnectedOverlayPositions]="positions"
-      [cdkConnectedOverlayWidth]="(containerWidth$ | async) || 0"
+      [cdkConnectedOverlayWidth]="(containerWidth$ | async) || 200"
       (backdropClick)="isOpen = false">
 
       <div class="border rounded inline-block border-slate-400 box-border w-full" *ngIf="isOpen">
