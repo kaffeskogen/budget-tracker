@@ -49,7 +49,10 @@ export class TransactionGroupsService {
             .pipe(takeUntilDestroyed())
             .subscribe({
                 next: (groups) => {
-                    if (!groups) return;
+                    console.log('Groups loaded', groups)
+                    if (!groups)  {
+                        return;
+                    };
                     this.state.update((state) => ({
                         ...state,
                         groups,
@@ -57,7 +60,10 @@ export class TransactionGroupsService {
                         status: 'success'
                     } satisfies TransactionGroupsServiceState))
                 },
-                error: (err) => this.state.update((state) => ({ ...state, status: 'error', error: err }))
+                error: (err) => {
+                    this.state.update((state) => ({ ...state, status: 'error', error: err }));
+                    console.error('Error loading groups', err);
+                }
             });
 
         this.add$

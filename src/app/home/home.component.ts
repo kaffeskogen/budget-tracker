@@ -10,19 +10,24 @@ import { GraphComponent } from '../shared/ui/graph/graph.component';
 import { TransactionsService } from '../shared/data-access/transactions.service';
 import { Group } from '../shared/interfaces/Group';
 import { ToastService } from '../shared/ui/toast/toast.service';
+import { StorageService } from '../shared/data-access/storage.service';
 
 @Component({
-    selector: 'app-home',
-    template: `
+  selector: 'app-home',
+  template: `
       <div class="p-8 mb-32">
         <div class="flex flex-col lg:flex-row">
           <div class="grid gap-y-8 w-full max-w-md mr-16">
             <app-header></app-header>
+
             <app-current-balance></app-current-balance>
 
-            <button class="bg-white p-4 rounded-md border border-gray-200 hover:bg-slate-50 cursor-pointer" [routerLink]="['create-group']">+ Create group</button>
-
             <ng-container *ngIf="groupsService.status() === 'success'">
+
+              <button class="bg-white p-4 rounded-md border border-gray-200 hover:bg-slate-50 cursor-pointer" [routerLink]="['create-group']">
+                + Create group
+              </button>
+            
               <app-transactions-group *ngFor="let group of groupsService.groups()" [group]="group" [color]="group.color">
               </app-transactions-group>
             </ng-container>
@@ -31,8 +36,19 @@ import { ToastService } from '../shared/ui/toast/toast.service';
               </app-transactions-group>
 
             <ng-container *ngIf="groupsService.status() === 'loading'">
+
               <app-transactions-group>
               </app-transactions-group>
+
+            </ng-container>
+
+            <ng-container *ngIf="groupsService.status() === 'error'">
+
+              <div class="w-full px-4 py-2 bg-red-100 text-red-800 rounded-md border border-red-400">
+                <b>An error has occurred</b>
+                <p>{{ groupsService.error() }}</p>
+              </div>
+
             </ng-container>
 
 
@@ -49,9 +65,9 @@ import { ToastService } from '../shared/ui/toast/toast.service';
         <router-outlet></router-outlet>
       </div>
     `,
-    styleUrls: ['./home.component.scss'],
-    standalone: true,
-    imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent, GraphComponent, JsonPipe, RouterLink]
+  styleUrls: ['./home.component.scss'],
+  standalone: true,
+  imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent, GraphComponent, JsonPipe, RouterLink]
 })
 export class HomeComponent {
 
@@ -70,15 +86,15 @@ export class HomeComponent {
 
   orphanedTransactions = computed(() => this.transactionsService.transactions()
     .filter(t => this.groups().find(g => g.id === t.groupId) === undefined)
-    .map(t => ({...t, group: this.orphanedGroup() })));
+    .map(t => ({ ...t, group: this.orphanedGroup() })));
 
   graphData = computed(() => {
     const transactions = this.transactionsService.transactions();
     return this.groups()
       .map(group => {
         const groupTransactions = transactions.filter(t => t.groupId === group.id);
-        const values = groupTransactions.map(t => t.value||0);
-        const totale = values.reduce((a,b) => a + b, 0);
+        const values = groupTransactions.map(t => t.value || 0);
+        const totale = values.reduce((a, b) => a + b, 0);
         return {
           label: group.name,
           value: totale,
@@ -91,10 +107,10 @@ export class HomeComponent {
 
   expensesGraphData = computed(() => this.graphData()
     .filter(g => g.value < 0)
-    .map((g) => ({...g, value: Math.abs(g.value)})));
+    .map((g) => ({ ...g, value: Math.abs(g.value) })));
 
   incomesGraphData = computed(() => this.graphData()
     .filter(g => g.value > 0)
-    .map((g) => ({...g, value: Math.abs(g.value)})));
+    .map((g) => ({ ...g, value: Math.abs(g.value) })));
 
 }

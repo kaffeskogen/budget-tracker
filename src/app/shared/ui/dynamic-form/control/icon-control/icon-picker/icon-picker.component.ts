@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Output, ViewChild, computed, signal, EventEmitter } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Output, ViewChild, computed, signal, EventEmitter, Input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, distinctUntilChanged, map } from 'rxjs';
 import { IconComponents } from 'src/app/shared/icons';
@@ -11,14 +11,14 @@ type IconName = keyof typeof IconComponents;
     selector: 'app-icon-picker',
     styleUrl: './icon-picker.component.scss',
     template: `
-  <div class="w-full bg-white overflow-auto block">
-    <input class="app-input w-full"
+  <div class="bg-white border rounded inline-block border-slate-300 box-border w-full overflow-hidden">
+    <input class="bg-white pt-2 pb-1.5 px-4 outline-none w-full border-b-sky-700 border-b-2"
         placeholder="Search icon"
         (input)="inputValue$.next($event)"
         #inputElement>
     <div class="h-[300px] overflow-y-scroll">
       <button type="button" role="button" (click)="iconSelected.emit(icon)" *ngFor="let icon of filteredIcons()" class="px-2 py-1 flex w-full hover:bg-slate-50 active:bg-white">
-        <app-icon [iconName]="icon" [size]="32" class="block mr-2"></app-icon>
+        <app-icon [color]="color || 'black'" [iconName]="icon" [size]="32" class="block mr-2"></app-icon>
         <span>{{icon}}</span>
       </button>
     </div>
@@ -35,6 +35,7 @@ export class IconPickerComponent implements AfterViewInit {
   @ViewChild("inputElement", { static: true }) inputRef!: ElementRef<HTMLInputElement>;
 
   @Output() public readonly iconSelected = new EventEmitter<IconName>();
+  @Input() public color?: string;
 
   inputValue$: Subject<Event> = new Subject();
 

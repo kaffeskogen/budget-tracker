@@ -36,6 +36,7 @@ export const IN_MEMORY = new InjectionToken<Storage>(
   }
 );
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,20 +48,25 @@ export class StorageService {
 
   public storageProvider = signal<AppStorageProvider | null>(null);
 
-  transactions$ = new BehaviorSubject<Transaction[]|null>(null);
-  groups$ = new BehaviorSubject<Group[]|null>(null);
+  transactions$ = new BehaviorSubject<Transaction[] | null>(null);
+  groups$ = new BehaviorSubject<Group[] | null>(null);
 
   constructor() {
     toObservable(this.storageProvider)
       .pipe(
         takeUntilDestroyed(),
-        mergeMap((provider: AppStorageProvider|null) => provider ? provider.periodAppStorage$ : of(null))
+        mergeMap((provider: AppStorageProvider | null) => provider ? provider.periodAppStorage$ : of(null))
       ).subscribe({
-        next: (appStorage: AppStorage|null) => {
-          if (appStorage) {
-            this.transactions$.next(appStorage.transactions);
-            this.groups$.next(appStorage.groups);
+        next: (appStorage: AppStorage | null) => {
+          if (!appStorage) {
+            return;
           }
+          this.transactions$.next(appStorage.transactions);
+          this.groups$.next(appStorage.groups);
+        },
+        error: (error: any) => {
+          this.groups$.error('Could not fetch app storage');
+          this.transactions$.error('Could not fetch app storage');
         }
       });
   }

@@ -26,9 +26,7 @@ export class TransactionsService {
     remove$ = new Subject<Transaction>();
     edit$ = new Subject<Transaction>();
 
-
     toast = inject(ToastService);
-
 
     // state
     private state = signal<TransactionsServiceState>({

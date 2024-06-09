@@ -87,7 +87,6 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
                 params: { spaces: 'appDataFolder', fields: 'files(id, name)', pageSize: '1000' }
             }).pipe(
                 map(response => response.files),
-                
             )
         )
     )
@@ -118,7 +117,7 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         this.selectedPeriod$
     ]).pipe(
         map(([periods, selectedPeriod]) => selectedPeriod && periods.find((period) => period.name === selectedPeriod)),
-        mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : of({ transactions: [], groups: [] })),
+        mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : EMPTY),
         mergeMap(data => data ? of(data) : EMPTY)
     );
 

@@ -1,8 +1,7 @@
 import { ConnectionPositionPair, CdkOverlayOrigin, CdkConnectedOverlay, ViewportRuler } from '@angular/cdk/overlay';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, ViewContainerRef, forwardRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, ElementRef, Input, ViewChild, ViewContainerRef, forwardRef, inject } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { EMPTY, Observable, combineLatest, fromEvent, interval, map, mergeMap, of, startWith } from 'rxjs';
+import { Observable, debounceTime, map, startWith } from 'rxjs';
 import { IconComponents } from 'src/app/shared/icons';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -24,7 +23,7 @@ import { IconComponent } from '../../../../icons/icon/icon.component';
       [cdkConnectedOverlayWidth]="(containerWidth$ | async) || 200"
       (backdropClick)="isOpen = false">
 
-      <div class="border rounded inline-block border-slate-400 box-border w-full" *ngIf="isOpen">
+      <div class="w-full" *ngIf="isOpen">
 
         <app-icon-picker (iconSelected)="onValueChange($event)"></app-icon-picker>
 
@@ -117,6 +116,7 @@ export class IconControlComponent implements ControlValueAccessor {
   containerWidth$: Observable<number | string> = this.viewportRuler.change()
     .pipe(
       startWith(null),
+      debounceTime(16),
       map(() => this.viewContainerRef.element.nativeElement.getBoundingClientRect().width)
     );
 
