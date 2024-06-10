@@ -2,7 +2,7 @@ import { Component, computed, effect, inject } from '@angular/core';
 import { TransactionGroupsService } from '../shared/data-access/transaction-groups.service';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TransactionsGroupComponent } from './transactions-group/transactions-group.component';
-import { NgIf, NgFor, JsonPipe } from '@angular/common';
+import { NgIf, NgFor, JsonPipe, AsyncPipe } from '@angular/common';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { HeaderComponent } from './header/header.component';
 import { SidenavComponent } from '../sidenav/sidenav.component';
@@ -11,6 +11,7 @@ import { TransactionsService } from '../shared/data-access/transactions.service'
 import { Group } from '../shared/interfaces/Group';
 import { ToastService } from '../shared/ui/toast/toast.service';
 import { StorageService } from '../shared/data-access/storage.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -24,9 +25,17 @@ import { StorageService } from '../shared/data-access/storage.service';
 
             <ng-container *ngIf="groupsService.status() === 'success'">
 
-              <button class="bg-white p-4 rounded-md border border-gray-200 hover:bg-slate-50 cursor-pointer" [routerLink]="['create-group']">
-                + Create group
-              </button>
+              <div class="flex place-content-between">
+                <select class="bg-white p-4 rounded-md border border-gray-200 min-w-[140px]"
+                    [(ngModel)]="selectedPeriod"
+                    (change)="periodChange()">
+                  <option *ngFor="let period of periods$ | async" [ngValue]="period.name">{{ period.name }}</option>
+                </select>
+
+                <button class="bg-white p-4 rounded-md border border-gray-200 hover:bg-slate-50 cursor-pointer" [routerLink]="['create-group']">
+                  + Create group
+                </button>
+              </div>
             
               <app-transactions-group *ngFor="let group of groupsService.groups()" [group]="group" [color]="group.color">
               </app-transactions-group>
@@ -67,12 +76,39 @@ import { StorageService } from '../shared/data-access/storage.service';
     `,
   styleUrls: ['./home.component.scss'],
   standalone: true,
-  imports: [HeaderComponent, CurrentBalanceComponent, NgIf, NgFor, TransactionsGroupComponent, RouterOutlet, SidenavComponent, GraphComponent, JsonPipe, RouterLink]
+  imports: [
+    HeaderComponent,
+    CurrentBalanceComponent,
+    NgIf,
+    NgFor,
+    TransactionsGroupComponent,
+    RouterOutlet,
+    SidenavComponent,
+    GraphComponent,
+    JsonPipe,
+    RouterLink,
+    AsyncPipe,
+    FormsModule
+  ]
 })
 export class HomeComponent {
 
   groupsService = inject(TransactionGroupsService);
   transactionsService = inject(TransactionsService);
+
+  storageService = inject(StorageService);
+  provider = this.storageService.storageProvider();
+  periods$ = this.provider?.periods$;
+  selectedPeriod: string = [
+    new Date().getFullYear().toString(),
+    (new Date().getMonth() + 1).toString().padStart(2, '0')
+  ].join('-');
+  periodChange = () => {
+    if (!this.selectedPeriod) return;
+    this.groupsService.reset();
+    this.transactionsService.reset();
+    this.provider?.selectedPeriod$.next(this.selectedPeriod);
+  };
 
   toastService = inject(ToastService);
 

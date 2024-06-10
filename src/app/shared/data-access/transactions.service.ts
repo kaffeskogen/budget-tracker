@@ -45,6 +45,10 @@ export class TransactionsService {
         return computed(() => this.transactions()?.find((t) => t.id === id));
     }
 
+    reset() {
+        this.state.update((state) => ({ ...state, transactions: [], status: 'loading' } satisfies TransactionsServiceState));
+    }
+
     constructor() {
 
         this.transactionsLoaded$

@@ -44,12 +44,15 @@ export class TransactionGroupsService {
         return computed(() => this.groups()?.find((t) => t.id === id));
     }
 
+    reset() {
+        this.state.update((state) => ({ ...state, groups: [], status: 'loading' } satisfies TransactionGroupsServiceState));
+    }
+
     constructor() {
         this.groupsLoaded$
             .pipe(takeUntilDestroyed())
             .subscribe({
                 next: (groups) => {
-                    console.log('Groups loaded', groups)
                     if (!groups)  {
                         return;
                     };
