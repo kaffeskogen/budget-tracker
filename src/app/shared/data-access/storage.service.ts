@@ -48,8 +48,8 @@ export class StorageService {
 
   public storageProvider = signal<AppStorageProvider | null>(null);
 
-  transactions$ = new BehaviorSubject<Transaction[] | null>(null);
-  groups$ = new BehaviorSubject<Group[] | null>(null);
+  transactions$ = new BehaviorSubject<Transaction[]>([]);
+  groups$ = new BehaviorSubject<Group[]>([]);
 
   constructor() {
     toObservable(this.storageProvider)
@@ -77,8 +77,8 @@ export class StorageService {
       console.error('No storage provider set, cannot save transactions');
       return;
     }
-    const { groups } = await firstValueFrom(provider?.periodAppStorage$);
-    await this.storageProvider()?.saveAppStorage({ groups, transactions });
+    this.transactions$.next(transactions);
+    await this.storageProvider()?.saveAppStorage({ groups: this.groups$.value, transactions });
   }
 
   async saveGroups(groups: Group[]): Promise<void> {
@@ -87,8 +87,8 @@ export class StorageService {
       console.error('No storage provider set, cannot save transactions');
       return;
     }
-    const { transactions } = await firstValueFrom(provider.periodAppStorage$);
-    await this.storageProvider()?.saveAppStorage({ transactions, groups });
+    this.groups$.next(groups);
+    await this.storageProvider()?.saveAppStorage({ transactions: this.transactions$.value, groups });
   }
 
 }

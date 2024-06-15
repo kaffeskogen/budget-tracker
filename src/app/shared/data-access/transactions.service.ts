@@ -115,6 +115,6 @@ export class TransactionsService {
 
             this.storageService.saveTransactions(this.transactions());
 
-        });
+        }, { allowSignalWrites: true });
     }
 }

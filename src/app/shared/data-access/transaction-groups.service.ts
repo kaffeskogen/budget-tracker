@@ -111,13 +111,13 @@ export class TransactionGroupsService {
 
 
         effect(() => {
+            
             if (!this.save()) {
                 return;
             }
 
             this.storageService.saveGroups(this.groups());
-            return;
 
-        });
+        }, {allowSignalWrites: true});
     }
 }

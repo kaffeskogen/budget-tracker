@@ -12,6 +12,7 @@ import { Group } from '../shared/interfaces/Group';
 import { ToastService } from '../shared/ui/toast/toast.service';
 import { StorageService } from '../shared/data-access/storage.service';
 import { FormsModule } from '@angular/forms';
+import { IconComponent } from '../shared/icons/icon/icon.component';
 
 @Component({
   selector: 'app-home',
@@ -26,15 +27,18 @@ import { FormsModule } from '@angular/forms';
             <ng-container *ngIf="groupsService.status() === 'success'">
 
               <div class="flex place-content-between">
-                <select class="bg-white p-4 rounded-md border border-gray-200 min-w-[140px]"
+                <select class="text-violet-600 bg-transparent"
                     [(ngModel)]="selectedPeriod"
                     (change)="periodChange()">
                   <option *ngFor="let period of periods$ | async" [ngValue]="period.name">{{ period.name }}</option>
                 </select>
 
-                <button class="bg-white p-4 rounded-md border border-gray-200 hover:bg-slate-50 cursor-pointer" [routerLink]="['create-group']">
-                  + Create group
-                </button>
+                
+                <a [routerLink]="['create-group']"
+                    class="flex top-0 items-center text-sm cursor-pointer hover:underline text-orange-600">
+                    <app-icon iconName='Plus' [size]="16"></app-icon>
+                    <div class="flex-1">Create group</div>
+                </a>
               </div>
             
               <app-transactions-group *ngFor="let group of groupsService.groups()" [group]="group" [color]="group.color">
@@ -88,7 +92,8 @@ import { FormsModule } from '@angular/forms';
     JsonPipe,
     RouterLink,
     AsyncPipe,
-    FormsModule
+    FormsModule,
+    IconComponent
   ]
 })
 export class HomeComponent {
