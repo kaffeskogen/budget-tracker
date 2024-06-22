@@ -30,8 +30,12 @@ interface GoogleDriveOpenWith {
         <div class="bg-red-200 px-4 py-2 rounded border border-red-300 font-mono">{{message()}}</div>
         <a [routerLink]="['..']" class="text-sky-600 block mt-2">Go back</a>
       } @case ('confirmation') {
-        <div class="bg-yellow-200 px-4 py-2 rounded border border-yellow-300 font-mono">{{message()}}</div>
-        <button (click)="confirm()" class="bg-yellow-500 text-white px-4 py-2 rounded mt-2">Yes, I want to use this file</button>
+        <p class="mb-1">Confirm you'd like to use the following file for storage</p>
+        <div class="bg-gray-300 px-4 py-2 rounded border border-gray-400 font-mono">{{fileId()}}</div>
+        <div class="flex justify-end">
+          <button [routerLink]="['..']" type="button" class="rounded px-4 py-2 mt-4 mr-2 border border-slate-400 hover:bg-gray-100 text-gray-800 bg-white">Cancel</button>
+          <button type="button" class="rounded px-4 py-2 mt-4 border bg-sky-700 hover:bg-sky-800 text-white" (click)="confirm()">Confirm</button>
+        </div>
       } @case ('success') {
         <div class="bg-green-200 px-4 py-2 rounded border border-green-300 font-mono">{{message()}}</div>
         <a [routerLink]="['..']" class="text-sky-600 block mt-2">Go back</a>
@@ -48,8 +52,9 @@ export class SetStorageFileComponent implements OnInit {
   storageProvider = this.storageService.storageProvider as WritableSignal<GoogleDriveStorageProvider>;
   http = inject(HttpClient);
 
-  state = signal<'loading'|'error'|'confirmation'|'success'>('loading');
-  message = signal<string|null>(null);
+  state = signal<'loading' | 'error' | 'confirmation' | 'success'>('loading');
+  message = signal<string | null>(null);
+  fileId = signal<string | null>(null);
 
   ngOnInit(): void {
     const state = this.route.snapshot.queryParamMap.get('state');
@@ -75,11 +80,24 @@ export class SetStorageFileComponent implements OnInit {
       return;
     }
 
-    
+    this.fileId.update(() => firstId);
+    this.state.update(() => 'confirmation')
+
   }
 
-  confirm() {
-    this.state.update(() => 'confirmation');
+  async confirm() {
+    const fileId = this.fileId();
+
+    if (!fileId) {
+      return;
+    }
+    
+    await this.storageProvider().setAppStorageFolderId(fileId);
+    await new Promise<void>((resolve, reject) => {
+      setTimeout(() => resolve(), 1000)
+    });
+
+    window.location.href = window.location.origin;
   }
 
 }

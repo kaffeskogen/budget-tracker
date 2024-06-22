@@ -1,6 +1,6 @@
 import { AppStorageProvider } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
-import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, switchMap, fromEvent, tap, BehaviorSubject, pipe, merge, concat, zip, find, zipWith, last, throwIfEmpty, throwError, combineLatest, shareReplay } from "rxjs";
+import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, switchMap, fromEvent, tap, BehaviorSubject, pipe, merge, concat, zip, find, zipWith, last, throwIfEmpty, throwError, combineLatest, shareReplay, lastValueFrom } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
 import { environment } from "src/environments/environment";
 import { Oauth2TokenResponse } from "../auth/auth.service";
@@ -42,7 +42,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     googleDriveConfigFileId$ = this.googleDriveAppDataFolderContents$
         .pipe(
             map(files => files.find(file => file.name === 'google-drive-config.json')),
-            mergeMap(file => file?.id ? of(file?.id) : this.createGoogleDriveConfigFile('google-drive-config.json'))
+            mergeMap(file => file?.id ? of(file?.id) : this.createGoogleDriveConfigFile('google-drive-config.json')),
+            shareReplay(1)
         );
 
     googleDriveConfig$ = this.googleDriveConfigFileId$.pipe(
@@ -73,22 +74,27 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         mergeMap(folderId => folderId ? this.getFolderItems(folderId) : EMPTY),
         shareReplay(1)
     );
+
+    defaultPeriod = [
+        new Date().getFullYear().toString(),
+        (new Date().getMonth() + 1).toString().padStart(2, '0')
+    ].join('-')
+
+    selectedPeriod$ = new BehaviorSubject<string>(this.defaultPeriod);
     
     periods$: Observable<{ name: string, id: string }[]> = this.appFolderContents$.pipe(
         map(files => files.map((file: any) => ({ name: file.name, id: file.id })))
     );
-
-    selectedPeriod$ = new BehaviorSubject<string>([
-        new Date().getFullYear().toString(),
-        (new Date().getMonth() + 1).toString().padStart(2, '0')
-    ].join('-'));
 
     periodAppStorage$: Observable<AppStorage> = combineLatest([
         this.periods$,
         this.selectedPeriod$
     ]).pipe(
         map(([periods, selectedPeriod]) => selectedPeriod && periods.find((period) => period.name === selectedPeriod)),
-        mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : EMPTY),
+        mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : of({
+            transactions: [],
+            groups: []
+        })),
         mergeMap(data => data ? of(data) : EMPTY),
         shareReplay(1)
     );
@@ -186,10 +192,15 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         );
     }
 
-    setAppStorageFileId(fileId: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            
-        });
+    async setAppStorageFolderId(folderId: string): Promise<void> {
+
+        const googleDriveConfigFileId = await firstValueFrom(this.googleDriveConfigFileId$);
+
+        const googleDriveAppData = {
+            storageFileId: folderId
+        } satisfies GoogleDriveAppData;
+
+        await firstValueFrom(this.saveFileContents(googleDriveConfigFileId, JSON.stringify(googleDriveAppData)));
     }
 
     createFolder(name: string): Observable<string> {

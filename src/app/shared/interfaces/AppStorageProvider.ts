@@ -7,5 +7,5 @@ export interface AppStorageProvider {
     selectedPeriod$: BehaviorSubject<string>;
     periodAppStorage$: Observable<AppStorage>;
     saveAppStorage(appStorage: AppStorage): Promise<void>;
-    setAppStorageFileId(fileId: string): Promise<void>;
+    setAppStorageFolderId(fileId: string): Promise<void>;
 }

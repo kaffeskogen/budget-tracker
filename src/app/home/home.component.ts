@@ -13,6 +13,7 @@ import { ToastService } from '../shared/ui/toast/toast.service';
 import { StorageService } from '../shared/data-access/storage.service';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../shared/icons/icon/icon.component';
+import { Observable, map } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +31,7 @@ import { IconComponent } from '../shared/icons/icon/icon.component';
                 <select class="text-violet-600 bg-transparent"
                     [(ngModel)]="selectedPeriod"
                     (change)="periodChange()">
-                  <option *ngFor="let period of periods$ | async" [ngValue]="period.name">{{ period.name }}</option>
+                  <option *ngFor="let periodName of periodNames$ | async" [ngValue]="periodName">{{ periodName }}</option>
                 </select>
 
                 
@@ -103,11 +104,18 @@ export class HomeComponent {
 
   storageService = inject(StorageService);
   provider = this.storageService.storageProvider();
-  periods$ = this.provider?.periods$;
+  
   selectedPeriod: string = [
     new Date().getFullYear().toString(),
     (new Date().getMonth() + 1).toString().padStart(2, '0')
   ].join('-');
+
+  periodNames$ = this.provider?.periods$
+    .pipe(
+      map(periods => periods.map(p => p.name) || [] as string[]),
+      map(periods => periods.includes(this.selectedPeriod) ? periods : [...periods, this.selectedPeriod])
+    );
+
   periodChange = () => {
     if (!this.selectedPeriod) return;
     this.groupsService.reset();
