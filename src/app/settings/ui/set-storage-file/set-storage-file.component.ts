@@ -74,6 +74,8 @@ export class SetStorageFileComponent implements OnInit {
       this.message.update(() => 'No file id provided');
       return;
     }
+
+    
   }
 
   confirm() {
