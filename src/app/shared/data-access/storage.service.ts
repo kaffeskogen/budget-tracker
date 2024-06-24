@@ -1,5 +1,5 @@
 import { Injectable, InjectionToken, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, firstValueFrom, lastValueFrom, map, mergeMap, of, tap } from "rxjs";
+import { BehaviorSubject, EMPTY, Observable, Subject, firstValueFrom, lastValueFrom, map, mergeMap, of, shareReplay, tap } from "rxjs";
 import { MOCK_TRANSACTIONS } from '../mocks/transactions';
 import { MOCK_GROUPS } from '../mocks/groups';
 import { Transaction } from '../interfaces/Transaction';
@@ -48,8 +48,12 @@ export class StorageService {
 
   public storageProvider = signal<AppStorageProvider | null>(null);
 
-  transactions$ = new BehaviorSubject<Transaction[]>([]);
-  groups$ = new BehaviorSubject<Group[]>([]);
+  private _transactions$ = new BehaviorSubject<Transaction[]|null>(null);
+  transactions$ = this._transactions$
+    .pipe(mergeMap(transactions => transactions ? of(transactions) : EMPTY), shareReplay(1))
+  private _groups$ = new BehaviorSubject<Group[]|null>(null);
+  groups$ = this._groups$
+    .pipe(mergeMap(groups => groups ? of(groups) : EMPTY), shareReplay(1))
 
   constructor() {
     toObservable(this.storageProvider)
@@ -61,12 +65,12 @@ export class StorageService {
           if (!appStorage) {
             return;
           }
-          this.transactions$.next(appStorage.transactions);
-          this.groups$.next(appStorage.groups);
+          this._transactions$.next(appStorage.transactions);
+          this._groups$.next(appStorage.groups);
         },
         error: (error: any) => {
-          this.groups$.error('Could not fetch app storage');
-          this.transactions$.error('Could not fetch app storage');
+          this._groups$.error('Could not fetch app storage');
+          this._transactions$.error('Could not fetch app storage');
         }
       });
   }
@@ -77,8 +81,15 @@ export class StorageService {
       console.error('No storage provider set, cannot save transactions');
       return;
     }
-    this.transactions$.next(transactions);
-    await this.storageProvider()?.saveAppStorage({ groups: this.groups$.value, transactions });
+
+    const groups = this._groups$.value;
+    if (!groups) {
+      console.error('Groups cannot be null');
+      return;
+    }
+
+    this._transactions$.next(transactions);
+    await this.storageProvider()?.saveAppStorage({ groups, transactions });
   }
 
   async saveGroups(groups: Group[]): Promise<void> {
@@ -87,8 +98,15 @@ export class StorageService {
       console.error('No storage provider set, cannot save transactions');
       return;
     }
-    this.groups$.next(groups);
-    await this.storageProvider()?.saveAppStorage({ transactions: this.transactions$.value, groups });
+
+    const transactions = this._transactions$.value;
+    if (!transactions) {
+      console.error('Groups cannot be null');
+      return;
+    }
+    
+    this._groups$.next(groups);
+    await this.storageProvider()?.saveAppStorage({ transactions, groups });
   }
 
 }

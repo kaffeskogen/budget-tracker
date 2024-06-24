@@ -1,11 +1,14 @@
 import { AppStorageProvider } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
-import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, switchMap, fromEvent, tap, BehaviorSubject, pipe, merge, concat, zip, find, zipWith, last, throwIfEmpty, throwError, combineLatest, shareReplay, lastValueFrom } from "rxjs";
+import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, fromEvent, BehaviorSubject, throwError, combineLatest, shareReplay, combineLatestWith } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
 import { environment } from "src/environments/environment";
 import { Oauth2TokenResponse } from "../auth/auth.service";
-import { Injectable, WritableSignal, computed, inject, signal } from "@angular/core";
-import { takeUntilDestroyed, toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { Injectable, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { RxJsLoggingLevel, debug } from "../utils/rxjs-debug";
+import { MOCK_TRANSACTIONS } from "../mocks/transactions";
+import { MOCK_GROUPS } from "../mocks/groups";
 
 export interface GoogleDriveAppData {
     storageFileId: string | null;
@@ -20,14 +23,17 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     tokenResponse$ = fromEvent<MessageEvent>(window, 'message');
     token$ = this.tokenResponse$
         .pipe(
+            debug(RxJsLoggingLevel.DEBUG, 'Getting token...'),
             takeUntilDestroyed(),
             map(event => event.data as Oauth2TokenResponse),
             map(response => response.access_token),
             mergeMap(token => token ? of(token) : EMPTY),
+            debug(RxJsLoggingLevel.DEBUG, 'Got token!'),
             shareReplay(1)
         );
 
     googleDriveAppDataFolderContents$ = this.token$.pipe(
+        debug(RxJsLoggingLevel.DEBUG, 'Getting g-drive app data folder contents...'),
         mergeMap(token => !token ?
             EMPTY :
             this.http.get<{ files: { name: string, id: string }[] }>('https://www.googleapis.com/drive/v3/files', {
@@ -36,42 +42,55 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
             }).pipe(
                 map(response => response.files),
             )
-        )
+        ),
+        debug(RxJsLoggingLevel.DEBUG, 'Got g-drive app data folder contents!'),
+        shareReplay(1)
     )
-    
+
     googleDriveConfigFileId$ = this.googleDriveAppDataFolderContents$
         .pipe(
+            debug(RxJsLoggingLevel.DEBUG, 'Getting g-drive config file id...'),
             map(files => files.find(file => file.name === 'google-drive-config.json')),
             mergeMap(file => file?.id ? of(file?.id) : this.createGoogleDriveConfigFile('google-drive-config.json')),
-            shareReplay(1)
+            debug(RxJsLoggingLevel.DEBUG, 'Got g-drive config file id!'),
+            shareReplay(1),
         );
 
     googleDriveConfig$ = this.googleDriveConfigFileId$.pipe(
+        debug(RxJsLoggingLevel.DEBUG, 'Getting g-drive config...'),
         mergeMap(fileId => fileId ?
             this.getFileContents<GoogleDriveAppData>(fileId) :
-            of({ storageFileId: null }))
+            of({ storageFileId: null })),
+        shareReplay(1),
+        debug(RxJsLoggingLevel.DEBUG, 'Got g-drive config!')
     );
 
     appFolderId$ = this.googleDriveConfig$.pipe(
+        debug(RxJsLoggingLevel.DEBUG, 'Getting app folder id...'),
         takeUntilDestroyed(),
         mergeMap(googleDriveConfig => googleDriveConfig?.storageFileId
             ? of(googleDriveConfig.storageFileId)
             : this.createFolder(window.location.hostname)
                 .pipe(
-                    zipWith(this.googleDriveConfigFileId$),
+                    debug(RxJsLoggingLevel.DEBUG, '- Created app folder'),
+                    combineLatestWith(this.googleDriveConfigFileId$),
+                    debug(RxJsLoggingLevel.DEBUG, '- Combined with googleDriveConfigFileId$'),
                     mergeMap(([folderId, fileId]) =>
                         this.saveFileContents(fileId, JSON.stringify({ storageFileId: folderId }))
                             .pipe(map(() => folderId))
                     ),
-                    last()
+                    debug(RxJsLoggingLevel.DEBUG, '- Saved file in app folder'),
                 )
         ),
-        shareReplay(1)
+        debug(RxJsLoggingLevel.DEBUG, 'Got app folder id!'),
+        shareReplay(1),
     );
 
     appFolderContents$ = this.appFolderId$.pipe(
+        debug(RxJsLoggingLevel.DEBUG, 'Getting app folder contents...'),
         takeUntilDestroyed(),
         mergeMap(folderId => folderId ? this.getFolderItems(folderId) : EMPTY),
+        debug(RxJsLoggingLevel.DEBUG, 'Got app folder contents!'),
         shareReplay(1)
     );
 
@@ -81,21 +100,24 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     ].join('-')
 
     selectedPeriod$ = new BehaviorSubject<string>(this.defaultPeriod);
-    
-    periods$: Observable<{ name: string, id: string }[]> = this.appFolderContents$.pipe(
-        map(files => files.map((file: any) => ({ name: file.name, id: file.id })))
-    );
+
+    periods$: Observable<{ name: string, id: string }[]> = this.appFolderContents$
+        .pipe(
+            map(files => files.map((file: any) => ({ name: file.name, id: file.id })))
+        );
 
     periodAppStorage$: Observable<AppStorage> = combineLatest([
         this.periods$,
         this.selectedPeriod$
     ]).pipe(
+        debug(RxJsLoggingLevel.DEBUG, 'Getting selected period file contents...'),
         map(([periods, selectedPeriod]) => selectedPeriod && periods.find((period) => period.name === selectedPeriod)),
         mergeMap(period => period ? this.getFileContents<AppStorage>(period.id) : of({
-            transactions: [],
-            groups: []
+            transactions: MOCK_TRANSACTIONS,
+            groups: MOCK_GROUPS
         })),
         mergeMap(data => data ? of(data) : EMPTY),
+        debug(RxJsLoggingLevel.DEBUG, 'Got selected period file contents!'),
         shareReplay(1)
     );
 
