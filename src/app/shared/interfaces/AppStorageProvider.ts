@@ -2,10 +2,11 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { AppStorage } from "./AppStorage"; 
 
 export interface AppStorageProvider {
-    appFolderId$: Observable<string|null>;
     periods$: Observable<{name: string, id: string}[]>;
     selectedPeriod$: BehaviorSubject<string>;
     periodAppStorage$: Observable<AppStorage>;
     saveAppStorage(appStorage: AppStorage): Promise<void>;
-    setAppStorageFolderId(fileId: string): Promise<void>;
+    setAppStorageFolder(folder: {id: string, name: string}): Promise<void>;
+    addStorageFile(file: {id: string, name: string}): Promise<void>;
+    getFileMetadata(fileId: string): Promise<{name: string, id: string}>;
 }

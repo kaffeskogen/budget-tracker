@@ -8,7 +8,7 @@ export enum RxJsLoggingLevel {
     ERROR
 }
 
-let rxjsLoggingLevel = RxJsLoggingLevel.ERROR;
+let rxjsLoggingLevel = RxJsLoggingLevel.TRACE;
 
 export function setRxJsLoggingLevel(level: RxJsLoggingLevel) {
     rxjsLoggingLevel = level;
