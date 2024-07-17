@@ -316,6 +316,24 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         await firstValueFrom(this.saveFileContents(googleDriveConfigFileId, JSON.stringify(googleDriveAppData)));
     }
 
+    async removeStorageFile({id: fileId, name: fileName}: {id: string, name: string}): Promise<void> {
+
+        const [googleDriveConfigFileId, googleDriveConfig] = await Promise.all([
+            firstValueFrom(this.googleDriveConfigFileId$),
+            firstValueFrom(this.googleDriveConfig$)
+        ]);
+
+        const storageFiles = (googleDriveConfig?.storageFiles||[])
+            .filter(file => file.id !== fileId);
+
+        const googleDriveAppData = {
+            ...googleDriveConfig,
+            storageFiles
+        } satisfies GoogleDriveAppData;
+
+        await firstValueFrom(this.saveFileContents(googleDriveConfigFileId, JSON.stringify(googleDriveAppData)));
+    }
+
     createFolder(name: string): Observable<string> {
         return this.token$.pipe(
             mergeMap(token => token ?

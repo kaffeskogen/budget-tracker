@@ -23,5 +23,8 @@ export class EmptyStorageProvider implements AppStorageProvider {
     getFileMetadata(fileId: string): Promise<{ name: string; id: string; }> {
         throw new Error("Method not implemented.");
     }
+    removeStorageFile(file: { id: string; name: string; }): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
 
 }

@@ -9,6 +9,7 @@ export interface AppStorageProvider {
     saveAppStorage(appStorage: AppStorage): Promise<void>;
     setAppStorageFolder(folder: {id: string, name: string}): Promise<void>;
     addStorageFile(file: {id: string, name: string}): Promise<void>;
+    removeStorageFile(file: {id: string, name: string}): Promise<void>;
     getFileMetadata(fileId: string): Promise<{name: string, id: string}>;
     isFolder(file: ItemMetadata): boolean;
 }
