@@ -7,6 +7,7 @@ import { Group } from '../interfaces/Group';
 import { AppStorageProvider } from '../interfaces/AppStorageProvider';
 import { AppStorage } from '../interfaces/AppStorage';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { EmptyStorageProvider } from './empty-storage-provider';
 
 const test = new BehaviorSubject<string>("hello");
 
@@ -46,7 +47,7 @@ export class StorageService {
 
   mockGroups = computed(() => MOCK_GROUPS);
 
-  public storageProvider = signal<AppStorageProvider | null>(null);
+  public storageProvider = signal<AppStorageProvider>(new EmptyStorageProvider());
 
   private _transactions$ = new BehaviorSubject<Transaction[]|null>(null);
   transactions$ = this._transactions$

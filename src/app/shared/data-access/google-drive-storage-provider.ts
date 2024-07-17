@@ -1,10 +1,10 @@
-import { AppStorageProvider } from "../interfaces/AppStorageProvider";
+import { AppStorageProvider, ItemMetadata } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
 import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, fromEvent, BehaviorSubject, throwError, combineLatest, shareReplay, combineLatestWith } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
 import { environment } from "src/environments/environment";
 import { Oauth2TokenResponse } from "../auth/auth.service";
-import { Injectable, Optional, inject } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RxJsLoggingLevel, debug } from "../utils/rxjs-debug";
 import { MOCK_TRANSACTIONS } from "../mocks/transactions";
@@ -15,10 +15,8 @@ export interface GoogleDriveAppData {
     storageFiles?: {name: string, id: string}[];
 }
 
-export interface GoogleDriveItemMetadata {
-    kind: `drive#${'file'|'folder'}`,
-    id: string,
-    name: string,
+export interface GoogleDriveItemMetadata extends ItemMetadata {
+    kind: `drive#file`,
     mimeType: string
 }
 
@@ -29,6 +27,10 @@ const DEFAULT_APP_FOLDER_NAME = window.location.hostname;
 })
 export class GoogleDriveStorageProvider implements AppStorageProvider {
     http = inject(HttpClient);
+
+    isFolder(itemMetadata: GoogleDriveItemMetadata): boolean {
+        return itemMetadata.mimeType === 'application/vnd.google-apps.folder';
+    }
 
     tokenResponse$ = fromEvent<MessageEvent>(window, 'message');
     token$ = this.tokenResponse$
@@ -297,8 +299,6 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         } satisfies GoogleDriveAppData;
 
         await firstValueFrom(this.saveFileContents(googleDriveConfigFileId, JSON.stringify(googleDriveAppData)));
-
-        window.location.reload();
     }
 
     async addStorageFile({id: fileId, name: fileName}: {id: string, name: string}): Promise<void> {
@@ -314,8 +314,6 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         } satisfies GoogleDriveAppData;
 
         await firstValueFrom(this.saveFileContents(googleDriveConfigFileId, JSON.stringify(googleDriveAppData)));
-
-        window.location.reload();
     }
 
     createFolder(name: string): Observable<string> {

@@ -1,11 +1,9 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Params, Router, RouterLink, RouterModule } from '@angular/router';
-import { BehaviorSubject, EMPTY, Observable, Observer, Scheduler, Subject, concatMap, delay, forkJoin, map, merge, mergeMap, of, scheduled, skipUntil, startWith, throwError, zip } from 'rxjs';
-import { GoogleDriveItemMetadata, GoogleDriveStorageProvider } from 'src/app/shared/data-access/google-drive-storage-provider';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { StorageService } from 'src/app/shared/data-access/storage.service';
+import { ItemMetadata } from 'src/app/shared/interfaces/AppStorageProvider';
 
 interface GoogleDriveOpenWith {
   ids: string[],
@@ -52,13 +50,13 @@ export class SetStorageFileComponent implements OnInit {
   route = inject(ActivatedRoute);
   router = inject(Router);
   storageService = inject(StorageService);
-  storageProvider = this.storageService.storageProvider as WritableSignal<GoogleDriveStorageProvider>;
+  storageProvider = this.storageService.storageProvider;
   http = inject(HttpClient);
 
   state = signal<'loading' | 'error' | 'confirmation' | 'success'>('loading');
   message = signal<string | null>(null);
   fileId = signal<string | null>(null);
-  fileMetadata = signal<GoogleDriveItemMetadata | null>(null);
+  fileMetadata = signal<ItemMetadata | null>(null);
 
   async ngOnInit(): Promise<void> {
     const state = this.route.snapshot.queryParamMap.get('state');
@@ -96,21 +94,30 @@ export class SetStorageFileComponent implements OnInit {
     const fileId = this.fileId();
     const fileMetadata = this.fileMetadata();
 
+    const storageProvider = this.storageProvider();
+
     if (!fileId || !fileMetadata?.name) {
       return;
     }
 
-    if (fileMetadata.kind === 'drive#folder') {
-      await this.storageProvider().setAppStorageFolder({id: fileId, name: fileMetadata.name});
-    } else {
-      await this.storageProvider().addStorageFile({id: fileId, name: fileMetadata.name});
+    this.state.update(() => 'loading');
+    
+    try {
+
+      if (storageProvider.isFolder(fileMetadata)) {
+        await this.storageProvider().setAppStorageFolder({id: fileId, name: fileMetadata.name});
+      } else {
+        await this.storageProvider().addStorageFile({id: fileId, name: fileMetadata.name});
+      }
+
+      this.message.update(() => 'Completed!');
+      this.state.update(() => 'success');
+
+    } catch (e: any) {
+      const errorMessage = e?.error?.message || e?.error || e?.message || 'Unknown error';
+      this.message.update(() => errorMessage);
+      this.state.update(() => 'loading');
     }
-
-    await new Promise<void>((resolve, reject) => {
-      setTimeout(() => resolve(), 1000)
-    });
-
-    window.location.href = window.location.origin;
   }
 
 }
