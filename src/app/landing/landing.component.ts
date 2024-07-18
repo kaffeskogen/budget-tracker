@@ -68,7 +68,7 @@ export class LandingComponent implements OnInit {
   appState = inject(AppStateService);
 
   ngOnInit(): void {
-    this.appState.storageStrategy.update(() => 'google-drive')
+    // this.appState.storageStrategy.update(() => 'google-drive')
   }
 
   savingStrategies = [

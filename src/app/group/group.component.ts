@@ -150,7 +150,7 @@ export class GroupComponent {
         })
       : [];
   });
-  
+
   deleteGroup() {
     const group = this.group();
     this.hideConfirmDeletionDialog();

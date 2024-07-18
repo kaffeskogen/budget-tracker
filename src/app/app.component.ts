@@ -1,7 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterEvent, RouterOutlet } from '@angular/router';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { ToastComponent } from './shared/ui/toast/toast.component';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
@@ -17,4 +20,18 @@ import { ToastComponent } from './shared/ui/toast/toast.component';
 })
 export class AppComponent {
   title = 'budget-tracker';
+
+  router = inject(Router);
+
+  constructor() {
+    this.router.events
+      .pipe(
+        takeUntilDestroyed(),
+        filter(e => e instanceof NavigationEnd)
+      )
+      .subscribe(event => {
+        document.documentElement.scrollTop = 0;
+      });
+  }
+
 }
