@@ -13,8 +13,7 @@
     "fix": "gts fix",
     "e2e": "playwright test --project=chromium",
     "e2e:ui": "playwright test --ui",
-    "e2e:debug": "playwright test --project chromium --headed",
-    "prebuild": "node update-version.js"
+    "e2e:debug": "playwright test --project chromium --headed"
   },
   "private": true,
   "dependencies": {
