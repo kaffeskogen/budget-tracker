@@ -3,12 +3,34 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { StorageService } from 'src/app/shared/data-access/storage.service';
 import { TransactionsService } from 'src/app/shared/data-access/transactions.service';
 import { IconComponent } from "../../../shared/icons/icon/icon.component";
+import { Version } from 'src/main';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-general-settings',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, DatePipe],
   template: `
+    <label class="flex flex-col mt-4 w-full">
+      <small class="ml-4">Version</small>
+      <div class="w-full h-8 rounded col-span-2 px-2 bg-white flex items-center border border-slate-200 justify-between">
+        {{appVersion.version}}
+      </div>
+    </label>
+    
+    <label class="flex flex-col mt-4 w-full">
+      <small class="ml-4">Build date</small>
+      <div class="w-full h-8 rounded col-span-2 px-2 bg-white flex items-center border border-slate-200 justify-between">
+        {{appVersion.buildDate | date:'medium'}}
+      </div>
+    </label>
+    
+    <label class="flex flex-col mt-4 w-full">
+      <small class="ml-4">Commit-hash</small>
+      <div class="w-full h-8 rounded col-span-2 px-2 bg-white flex items-center border border-slate-200 justify-between">
+        {{appVersion.commitHash}}
+      </div>
+    </label>
     
     <label class="flex flex-col mt-4 w-full">
       <small class="ml-4">Storage folder id</small>
@@ -44,6 +66,7 @@ export class GeneralSettingsComponent {
 
   transactionsService = inject(TransactionsService);
   storageService = inject(StorageService);
+  appVersion = inject(Version);
 
   storageProvider = computed(() => this.storageService.storageProvider());
   folderId = toSignal(this.storageProvider().appFolderId$);

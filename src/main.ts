@@ -4,12 +4,15 @@ import { NgHeroiconsModule } from '@dimaslz/ng-heroicons';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app/app-routing.module';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { LOCALE_ID, DEFAULT_CURRENCY_CODE, importProvidersFrom } from '@angular/core';
+import { LOCALE_ID, DEFAULT_CURRENCY_CODE, importProvidersFrom, InjectionToken } from '@angular/core';
 
 import localeSwedish from '@angular/common/locales/sv';
 import { provideHttpClient } from '@angular/common/http';
 import { ToastService } from './app/shared/ui/toast/toast.service';
+import * as versionInfo from './environments/app-version';
 registerLocaleData(localeSwedish);
+
+export const Version = new InjectionToken<{version: string, buildDate: string, commitHash: string}>('ShipInfo');
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -18,7 +21,8 @@ bootstrapApplication(AppComponent, {
         { provide: DEFAULT_CURRENCY_CODE, useValue: 'SEK' },
         provideAnimations(),
         provideHttpClient(),
-        ToastService
+        ToastService,
+        { provide: Version, useValue: versionInfo }
     ]
 })
     .catch(err => console.error(err));
