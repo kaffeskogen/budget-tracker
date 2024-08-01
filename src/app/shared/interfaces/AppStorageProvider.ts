@@ -6,6 +6,7 @@ export interface AppStorageProvider {
     selectedPeriod$: BehaviorSubject<string>;
     periodAppStorage$: Observable<AppStorage>;
     appFolderId$: Observable<string>;
+    userProfile$: Observable<ProfileInfo>;
     saveAppStorage(appStorage: AppStorage): Promise<void>;
     setAppStorageFolder(folder: {id: string, name: string}): Promise<void>;
     addStorageFile(file: {id: string, name: string}): Promise<void>;
@@ -17,4 +18,10 @@ export interface AppStorageProvider {
 export interface ItemMetadata {
     id: string,
     name: string,
+}
+
+export interface ProfileInfo {
+    name: string;
+    email: string;
+    photoUrl: string;
 }

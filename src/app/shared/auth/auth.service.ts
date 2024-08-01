@@ -51,7 +51,10 @@ export class AuthService {
       scope: [
         'https://www.googleapis.com/auth/drive.appdata',
         'https://www.googleapis.com/auth/drive.file',
-        'https://www.googleapis.com/auth/drive.install'
+        'https://www.googleapis.com/auth/drive.install',
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'openid'
       ].join(' '),
       response_type: 'token',
       redirect_uri: window.location.origin + '/oauth2.html',

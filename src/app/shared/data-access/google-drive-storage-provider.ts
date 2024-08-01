@@ -1,6 +1,6 @@
-import { AppStorageProvider, ItemMetadata } from "../interfaces/AppStorageProvider";
+import { AppStorageProvider, ItemMetadata, ProfileInfo } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
-import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, fromEvent, BehaviorSubject, throwError, combineLatest, shareReplay, combineLatestWith } from "rxjs";
+import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, fromEvent, BehaviorSubject, throwError, combineLatest, shareReplay, combineLatestWith, tap } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
 import { environment } from "src/environments/environment";
 import { Oauth2TokenResponse } from "../auth/auth.service";
@@ -136,7 +136,10 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
             scope: [
                 'https://www.googleapis.com/auth/drive.appdata',
                 'https://www.googleapis.com/auth/drive.file',
-                'https://www.googleapis.com/auth/drive.install'
+                'https://www.googleapis.com/auth/drive.install',
+                'https://www.googleapis.com/auth/userinfo.profile',
+                'https://www.googleapis.com/auth/userinfo.email',
+                'openid'
             ].join(' '),
             response_type: 'token',
             redirect_uri: window.location.origin + '/oauth2.html',
@@ -160,6 +163,50 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
 
         return firstValueFrom(this.saveFileContents(periodFileId, JSON.stringify(appStorage)));
     }
+
+    userProfile$ = this.token$.pipe(
+        mergeMap(token => !token ? EMPTY : this.http.get<unknown>('https://people.googleapis.com/v1/people/me',{
+            params: { personFields: [
+                "addresses",
+                "ageRanges",
+                "biographies",
+                "birthdays",
+                "calendarUrls",
+                "clientData",
+                "coverPhotos",
+                "emailAddresses",
+                "events",
+                "externalIds",
+                "genders",
+                "imClients",
+                "interests",
+                "locales",
+                "locations",
+                "memberships",
+                "metadata",
+                "miscKeywords",
+                "names",
+                "nicknames",
+                "occupations",
+                "organizations",
+                "phoneNumbers",
+                "photos",
+                "relations",
+                "sipAddresses",
+                "skills",
+                "urls",
+                "userDefined"
+            ]},
+            headers: { 'Authorization': `Bearer ${token}` }
+        })),
+        map(result => ({
+            email: (result as any)['emailAddresses'][0]['value'],
+            name: (result as any)['names'][0]['displayName'],
+            photoUrl: (result as any)['photos'][0]['url'],
+        } satisfies ProfileInfo)),
+        tap(result => console.log(result)),
+        shareReplay()
+    );
 
     // https://til.simonwillison.net/googlecloud/recursive-fetch-google-drive
     getFolderItems(folderId: string) {

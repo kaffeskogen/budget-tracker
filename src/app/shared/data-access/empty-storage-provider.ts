@@ -1,12 +1,13 @@
 import { Observable, BehaviorSubject, of } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
-import { AppStorageProvider, ItemMetadata } from "../interfaces/AppStorageProvider";
+import { AppStorageProvider, ItemMetadata, ProfileInfo } from "../interfaces/AppStorageProvider";
 
 export class EmptyStorageProvider implements AppStorageProvider {
     periods$ = of([{ name: '', id: '' }]);
     selectedPeriod$ = new BehaviorSubject('');
     periodAppStorage$ = of({} as AppStorage)
     appFolderId$ = of('');
+    userProfile$ = of({} as ProfileInfo);
     
     isFolder(file: ItemMetadata): boolean {
         throw new Error("Method not implemented.");
