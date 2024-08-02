@@ -1,6 +1,6 @@
 import { AppStorageProvider, ItemMetadata, ProfileInfo } from "../interfaces/AppStorageProvider";
 import { HttpClient } from "@angular/common/http";
-import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, fromEvent, BehaviorSubject, throwError, combineLatest, shareReplay, combineLatestWith, tap } from "rxjs";
+import { Observable, map, mergeMap, of, firstValueFrom, EMPTY, fromEvent, BehaviorSubject, throwError, combineLatest, shareReplay, combineLatestWith, tap, take, timer } from "rxjs";
 import { AppStorage } from "../interfaces/AppStorage";
 import { environment } from "src/environments/environment";
 import { Oauth2TokenResponse } from "../auth/auth.service";
@@ -33,7 +33,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     tokenResponse$ = fromEvent<MessageEvent>(window, 'message');
-    token$ = this.tokenResponse$
+    token$ = new BehaviorSubject<string|null>(null);
+    tokenIsSet$: Observable<void> = this.tokenResponse$
         .pipe(
             debug(RxJsLoggingLevel.DEBUG, 'Getting token...'),
             takeUntilDestroyed(),
@@ -41,11 +42,15 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
             map(response => response.access_token),
             mergeMap(token => token ? of(token) : EMPTY),
             debug(RxJsLoggingLevel.DEBUG, 'Got token!'),
+            tap(token => this.token$.next(token)),
+            take(1),
+            map(() => undefined),
             shareReplay(1)
-        );
+        ) as Observable<void>;
 
-    googleDriveAppDataFolderContents$ = this.token$.pipe(
+    googleDriveAppDataFolderContents$ = this.tokenIsSet$.pipe(
         debug(RxJsLoggingLevel.DEBUG, 'Getting g-drive app data folder contents...'),
+        mergeMap(() => this.token$),
         mergeMap(token => !token ?
             EMPTY :
             this.http.get<{ files: { name: string, id: string }[] }>('https://www.googleapis.com/drive/v3/files', {
@@ -164,7 +169,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
         return firstValueFrom(this.saveFileContents(periodFileId, JSON.stringify(appStorage)));
     }
 
-    userProfile$ = this.token$.pipe(
+    userProfile$ = this.tokenIsSet$.pipe(
+        mergeMap(() => this.token$),
         mergeMap(token => !token ? EMPTY : this.http.get<unknown>('https://people.googleapis.com/v1/people/me',{
             params: { personFields: [
                 "addresses",
@@ -210,7 +216,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
 
     // https://til.simonwillison.net/googlecloud/recursive-fetch-google-drive
     getFolderItems(folderId: string) {
-        return this.token$.pipe(
+        return this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => !token ?
                 EMPTY :
                 this.http.get<{ files: any[] }>('https://www.googleapis.com/drive/v3/files', {
@@ -267,7 +274,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     getGoogleDriveAppData(): Observable<{ id: string, name: string }[]> {
-        return this.token$.pipe(
+        return this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => !token ?
                 EMPTY :
                 this.http.get<{ files: any[] }>('https://www.googleapis.com/drive/v3/files', {
@@ -283,7 +291,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     getFileContents<T>(fileId: string): Observable<T> {
-        return this.token$.pipe(
+        return this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => token ?
                 this.http.get<any>(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
                     headers: {
@@ -299,7 +308,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     async getFileMetadata(fileId: string): Promise<GoogleDriveItemMetadata> {
-        const obs = this.token$.pipe(
+        const obs = this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => token ?
                 this.http.get<GoogleDriveItemMetadata>(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
                     headers: {
@@ -318,7 +328,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     saveFileContents(fileId: string, contents: string): Observable<void> {
-        return this.token$.pipe(
+        return this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => token ?
                 this.http.patch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}`, contents, {
                     headers: {
@@ -382,7 +393,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     createFolder(name: string): Observable<string> {
-        return this.token$.pipe(
+        return this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => token ?
                 this.http.post('https://www.googleapis.com/drive/v3/files', {
                     name: name,
@@ -404,7 +416,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     createFile(parentFolderId: string, fileName: string): Observable<string> {
-        return this.token$.pipe(
+        return this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => token ?
                 this.http.post('https://www.googleapis.com/drive/v3/files', {
                     name: fileName,
@@ -426,7 +439,8 @@ export class GoogleDriveStorageProvider implements AppStorageProvider {
     }
 
     createGoogleDriveConfigFile(fileName: string): Observable<string> {
-        return this.token$.pipe(
+        return this.tokenIsSet$.pipe(
+            mergeMap(() => this.token$),
             mergeMap(token => token ?
                 this.http.post('https://www.googleapis.com/drive/v3/files', {
                     name: fileName,
