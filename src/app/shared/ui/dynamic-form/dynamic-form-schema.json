@@ -17,10 +17,10 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                    "id": {
+                    "slug": {
                         "type": "string"
                     },
-                    "displayName": {
+                    "name": {
                         "type": "string"
                     },
                     "controls": {
@@ -28,6 +28,9 @@
                         "items": {
                             "type": "string"
                         }
+                    },
+                    "bounds": {
+                        "$ref": "#/definitions/bounds"
                     }
                 }
             }
@@ -61,6 +64,33 @@
         }
     },
     "definitions": {
+        "bounds": {
+            "$id": "/definitions/bounds",
+            "$schema": "http://json-schema.org/schema",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "x",
+                "y",
+                "width",
+                "height"
+
+            ],
+            "properties": {
+                "x": {
+                    "type": "integer"
+                },
+                "y": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "integer"
+                }
+            }
+        },
         "text": {
             "$id": "/definitions/text",
             "$schema": "http://json-schema.org/schema",
@@ -69,7 +99,8 @@
             "required": [
                 "slug",
                 "name",
-                "type"
+                "type",
+                "bounds"
             ],
             "properties": {
                 "type": {
@@ -81,6 +112,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "bounds": {
+                    "$ref": "#/definitions/bounds"
                 },
                 "defaultValue": {
                     "type": [
@@ -104,7 +138,8 @@
             "required": [
                 "slug",
                 "name",
-                "type"
+                "type",
+                "bounds"
             ],
             "properties": {
                 "type": {
@@ -116,6 +151,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "bounds": {
+                    "$ref": "#/definitions/bounds"
                 },
                 "decimalPoints": {
                     "type": [
@@ -151,7 +189,8 @@
             "required": [
                 "slug",
                 "name",
-                "type"
+                "type",
+                "bounds"
             ],
             "properties": {
                 "type": {
@@ -163,6 +202,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "bounds": {
+                    "$ref": "#/definitions/bounds"
                 }
             }
         },
@@ -174,7 +216,8 @@
             "required": [
                 "slug",
                 "name",
-                "type"
+                "type",
+                "bounds"
             ],
             "properties": {
                 "type": {
@@ -186,6 +229,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "bounds": {
+                    "$ref": "#/definitions/bounds"
                 },
                 "defaultValue": {
                     "type": [

@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TransactionGroupsService } from 'src/app/shared/data-access/transaction-groups.service';
 import { DialogComponent } from 'src/app/shared/ui/dialog/dialog.component';
 import { DynamicFormComponent } from 'src/app/shared/ui/dynamic-form/dynamic-form.component';
-import { JsonForm } from 'src/app/shared/ui/dynamic-form/models/models';
+import { JsonForm, JsonFormControl } from 'src/app/shared/ui/dynamic-form/models/models';
 
 @Component({
   selector: 'app-create-group',
@@ -30,20 +30,37 @@ export class CreateGroupComponent {
       {
         name: 'Slug',
         slug: 'id',
-        type: 'text'
-      },
+        type: 'text',
+        bounds: {
+          height: 0,
+          width: 0,
+          x: 0,
+          y: 0
+        }
+      } ,
       {
         name: 'Name',
         slug: 'name',
-        type: 'text'
+        type: 'text',
+        bounds: {
+          height: 0,
+          width: 0,
+          x: 0,
+          y: 0
+        }
       },
       {
         name: 'Color',
         slug: 'color',
-        type: 'text'
+        type: 'text',
+        bounds: {
+          height: 0,
+          width: 0,
+          x: 0,
+          y: 0
+        }
       },
-      
-    ],
+    ] satisfies JsonFormControl[],
     sections: []
   }));
 

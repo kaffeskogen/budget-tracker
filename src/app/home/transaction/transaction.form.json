@@ -1,36 +1,83 @@
 {
-    "sections": [],
+    "sections": [
+        {
+            "name": "Title",
+            "slug": "title",
+            "bounds": {
+                "height": 1,
+                "width": 8,
+                "x": 0,
+                "y": 0
+            }
+        }
+    ],
     "controls": [
         {
             "type": "text",
             "name": "Title",
             "slug": "title",
-            "placeholder": "Hello world"
+            "placeholder": "Hello world",
+            "bounds": {
+                "height": 1,
+                "width": 8,
+                "x": 1,
+                "y": 0
+            }
         },
         {
             "type": "group",
             "name": "Group",
-            "slug": "groupId"
+            "slug": "groupId",
+            "bounds": {
+                "height": 1,
+                "width": 8,
+                "x": 2,
+                "y": 0
+            }
         },
         {
             "type": "text",
             "name": "Category",
-            "slug": "category"
+            "slug": "category",
+            "bounds": {
+                "height": 1,
+                "width": 8,
+                "x": 3,
+                "y": 0
+            }
         },
         {
             "type": "icon",
             "name": "Icon",
-            "slug": "icon"
+            "slug": "icon",
+            "bounds": {
+                "height": 1,
+                "width": 8,
+                "x": 4,
+                "y": 0
+            }
         },
         {
             "type": "number",
             "name": "Value",
-            "slug": "value"
+            "slug": "value",
+            "bounds": {
+                "height": 1,
+                "width": 8,
+                "x": 5,
+                "y": 0
+            }
         },
         {
             "type": "date",
             "name": "Date",
-            "slug": "date"
+            "slug": "date",
+            "bounds": {
+                "height": 1,
+                "width": 8,
+                "x": 6,
+                "y": 0
+            }
         }
     ]
 }
