@@ -35,12 +35,6 @@ export class GroupSettingsComponent {
       name: 'Name',
       slug: 'name',
       type: 'text',
-      bounds: {
-        height: 0,
-        width: 0,
-        x: 0,
-        y: 0
-      },
       defaultValue: this.group()?.name
     }],
     sections: []
